@@ -24,6 +24,7 @@
 library(googlesheets4)
     
   #sources
+source("Supply chain exclusions.R")
 team <- "USAID OHA/EA Branch"
 agency_order_long <- c("USAID", "CDC", "OTHER")
 # Distinct list of OUS to loop over
@@ -73,7 +74,7 @@ df_be <- df_fsd %>%
       
       #replace NAs with 0s
       df<-df%>%
-        mutate_at(vars(`COP Budget New Funding`:`Expenditure`),~replace_na(.,0))
+        mutate_at(vars(`COP Budget New Funding`:`Spend`),~replace_na(.,0))
       
       #add in a quarter for the budget data, this is useful for doing quarterly analytics of budget data
       # df$Quarter<-c("Quarter 1")
@@ -83,8 +84,8 @@ df_be <- df_fsd %>%
         dplyr::mutate(`Fiscal Year`= as.character(`Fiscal Year`))%>%
         dplyr::mutate(`COP Budget New Funding`=as.numeric(`COP Budget New Funding`))%>%
         dplyr::mutate(`COP Budget Pipeline`=as.numeric(`COP Budget Pipeline`))%>%
-        dplyr::mutate(`Total Planned Funding`=as.numeric(`Total Planned Funding`))%>%
-        dplyr::mutate(`Expenditure`=as.numeric(`Expenditure`))
+        dplyr::mutate(`Budget`=as.numeric(`Budget`))%>%
+        dplyr::mutate(`Spend`=as.numeric(`Spend`))
       
       
       
@@ -117,6 +118,11 @@ df_be <- df_fsd %>%
   #filter out for non M&O
     df<-df%>%
       dplyr::filter(record_type =="Implementing Mechanism")
+    
+  
+  #Filtering out SCH Mechs
+    df<-df%>%
+      dplyr::filter(!mech_code  %in% SGAC_list)
    
     
     
