@@ -21,12 +21,25 @@
     library(ggtext)
     library(here)
     library(gt)
+library(googlesheets4)
     
   #sources
-team <- "EA Branch"
+team <- "USAID OHA/EA Branch"
 agency_order_long <- c("USAID", "CDC", "OTHER")
 # Distinct list of OUS to loop over
 
+
+#@to do-incorporate 
+sch_list <- read_sheet(sch_partner_sheet) %>% 
+  pull(`Mech Code`)
+
+
+
+#aggregate after filtering to USAID, excluding M&O and SC 
+df_be <- df_fsd %>% 
+  filter(fundingagency == "USAID",
+         record_type != "Management and Operations",
+         !mech_code %in% sch_list) 
 
   
   # Set paths  
@@ -54,9 +67,9 @@ agency_order_long <- c("USAID", "CDC", "OTHER")
                       "Fiscal Year" = fiscal_year,
                       "COP Budget New Funding"=cop_budget_new_funding,
                       "COP Budget Pipeline"=cop_budget_pipeline,
-                      "Total Planned Funding" = cop_budget_total,
+                      "Budget" = cop_budget_total,
                       "Workplan Budget" = workplan_budget_amt,
-                      "Expenditure"=expenditure_amt)
+                      "Spend"=expenditure_amt)
       
       #replace NAs with 0s
       df<-df%>%
@@ -80,6 +93,9 @@ agency_order_long <- c("USAID", "CDC", "OTHER")
                                           ifelse(`Agency Category` == "HHS/CDC", "CDC",
                                                  ifelse(`Agency Category` =="Dedup", "Dedup","Other"))))
     return(df)
+    
+    
+    #@ todo for FY20  mutate(display_year = glue("FY{str_sub(Fiscal Year, 3,4)}")
     }
 
 # LOAD DATA ============================================================================  
