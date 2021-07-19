@@ -20,8 +20,14 @@
     library(patchwork)
     library(ggtext)
     library(here)
+    library(gt)
     
-    
+  #sources
+team <- "EA Branch"
+agency_order_long <- c("USAID", "CDC", "OTHER")
+# Distinct list of OUS to loop over
+
+
   
   # Set paths  
     proj_paths
@@ -79,6 +85,11 @@
 # LOAD DATA ============================================================================  
 
   df<-FSD_Clean("Data/Financial_Structured_Datasets_COP17-20_20210618.txt")
+  
+    #distinct OU list to loop over
+    ou_list <- df %>% 
+      distinct(operatingunit) %>% 
+      pull()
 
 # MUNGE ============================================================================
   
@@ -87,6 +98,15 @@
     df<-df%>%
       dplyr::filter(`Fiscal Year` %in% fy)
     
+  #filter out for non M&O
+    df<-df%>%
+      dplyr::filter(record_type =="Implementing Mechanism")
+   
+    
+    
+     #testing for FY20
+  #  df<-df%>%
+   #   dplyr::filter(`Fiscal Year` =="2020")
   #group by OU, Agency, Total Planned funding, Expenditure and pull them out
   df<-df%>%
    select(`Operating Unit`,`Agency Category`,`Fiscal Year`,`Total Planned Funding`, Expenditure)
@@ -99,21 +119,118 @@
  df<-df%>%
    dplyr::mutate("Budget Execution"=`Expenditure` / `Total Planned Funding` )
  
- #testing with Fy20
+ #df<-df%>%
+  # pivot_longer(c(`Total Planned Funding`:`Budget Execution`), names_to = "Stream")
+# df<-df%>% 
+ #  pivot_wider(names_from = Stream,
+  #             values_from = value,values_fill = 0) 
+
+ #table testing 1 option (headers are spending funding and be)
+ df<-df%>% 
+   pivot_wider(names_from = `Fiscal Year`, values_from = `Total Planned Funding`:`Budget Execution`, values_fill = 0)
+ df <- df %>%
+   dplyr::relocate(Expenditure_2020, .before = `Total Planned Funding_2020`) %>% 
+   dplyr::relocate(`Budget Execution_2020`, .after = `Total Planned Funding_2020`) %>%
+   dplyr::relocate(Expenditure_2021, .before = `Total Planned Funding_2021`)
  df<-df%>%
-   dplyr::filter(`Fiscal Year` =="2020")
+   dplyr::rename("FY20 Spend"=Expenditure_2020,
+                 "FY20 Budget"=`Total Planned Funding_2020`,
+                 "FY21 Spend"=Expenditure_2021,
+                 "FY21 Budget"=`Total Planned Funding_2021`,
+                 "FY20 Budget Execution"=`Budget Execution_2020`,
+                 "FY21 Budget Execution"=`Budget Execution_2021`)%>%
+   mutate(`Agency Category` = fct_relevel(`Agency Category`, "CDC",
+                                  "Other",
+                                  "USAID",
+                            )) %>% 
+   arrange(`Agency Category`)
+ 
+ df<-df%>%
+  dplyr::mutate( `Agency Category` = fct_relevel(`Agency Category`, agency_order_long))
+ 
+
+ #notes below ignore
  
  dfUSAID<-df%>%
    dplyr::filter(`Agency Category`=="USAID")
+ 
+ #re-order table
+ dfUSAID <- dfUSAID %>%
+   dplyr::relocate(Expenditure_2020, .before = `Total Planned Funding_2020`) %>% 
+   dplyr::relocate(`Budget Execution_2020`, .after = `Total Planned Funding_2020`) %>%
+   dplyr::relocate(Expenditure_2021, .before = `Total Planned Funding_2021`)
   
+ 
+ 
+
  
   
 # VIZ ============================================================================
 
-  # use gt to build table
- df%>%gt(
-   groupname_col = "Agency category"
- )
+  # use gt to build table at OU level
+ df%>%
+   
+   gt(groupname_col = "Agency Category",
+ )%>%
+   cols_hide(
+     columns = c(
+       "Operating Unit"
+     ))%>%
+ 
+ 
+   fmt_percent(
+     columns = vars(`FY20 Budget Execution`, `FY21 Budget Execution`),
+     decimals = 0)%>%
+   fmt_currency( # add dolar signs
+     columns = vars(`FY20 Spend`,`FY20 Budget`,`FY21 Spend`,`FY21 Budget`),
+     decimals = 0,
+     currency = "USD")%>%
+   tab_options(
+     table.font.names = "Source Sans Pro"
+   ) %>% 
+   cols_width(
+     everything() ~ px(110))%>%
+   tab_header(title = "PEPFAR Budget Execution FY2020-2021") %>% 
+   tab_source_note(
+     source_note = paste("Produced on ",Sys.Date(), "by the ", team, " using PEPFAR FY21Q2c FSD released on 2021-06-18.")
+   )%>% 
+   tab_source_note(
+     source_note = md("OTHER AGENCIES based on aggregates excluding de-duplication.")
+   )%>%
+   tab_style(
+     style = cell_borders(
+       sides = "right",
+       weight = px(1.5),
+     ),
+     locations = cells_body(
+       columns = everything(),
+       rows = everything()
+     ))%>%
+   tab_spanner(
+     label = "COP20 Performance",
+     columns = c( "FY20 Budget", "FY20 Spend","FY20 Budget Execution"))%>%
+   tab_spanner(
+     label = "COP21 Performance",
+     columns = c( "FY21 Budget", "FY21 Spend","FY21 Budget Execution"))%>%
+   tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),      
+                    locations = cells_body(               
+                      columns = vars(`FY20 Budget Execution`),
+ rows = `FY20 Budget Execution` >= 0.9 & `FY20 Budget Execution` < 1.1)) %>%
+ tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),      
+           locations = cells_body(               
+             columns = vars(`FY20 Budget Execution`),
+             rows = `FY20 Budget Execution` < 0.9 ))%>%
+   tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),      
+             locations = cells_body(               
+               columns = vars(`FY20 Budget Execution`),
+               rows = `FY20 Budget Execution` >= 1.1 & `FY20 Budget Execution` < 1.2))%>%
+   tab_style(style = cell_fill(color = "#ff989f",alpha = .75),      
+             locations = cells_body(               
+               columns = vars(`FY20 Budget Execution`),
+               rows = `FY20 Budget Execution` >= 1.2 ))
+   
+  
+ 
 
  #just usaid
  tbl<-
@@ -121,14 +238,14 @@
               )%>%
    cols_hide(
      columns = c(
-       "Agency Category", "Fiscal Year"
+       "Agency Category"
      )
    )%>%
    fmt_percent(
-     columns = vars(`Budget Execution`),
+     columns = vars(`FY20 Budget Execution`, `FY21 Budget Execution`),
      decimals = 0)%>%
    fmt_currency( # add dolar signs
-     columns = vars(`Total Planned Funding`,`Expenditure`),
+     columns = vars(`FY20 Spend`,`FY20 Budget`,`FY21 Spend`,`FY21 Budget`),
      decimals = 0,
      currency = "USD")%>%
    tab_options(
