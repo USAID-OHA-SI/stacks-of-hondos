@@ -25,6 +25,7 @@ library(googlesheets4)
     
   #sources
 source("Supply chain exclusions.R")
+source("remove M&O.r")
 team <- "USAID OHA/EA Branch"
 agency_order_long <- c("USAID", "CDC", "OTHER")
 # Distinct list of OUS to loop over
@@ -93,16 +94,18 @@ df_be <- df_fsd %>%
         mutate(`Agency Category` = ifelse(`Agency Category` == "USAID", "USAID",
                                           ifelse(`Agency Category` == "HHS/CDC", "CDC",
                                                  ifelse(`Agency Category` =="Dedup", "Dedup","Other"))))
-    return(df)
+    
+     return(df)
     
     
-    #@ todo for FY20  mutate(display_year = glue("FY{str_sub(Fiscal Year, 3,4)}")
+   
     }
 
 # LOAD DATA ============================================================================  
 
   df<-FSD_Clean("Data/Financial_Structured_Datasets_COP17-20_20210618.txt")
-  
+    df<-df%>%
+      dplyr::mutate("Fiscal Year" = glue("FY{str_sub(`Fiscal Year`, 3,4)}"))
     #distinct OU list to loop over
     ou_list <- df %>% 
       distinct(operatingunit) %>% 
@@ -117,13 +120,18 @@ df_be <- df_fsd %>%
     
   #filter out for non M&O
     df<-df%>%
+      remove_mo()%>%
+      remove_sch("SGAC")
       dplyr::filter(record_type =="Implementing Mechanism")
     
   
   #Filtering out SCH Mechs
     df<-df%>%
       dplyr::filter(!mech_code  %in% SGAC_list)
-   
+  
+     #bind mech ID-name
+    df<-df%>%
+      dplyr::mutate(ID_Name = glue("{mech_code}-{mech_name}"))
     
     
      #testing for FY20
@@ -131,15 +139,15 @@ df_be <- df_fsd %>%
    #   dplyr::filter(`Fiscal Year` =="2020")
   #group by OU, Agency, Total Planned funding, Expenditure and pull them out
   df<-df%>%
-   select(`Operating Unit`,`Agency Category`,`Fiscal Year`,`Total Planned Funding`, Expenditure)
+   select(`Operating Unit`,`Agency Category`,`Program Area`,`Fiscal Year`,`Budget`, `Spend`)
   #summarize total funding and expenditure
   df<-df%>%
-    group_by(`Operating Unit`,`Agency Category`,`Fiscal Year`)%>%
-    summarise_at(vars(`Total Planned Funding`:Expenditure), sum, na.rm = TRUE)
+    group_by(`Operating Unit`,`Agency Category`, `Program Area`,`Fiscal Year`)%>%
+    summarise_at(vars(`Budget`:`Spend`), sum, na.rm = TRUE)
   
   #calculate budget execution
  df<-df%>%
-   dplyr::mutate("Budget Execution"=`Expenditure` / `Total Planned Funding` )
+   dplyr::mutate("Budget Execution"=`Spend` / `Budget` )
  
  #df<-df%>%
   # pivot_longer(c(`Total Planned Funding`:`Budget Execution`), names_to = "Stream")
@@ -149,11 +157,11 @@ df_be <- df_fsd %>%
 
  #table testing 1 option (headers are spending funding and be)
  df<-df%>% 
-   pivot_wider(names_from = `Fiscal Year`, values_from = `Total Planned Funding`:`Budget Execution`, values_fill = 0)
+   pivot_wider(names_from = `Fiscal Year`, values_from = `Budget`:`Budget Execution`, values_fill = 0)
  df <- df %>%
-   dplyr::relocate(Expenditure_2020, .before = `Total Planned Funding_2020`) %>% 
-   dplyr::relocate(`Budget Execution_2020`, .after = `Total Planned Funding_2020`) %>%
-   dplyr::relocate(Expenditure_2021, .before = `Total Planned Funding_2021`)
+   dplyr::relocate(Spend_2020, .before = `Budget_2020`) %>% 
+   dplyr::relocate(`Budget Execution_2020`, .after = `Budget_2020`) %>%
+   dplyr::relocate(Spend_2021, .before = `Budget_2021`)
  df<-df%>%
    dplyr::rename("FY20 Spend"=Expenditure_2020,
                  "FY20 Budget"=`Total Planned Funding_2020`,
@@ -191,19 +199,20 @@ df_be <- df_fsd %>%
 
   # use gt to build table at OU level
  df%>%
+   df(select())
    
    gt(groupname_col = "Agency Category",
  )%>%
-   cols_hide(
-     columns = c(
-       "Operating Unit"
-     ))%>%
+  # cols_hide(
+    # columns = c(
+     #  "Operating Unit"
+    # ))%>%
  
  
    fmt_percent(
      columns = vars(`FY20 Budget Execution`, `FY21 Budget Execution`),
      decimals = 0)%>%
-   fmt_currency( # add dolar signs
+   fmt_currency( # add dolar signsdrive_auth()
      columns = vars(`FY20 Spend`,`FY20 Budget`,`FY21 Spend`,`FY21 Budget`),
      decimals = 0,
      currency = "USD")%>%
