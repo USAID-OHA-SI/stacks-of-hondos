@@ -346,7 +346,7 @@ df<-df%>%
        columns = "expenditure_amt"))%>%
    tab_header(
      title = glue::glue(" Fiscal Year {fiscal_years}  {ou} Financial Performance Summary"))%>%
-   gt::tab_source_note(paste0("Created by the  EA Branch on ", Sys.Date(), ". For support please reach out to gh.oha.costingadvisors@usaid.gov"))
+   gt::tab_source_note(paste0("Created by the  EA Branch on ", Sys.Date(), " using the FY21Q4i FSD. For support please reach out to gh.oha.costingadvisors@usaid.gov"))
  return(df)
  }
  program_area(df_fsd,"Mozambique",("2020"))
