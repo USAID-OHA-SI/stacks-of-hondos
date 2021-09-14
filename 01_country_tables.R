@@ -24,8 +24,7 @@ agency_order_shrt <- c("USAID", "CDC", "OTHER")
   # Set paths  
 df_fsd<-si_path()%>%
   return_latest("COP17")%>%
-  gophr::read_msd()%>%
-  remove_mo()
+  gophr::read_msd()
 
 fiscal_years<-c("2020","2021")
     
@@ -49,14 +48,14 @@ fiscal_years<-c("2020","2021")
       dplyr::mutate(budget_execution=expenditure_amt/cop_budget_total)%>%
     ungroup()%>%
      
-      #dplyr::filter(countryname %in% ou)%>%
+      dplyr::filter(countryname %in% ou)%>%
       dplyr::filter(fiscal_year %in% fiscal_years)%>%
-      df<-df%>%
-      pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
-        dplyr::relocate(expenditure_amt_2020, .before = cop_budget_total_2020) %>%
-        dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
-        dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
-        dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) 
+     # df<-df%>%
+      #pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
+       # dplyr::relocate(expenditure_amt_2020, .before = cop_budget_total_2020) %>%
+        #dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
+      #  dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
+       # dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) 
     
        
        df%>% 
@@ -64,7 +63,7 @@ fiscal_years<-c("2020","2021")
         )%>%
         cols_hide(
           columns = c(
-            "fiscal_year", "countryname"
+             "countryname"
           ))%>%
         fmt_percent(
           columns = c(`budget_execution`),
@@ -117,11 +116,11 @@ fiscal_years<-c("2020","2021")
                 # df%>%
                  #   gt(groupname_col = "countryname",
                  #      rowname_col = "agency_category")
-    return(df)
+
     
     
    
-clean_ou(df,"South Africa","2020")   
+clean_ou(df_fsd,"South Africa","2020")   
 tanzania<-get_ou(df_fsd, "Tanzania","2020")
 
 
@@ -194,7 +193,7 @@ df<-df%>%
 
 # MUNGE ============================================================================
   
- clean_partner<-function(df,ou="countryname",fiscal_years,agency){
+ clean_partner<-function(df,ou="countryname",fiscal_years=c("2020,2021"), agency=c("USAID","Other","CDC")){
    
    df<-df_fsd%>%
      remove_mo()%>%
@@ -220,7 +219,7 @@ df<-df%>%
      dplyr::filter(fiscal_year %in% fiscal_years)%>%
     # dplyr::filter(agency_category %in% agency)%>%
      
-     gt(groupname_col = "Agency category",
+     gt(groupname_col = "agency_category",
      )%>%
     # row_group_order(
      #  groups = c("USAID", "CDC", "Other")
@@ -274,7 +273,7 @@ df<-df%>%
   
 # program area ============================================================================
 
-  program_area<-function(df,ou="countryname",fiscal_years,agency){
+  program_area<-function(df,ou="countryname",fiscal_years=c("2020,2021"), agency=c("USAID","Other","CDC")){
  
  df<-df_fsd%>%
    dplyr::select (c(countryname,fundingagency, program,fiscal_year,cop_budget_total,expenditure_amt))%>%
@@ -299,13 +298,11 @@ df<-df%>%
    dplyr::filter(agency_category %in% agency)%>%
    # dplyr::filter(agency_category %in% agency)%>%
    
-   gt()%>%
-   # row_group_order(
-   #  groups = c("USAID", "CDC", "Other")
-   #)%>%
+   gt(groupname_col = "agency_category",
+   )%>%
    cols_hide(
      columns = c(
-       "fiscal_year", "countryname", "agency_category"
+       "fiscal_year", "countryname", 
      ))%>%
    fmt_percent(
      columns = c(`budget_execution`),
@@ -343,12 +340,16 @@ df<-df%>%
              locations = cells_body(               
                columns = vars(budget_execution),
                rows = budget_execution >= 1.2 ))%>%
+   tab_footnote(
+     footnote = "Excluding M&O",
+     locations = cells_column_labels(
+       columns = "expenditure_amt"))%>%
    tab_header(
-     title = glue::glue(" Fiscal Year {fiscal_years} {agency} {ou} Financial Performance Summary"))%>%
-   gt::tab_source_note("Create by EA Branch Excluding M&O")
+     title = glue::glue(" Fiscal Year {fiscal_years}  {ou} Financial Performance Summary"))%>%
+   gt::tab_source_note(paste0("Created by the  EA Branch on ", Sys.Date(), ". For support please reach out to gh.oha.costingadvisors@usaid.gov"))
  return(df)
  }
- program_area(df_fsd,"Mozambique",("2020"), "USAID")
+ program_area(df_fsd,"Mozambique",("2020"))
 
 # SPINDOWN ============================================================================
 
