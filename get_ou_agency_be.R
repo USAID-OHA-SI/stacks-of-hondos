@@ -12,10 +12,10 @@ library(gophr)
 library(gt)
 library(glue)
 df_fsd<-si_path()%>%
-  return_latest("COP17")%>%
-  gophr::read_msd()
-  
-  source<-source_info(si_path(),"OU_IM")
+  return_latest("Fin")%>%
+  gophr::read_msd
+
+source<-source_info(si_path(),"Fin")
   
 ou_list<-si_path()%>%
   return_latest("COP17")%>%
@@ -28,6 +28,8 @@ country_list<-si_path()%>%
   gophr::read_msd()%>%
   distinct(countryname)%>%
   pull()
+
+#use this function to print out budget execution by agency at different OUs
 
 get_ou_agency_be<-function(df, ou="operatingunit"){
   df<-df_fsd%>%
@@ -86,6 +88,16 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
         gt::cell_text(weight = "bold")), 
       locations = gt::cells_column_spanners(spanners = tidyselect::everything())
     )%>%
+   
+    tab_style(
+      style = cell_borders(
+        sides = "right",
+        weight = px(1.5),
+      ),
+      locations = cells_body(
+        columns = everything(),
+        rows = everything()
+      ))%>%
     tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),      
               locations = cells_body(               
                 columns = (budget_execution_2020),
@@ -126,8 +138,8 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
       locations = cells_column_labels(
         columns =c(expenditure_amt_2020, expenditure_amt_2021)))%>%
     tab_header(
-      title = glue::glue(" COP2020 & 2021 {ou} Financial Performance Summary"))%>%
-    gt::tab_source_note(("Created by the  EA Branch using the. For support please reach out to gh.oha.costingadvisors@usaid.gov"))%>%
+      title = glue::glue(" COP2020 & COP2021 {ou} Financial Performance Summary"))%>%
+    gt::tab_source_note(("Created by the  EA Branch using the FY21Q4iFSD. For support please reach out to gh.oha.costingadvisors@usaid.gov"))%>%
     
     tab_source_note(
       source_note = md("*Other* based on aggregates excluding de-duplication."))
@@ -137,7 +149,8 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
 }
 
 table_out<-"GitHub/stacks-of-hondos/Images"
-#to run for one OU, get_ou_agency_be(df, "Mozambique)
+#to run for one OU
+get_ou_agency_be(df_fsd, "Mozambique")
 #to run for all:
 purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x))%>%
-gtsave(., path = table_out, filename = glue::glue("{.x}_ou_budget_execution.png"))
+gtsave(filename = glue::glue("{.x}_ou_budget_execution.png"))

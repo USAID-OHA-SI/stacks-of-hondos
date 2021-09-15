@@ -17,7 +17,9 @@ df_fsd<-si_path()%>%
   
   source<-source_info(si_path(),"OU_IM")
 
-fiscal_years=c("2020","2021")
+fiscal_years=c("2020","2021") #old
+
+#use this function to print out budget execution by for just USAID in all OUs
 
 get_global_usaid_ou<-function(df){
   df<-df_fsd%>%
@@ -131,3 +133,5 @@ get_global_usaid_ou<-function(df){
   return(df)
 }
 
+get_global_usaid_ou(df_fsd)%>%
+  gtsave("globa USAID performance.png")

@@ -12,14 +12,15 @@ library(gophr)
 library(gt)
 library(glue)
 df_fsd<-si_path()%>%
-  return_latest("COP17")%>%
-  gophr::read_msd()
+  return_latest("Fin")%>%
+  gophr::read_msd
 
-  source<-source_info(si_path(),"OU_IM")
+  source<-source_info(si_path(),"Fin")
 
-
+  #use this function to print out budget execution by agency at global level
+  
 get_global_agency_be<-function(df){
-df<-df_fsd%>%
+  df<-df_fsd%>%
   remove_mo()%>%
   dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
 dplyr::select (c(fundingagency,fiscal_year,cop_budget_total,expenditure_amt))%>%
@@ -74,6 +75,15 @@ gt()%>%
        gt::cell_text(weight = "bold")), 
      locations = gt::cells_column_spanners(spanners = tidyselect::everything())
    )%>%
+    tab_style(
+      style = cell_borders(
+        sides = "right",
+        weight = px(1.5),
+      ),
+      locations = cells_body(
+        columns = everything(),
+        rows = everything()
+      ))%>%
   tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),      
             locations = cells_body(               
               columns = (budget_execution_2020),
@@ -115,7 +125,7 @@ gt()%>%
        columns =c(expenditure_amt_2020, expenditure_amt_2021)))%>%
   tab_header(
     title = (" COP 2020 & 2021 Global Financial Performance Summary"))%>%
-    gt::tab_source_note(("Created by the  EA Branch using the FY21Q3i FSD. For support please reach out to gh.oha.costingadvisors@usaid.gov"))%>%
+    gt::tab_source_note(("Created by the  EA Branch using the FY21Q4i FSD. For support please reach out to gh.oha.costingadvisors@usaid.gov"))%>%
 
   tab_source_note(
     source_note = md("*Other* based on aggregates excluding de-duplication."))
@@ -125,5 +135,5 @@ return(df)
 }
 
 #test
-get_global_agency_be(df_fsd
-        )
+get_global_agency_be(df_fsd)%>%
+  gtsave("global performance_all_agencies.png")
