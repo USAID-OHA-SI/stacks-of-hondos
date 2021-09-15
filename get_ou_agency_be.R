@@ -13,7 +13,7 @@ library(gt)
 library(glue)
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
-  gophr::read_msd
+read_msd()
 
 source<-source_info(si_path(),"Fin")
   
@@ -42,8 +42,8 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
     mutate(agency_category  = ifelse(agency_category == "USAID", "USAID",
                                      ifelse(agency_category  == "HHS/CDC", "CDC",
                                             ifelse(agency_category  =="Dedup", "Dedup","Other"))))%>%
-    mutate( agency_category = fct_relevel(agency_category, "USAID","CDC","Other"))%>%
-    group_by(agency_category,fiscal_year)%>%
+    mutate( fundingagency = fct_relevel(fundingagency, "USAID","HHS/CDC","Other"))%>%
+    group_by(fundingagency,fiscal_year)%>%
     summarise_at(vars(cop_budget_total,expenditure_amt), sum, na.rm = TRUE)%>%
     dplyr::mutate(budget_execution=expenditure_amt/cop_budget_total)%>%
     ungroup()%>%
@@ -66,11 +66,11 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
     cols_width(
       everything() ~ px(140))%>%
     cols_label(
-      agency_category = "Agency",
+      fundingagency = "Agency",
       expenditure_amt_2020 = "Expenditure",
       cop_budget_total_2020 = "Budget",
       budget_execution_2020="Budget Execution",
-      agency_category = "Agency",
+      #agency_category = "Agency",
       expenditure_amt_2021 = "Expenditure",
       cop_budget_total_2021 = "Budget",
       budget_execution_2021="Budget Execution"
@@ -88,6 +88,16 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
         gt::cell_text(weight = "bold")), 
       locations = gt::cells_column_spanners(spanners = tidyselect::everything())
     )%>%
+    tab_style(
+      style = cell_text(weight = 700),
+      locations = cells_body(
+        columns = tidyselect::contains("_execution_")
+      ))%>%
+        gt::tab_options(
+          source_notes.font.size = 8,
+          table.font.size = 13, 
+          data_row.padding = gt::px(5),
+          source_notes.padding = gt::px(1),) %>%
    
     tab_style(
       style = cell_borders(
@@ -139,10 +149,7 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
         columns =c(expenditure_amt_2020, expenditure_amt_2021)))%>%
     tab_header(
       title = glue::glue(" COP2020 & COP2021 {ou} Financial Performance Summary"))%>%
-    gt::tab_source_note(("Created by the  EA Branch using the FY21Q4iFSD. For support please reach out to gh.oha.costingadvisors@usaid.gov"))%>%
-    
-    tab_source_note(
-      source_note = md("*Other* based on aggregates excluding de-duplication."))
+    gt::tab_source_note(("Created by the  EA Branch using the FY21Q4iFSD. For support please reach out to gh.oha.costingadvisors@usaid.gov"))
   
   
   return(df)
@@ -150,7 +157,8 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
 
 table_out<-"GitHub/stacks-of-hondos/Images"
 #to run for one OU
-get_ou_agency_be(df_fsd, "Mozambique")
+get_ou_agency_be(df_fsd, "Botswana")%>%
+  gtsave(filename = glue::glue("{ou}_ou_budget_execution.png",zoom = 1))
 #to run for all:
 purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x))%>%
 gtsave(filename = glue::glue("{.x}_ou_budget_execution.png"))

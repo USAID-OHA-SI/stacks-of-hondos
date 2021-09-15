@@ -52,6 +52,12 @@ get_global_usaid_ou<-function(df){
     tab_options(
       table.font.names = "Source Sans Pro"
     ) %>% 
+    tab_style(
+      style = cell_text(weight = 700),
+      locations = cells_body(
+        columns = tidyselect::contains("_execution_")
+      )
+    )%>%
     cols_width(
       everything() ~ px(140))%>%
     cols_label(
@@ -120,7 +126,11 @@ get_global_usaid_ou<-function(df){
                 columns = (budget_execution_2021),
                 rows = (budget_execution_2021) >= 1.2 ))%>%
     
-    
+    gt::tab_options(
+      source_notes.font.size = 8,
+      table.font.size = 13, 
+      data_row.padding = gt::px(5),
+      source_notes.padding = gt::px(1),) %>%
     tab_footnote(
       footnote = "Excluding M&O",
       locations = cells_column_labels(

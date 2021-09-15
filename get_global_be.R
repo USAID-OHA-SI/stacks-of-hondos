@@ -13,7 +13,7 @@ library(gt)
 library(glue)
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
-  gophr::read_msd
+  gophr::read_msd()
 
   source<-source_info(si_path(),"Fin")
 
@@ -62,19 +62,7 @@ gt()%>%
     cop_budget_total_2021 = "Budget",
     budget_execution_2021="Budget Execution"
   )%>%
-   tab_spanner(
-     label = "COP21 Performance",
-     columns = c(
-      expenditure_amt_2021,cop_budget_total_2021, budget_execution_2021,))%>%
-   tab_spanner(
-     label = "COP20 Performance",
-     columns = c(
-       expenditure_amt_2020,cop_budget_total_2020,budget_execution_2020))%>%
-   gt::tab_style(
-     style = list(
-       gt::cell_text(weight = "bold")), 
-     locations = gt::cells_column_spanners(spanners = tidyselect::everything())
-   )%>%
+
     tab_style(
       style = cell_borders(
         sides = "right",
@@ -84,40 +72,64 @@ gt()%>%
         columns = everything(),
         rows = everything()
       ))%>%
-  tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),      
-            locations = cells_body(               
-              columns = (budget_execution_2020),
-              rows = (budget_execution_2020) >= 0.9 & (budget_execution_2020) < 1.1)) %>%
-  tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),      
-            locations = cells_body(               
-              columns = (budget_execution_2020),
-              rows =(budget_execution_2020) < 0.9 ))%>%
-  tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),      
-            locations = cells_body(               
-              columns = (budget_execution_2020),
-              rows = (budget_execution_2020)>= 1.1 & (budget_execution_2020) < 1.2))%>%
-  tab_style(style = cell_fill(color = "#ff989f",alpha = .75),      
-            locations = cells_body(               
-              columns = (budget_execution_2020),
-              rows = (budget_execution_2020) >= 1.2 ))%>%
-
-  tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),      
-            locations = cells_body(               
-              columns = (budget_execution_2021),
-              rows = (budget_execution_2021) >= 0.9 & (budget_execution_2021) < 1.1)) %>%
-  tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),      
-            locations = cells_body(               
-              columns = (budget_execution_2021),
-              rows =(budget_execution_2021) < 0.9 ))%>%
-  tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),      
-            locations = cells_body(               
-              columns = (budget_execution_2021),
-              rows = (budget_execution_2021)>= 1.1 & (budget_execution_2021) < 1.2))%>%
-  tab_style(style = cell_fill(color = "#ff989f",alpha = .75),      
-            locations = cells_body(               
-              columns = (budget_execution_2021),
-              rows = (budget_execution_2021) >= 1.2 ))%>%
-  
+    tab_style(
+      style = cell_text(weight = 700),
+      locations = cells_body(
+        columns = tidyselect::contains("_execution_")
+      )
+    )%>%
+    tab_spanner(
+      label = "COP21 Performance",
+      columns = c(
+        expenditure_amt_2021,cop_budget_total_2021, budget_execution_2021,))%>%
+    tab_spanner(
+      label = "COP20 Performance",
+      columns = c(
+        expenditure_amt_2020,cop_budget_total_2020,budget_execution_2020))%>%
+    gt::tab_style(
+      style = list(
+        gt::cell_text(weight = "bold")), 
+      locations = gt::cells_column_spanners(spanners = tidyselect::everything())
+    )%>%
+    tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),      
+              locations = cells_body(               
+                columns = (budget_execution_2020),
+                rows = (budget_execution_2020) >= 0.9 & (budget_execution_2020) < 1.1)) %>%
+    tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),      
+              locations = cells_body(               
+                columns = (budget_execution_2020),
+                rows =(budget_execution_2020) < 0.9 ))%>%
+    tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),      
+              locations = cells_body(               
+                columns = (budget_execution_2020),
+                rows = (budget_execution_2020)>= 1.1 & (budget_execution_2020) < 1.2))%>%
+    tab_style(style = cell_fill(color = "#ff989f",alpha = .75),      
+              locations = cells_body(               
+                columns = (budget_execution_2020),
+                rows = (budget_execution_2020) >= 1.2 ))%>%
+    
+    tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),      
+              locations = cells_body(               
+                columns = (budget_execution_2021),
+                rows = (budget_execution_2021) >= 0.9 & (budget_execution_2021) < 1.1)) %>%
+    tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),      
+              locations = cells_body(               
+                columns = (budget_execution_2021),
+                rows =(budget_execution_2021) < 0.9 ))%>%
+    tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),      
+              locations = cells_body(               
+                columns = (budget_execution_2021),
+                rows = (budget_execution_2021)>= 1.1 & (budget_execution_2021) < 1.2))%>%
+    tab_style(style = cell_fill(color = "#ff989f",alpha = .75),      
+              locations = cells_body(               
+                columns = (budget_execution_2021),
+                rows = (budget_execution_2021) >= 1.2 ))%>%
+    
+    gt::tab_options(
+      source_notes.font.size = 8,
+      table.font.size = 13, 
+      data_row.padding = gt::px(5),
+      source_notes.padding = gt::px(1),) %>%
   
    tab_footnote(
      footnote = "Excluding M&O",
