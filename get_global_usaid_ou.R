@@ -59,7 +59,7 @@ get_global_usaid_ou<-function(df){
       )
     )%>%
     cols_width(
-      everything() ~ px(140))%>%
+      everything() ~ px(90))%>%
     cols_label(
       operatingunit = "Operating Unit",
       expenditure_amt_2020 = "Expenditure",
@@ -91,6 +91,14 @@ get_global_usaid_ou<-function(df){
       style = list(
         gt::cell_text(weight = "bold")), 
       locations = gt::cells_column_spanners(spanners = tidyselect::everything())
+    )%>%
+    cols_align(
+      align = "center",
+      columns = everything()
+    )%>%
+    cols_align(
+      align = "left",
+      columns = tidyselect::contains("unit")
     )%>%
     tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),      
               locations = cells_body(               
@@ -142,6 +150,6 @@ get_global_usaid_ou<-function(df){
   
   return(df)
 }
-
+#testing
 get_global_usaid_ou(df_fsd)%>%
   gtsave("globa USAID performance.png")

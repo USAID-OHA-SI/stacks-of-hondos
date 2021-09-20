@@ -64,7 +64,7 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
       table.font.names = "Source Sans Pro"
     ) %>% 
     cols_width(
-      everything() ~ px(140))%>%
+      everything() ~ px(90))%>%
     cols_label(
       fundingagency = "Agency",
       expenditure_amt_2020 = "Expenditure",
@@ -108,6 +108,15 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
         columns = everything(),
         rows = everything()
       ))%>%
+  
+    cols_align(
+      align = "center",
+      columns = everything()
+    )%>%
+    cols_align(
+      align = "left",
+      columns = tidyselect::contains("agency")
+    )%>%
     tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),      
               locations = cells_body(               
                 columns = (budget_execution_2020),
@@ -156,9 +165,11 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
 }
 
 table_out<-"GitHub/stacks-of-hondos/Images"
-#to run for one OU
-get_ou_agency_be(df_fsd, "Botswana")%>%
-  gtsave(filename = glue::glue("{ou}_ou_budget_execution.png",zoom = 1))
-#to run for all:
+#to run for one OU testing below
+get_ou_agency_be(df_fsd, "South Africa")%>%
+gtsave("test.png")
+get_ou_agency_be(df_fsd, "Democratic Republic of the Congo")%>%
+  gtsave(filename = glue::glue("DRC_budget_execution.png",zoom = 1))
+#to run for all (giving me)
 purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x))%>%
 gtsave(filename = glue::glue("{.x}_ou_budget_execution.png"))

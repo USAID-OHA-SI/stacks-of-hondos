@@ -51,7 +51,7 @@ gt()%>%
     table.font.names = "Source Sans Pro"
   ) %>% 
   cols_width(
-    everything() ~ px(140))%>%
+    everything() ~ px(90))%>%
   cols_label(
     agency_category = "Agency",
     expenditure_amt_2020 = "Expenditure",
@@ -90,6 +90,14 @@ gt()%>%
       style = list(
         gt::cell_text(weight = "bold")), 
       locations = gt::cells_column_spanners(spanners = tidyselect::everything())
+    )%>%
+    cols_align(
+      align = "center",
+      columns = everything()
+    )%>%
+    cols_align(
+      align = "left",
+      columns = tidyselect::contains("agency")
     )%>%
     tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),      
               locations = cells_body(               
@@ -140,12 +148,12 @@ gt()%>%
     gt::tab_source_note(("Created by the  EA Branch using the FY21Q4i FSD. For support please reach out to gh.oha.costingadvisors@usaid.gov"))%>%
 
   tab_source_note(
-    source_note = md("*Other* based on aggregates excluding de-duplication."))
+    source_note = md("*Other* based on aggregated funding agencies"))
   
 
 return(df)
 }
 
-#test
+#testing
 get_global_agency_be(df_fsd)%>%
   gtsave("global performance_all_agencies.png")
