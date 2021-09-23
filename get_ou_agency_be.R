@@ -1,16 +1,13 @@
-library(glitr)
 library(glamr)
-library(gisr)
 library(tidyverse)
 library(gophr)
-library(scales)
-library(sf)
 library(extrafont)
 library(tidytext)
-library(here)
-library(gophr)
 library(gt)
 library(glue)
+library(webshot)
+
+
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
 read_msd()
@@ -28,6 +25,9 @@ country_list<-si_path()%>%
   gophr::read_msd()%>%
   distinct(countryname)%>%
   pull()
+
+#using source info for getting other data
+#potential for sep functions for table, gt, munging, etc.
 
 #use this function to print out budget execution by agency at different OUs
 
@@ -52,6 +52,8 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
     dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
     dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
     dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) %>%
+    
+    #break into separate functions
     gt()%>%
     fmt_percent(
       columns = c(`budget_execution_2020`, `budget_execution_2021`),
@@ -158,9 +160,9 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
         columns =c(expenditure_amt_2020, expenditure_amt_2021)))%>%
     tab_header(
       title = glue::glue(" COP2020 & COP2021 {ou} Financial Performance Summary"))%>%
-    gt::tab_source_note(("Created by the  EA Branch using the FY21Q4iFSD. For support please reach out to gh.oha.costingadvisors@usaid.gov"))
-  
-  
+    gt::tab_source_note(
+      source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to gh.oha.ea@usaid.gov for questions"))
+    ) 
   return(df)
 }
 
@@ -168,8 +170,6 @@ table_out<-"GitHub/stacks-of-hondos/Images"
 #to run for one OU testing below
 get_ou_agency_be(df_fsd, "South Africa")%>%
 gtsave("test.png")
-get_ou_agency_be(df_fsd, "Democratic Republic of the Congo")%>%
-  gtsave(filename = glue::glue("DRC_budget_execution.png",zoom = 1))
 #to run for all (giving me)
-purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x))%>%
-gtsave(filename = glue::glue("{.x}_ou_budget_execution.png"))
+purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
+gtsave(.,path=table_out,filename = glue::glue("{.x}_ou_budget_execution.png")))

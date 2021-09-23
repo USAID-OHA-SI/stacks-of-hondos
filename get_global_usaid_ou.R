@@ -1,16 +1,12 @@
-library(glitr)
 library(glamr)
-library(gisr)
 library(tidyverse)
 library(gophr)
-library(scales)
-library(sf)
 library(extrafont)
 library(tidytext)
-library(here)
-library(gophr)
 library(gt)
 library(glue)
+library(webshot)
+
 df_fsd<-si_path()%>%
   return_latest("COP17")%>%
   gophr::read_msd()
@@ -145,11 +141,12 @@ get_global_usaid_ou<-function(df){
         columns =c(expenditure_amt_2020, expenditure_amt_2021)))%>%
     tab_header(
       title = (" COP 2020 & 2021 USAID Global Financial Performance Summary"))%>%
-    gt::tab_source_note(("Created by the  EA Branch using the. For support please reach out to gh.oha.costingadvisors@usaid.gov"))
-  
+    gt::tab_source_note(
+      source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions"))
+    ) 
   
   return(df)
 }
 #testing
 get_global_usaid_ou(df_fsd)%>%
-  gtsave("globa USAID performance.png")
+  gtsave(.,path=table_out,filename="globa USAID performance.png")

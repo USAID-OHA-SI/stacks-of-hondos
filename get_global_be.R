@@ -1,16 +1,13 @@
-library(glitr)
 library(glamr)
-library(gisr)
 library(tidyverse)
 library(gophr)
-library(scales)
-library(sf)
 library(extrafont)
 library(tidytext)
-library(here)
-library(gophr)
 library(gt)
 library(glue)
+library(webshot)
+
+
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
   gophr::read_msd()
@@ -52,7 +49,7 @@ gt()%>%
   ) %>% 
   cols_width(
     everything() ~ px(90))%>%
-  cols_label(
+  cols_label( #update GT to check on tidy select), also look at clean_names, also potentially case_when
     agency_category = "Agency",
     expenditure_amt_2020 = "Expenditure",
     cop_budget_total_2020 = "Budget",
@@ -144,9 +141,10 @@ gt()%>%
      locations = cells_column_labels(
        columns =c(expenditure_amt_2020, expenditure_amt_2021)))%>%
   tab_header(
-    title = (" COP 2020 & 2021 Global Financial Performance Summary"))%>%
-    gt::tab_source_note(("Created by the  EA Branch using the FY21Q4i FSD. For support please reach out to gh.oha.costingadvisors@usaid.gov"))%>%
-
+    title = (" COP 2020 & 2021 Global Financial Performance Summary"))%>% 
+    gt::tab_source_note(
+      source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions"))
+    ) %>%
   tab_source_note(
     source_note = md("*Other* based on aggregated funding agencies"))
   
@@ -155,5 +153,6 @@ return(df)
 }
 
 #testing
+table_out<-"GitHub/stacks-of-hondos/Images"
 get_global_agency_be(df_fsd)%>%
-  gtsave("global performance_all_agencies.png")
+  gtsave(., path=table_out, filename="global performance_all_agencies.png")
