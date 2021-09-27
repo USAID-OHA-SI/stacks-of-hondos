@@ -35,6 +35,7 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
   df<-df_fsd%>%
     remove_mo()%>%
     dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
+    #dplyr::filter(operatingunit== "Mozambique")%>%
     dplyr::filter(operatingunit %in% ou)%>%
     dplyr::select (c(fundingagency,fiscal_year,cop_budget_total,expenditure_amt))%>%
     mutate_at(vars(cop_budget_total,expenditure_amt),~replace_na(.,0))%>%
@@ -173,3 +174,7 @@ gtsave("test.png")
 #to run for all (giving me)
 purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
 gtsave(.,path=table_out,filename = glue::glue("{.x}_ou_budget_execution.png")))
+
+glamr::export_drivefile()
+
+

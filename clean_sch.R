@@ -1,5 +1,6 @@
 #clean_sch to help decide if you want commodities or don't
 #select either SGAC list, SCH list, or none (keep commodities)
+
 clean_sch <- function(df, poc= c("SCH","SGAC","none")){
  
   
@@ -22,6 +23,10 @@ clean_sch <- function(df, poc= c("SCH","SGAC","none")){
       dplyr::pull(mech_id)
     
       df <- dplyr::filter(df, !mech_code %in% lst_mech)
+      
+      return (df)
+      
+
     }
     
   if(poc == "SGAC"){
@@ -32,6 +37,7 @@ clean_sch <- function(df, poc= c("SCH","SGAC","none")){
       dplyr::pull(mech_id)
     
     df <- dplyr::filter(df, !mech_code %in% lst_mech)
+    return (df)
   } 
   
   if(poc == "none"){
@@ -41,4 +47,23 @@ clean_sch <- function(df, poc= c("SCH","SGAC","none")){
 
 return(df)  
   
+}
+
+note<-function(poc= c("SCH","SGAC","none")){
+    
+    
+    
+    if(poc == "SCH"){
+      note<-"Excludes Commodites"
+    return(note)
+    }
+    if(poc == "SGAC"){
+      note<-"Excludes Commodites"
+      return(note)
+    }
+    
+    if(poc == "None"){
+      note<-"Including Commodites"
+      return(note)
+    }
 }

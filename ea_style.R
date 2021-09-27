@@ -4,12 +4,16 @@ library(tidyverse)
 ea_style<-function(gt_obj){
     gt_obj%>%
   fmt_percent(
-    columns = c(`budget_execution_2020`, `budget_execution_2021`),
+    columns = tidyselect::contains("_execution_"),
     decimals = 0)%>%
   fmt_currency( # add dolar signs
-    columns = c(`cop_budget_total_2020`,`expenditure_amt_2020`,`cop_budget_total_2021`,`expenditure_amt_2021` ),
+    columns = tidyselect::contains("_budget_total"),
     decimals = 0,
     currency = "USD")%>%
+    fmt_currency( # add dolar signs
+      columns = tidyselect::contains("expenditure_amt"),
+      decimals = 0,
+      currency = "USD")%>%
   tab_options(
     table.font.names = "Source Sans Pro"
   ) %>% 
@@ -48,6 +52,14 @@ ea_style<-function(gt_obj){
     align = "center",
     columns = everything()
   )%>%
+    cols_label( #update GT to check on tidy select), also look at clean_names, also potentially case_when
+      expenditure_amt_2020 = "Expenditure",
+      cop_budget_total_2020 = "Budget",
+      budget_execution_2020="Budget Execution",
+      expenditure_amt_2021 = "Expenditure",
+      cop_budget_total_2021 = "Budget",
+      budget_execution_2021="Budget Execution"
+    )%>%
   cols_align(
     align = "left",
     columns = tidyselect::contains("agency")
