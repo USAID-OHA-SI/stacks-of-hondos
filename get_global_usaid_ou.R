@@ -8,10 +8,10 @@ library(glue)
 library(webshot)
 
 df_fsd<-si_path()%>%
-  return_latest("COP17")%>%
+  return_latest("Fin")%>%
   gophr::read_msd()
   
-  source<-source_info(si_path(),"OU_IM")
+  source<-source_info(si_path(),"Fin")
 
 fiscal_years=c("2020","2021") #old
 
@@ -19,7 +19,7 @@ fiscal_years=c("2020","2021") #old
 
 get_global_usaid_ou<-function(df){
   df<-df_fsd%>%
-    #remove_mo()%>%
+    remove_mo()%>%
     filter(fundingagency=="USAID")%>%
     dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
     group_by(operatingunit,fiscal_year)%>%
