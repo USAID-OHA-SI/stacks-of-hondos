@@ -89,3 +89,13 @@ agency_category<-function(df){
 percent_clean <- function(x, y) {
   ifelse(y > 0.000, (x / y), NA_real_)
 }
+
+pd <- si_path()%>%
+  glamr::return_latest("Fin")%>%
+  glamr::source_info(return="fiscal_year")
+fy_end <- pd %>% substr(3, 4) %>% as.numeric() + 2000
+fy_beg <- fy_end - 1 
+max_pd <- pd
+min_pd <- pd -1
+
+
