@@ -7,46 +7,55 @@ library(gt)
 library(glue)
 library(webshot)
 
+
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
   gophr::read_msd()
+
+source<-source_info(si_path(),"Fin")
   
-  source<-source_info(si_path(),"Fin")
+ou_list<-si_path()%>%
+  return_latest("COP17")%>%
+  gophr::read_msd()%>%
+  distinct(operatingunit)%>%
+  pull()
 
-fiscal_years=c("2020","2021") #old
+country_list<-si_path()%>%
+  return_latest("COP17")%>%
+  gophr::read_msd()%>%
+  distinct(countryname)%>%
+  pull()
 
-#use this function to print out budget execution by for just USAID in all OUs
+glamr::load_secrets()
 
-get_global_usaid_ou<-function(df){
-  df<-df%>%
-    #remove_mo()%>%
-    filter(fundingagency=="USAID")%>%
+#using source info for getting other data
+#potential for sep functions for table, gt, munging, etc.
+
+#use this function to print out budget execution by USAID partner types at OU level
+
+get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
+  df<-df_fsd%>%
+    remove_mo()%>%
+    remove_sch("SGAC")%>%
     dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
-    group_by(operatingunit,fiscal_year)%>%
-    #mutate_at(vars(cop_budget_total,expenditure_amt),~replace_na(.,0))%>%
+    dplyr::filter(fundingagency=="USAID")%>%
+    #dplyr::filter(operatingunit== "Mozambique")%>%
+    dplyr::filter(operatingunit %in% ou)%>%
+    glamr::apply_partner_type()%>%
+    dplyr::filter(partner_type_usaid_adjusted=="Local" | partner_type_usaid_adjusted=="International" )%>%
+    dplyr::select (c(partner_type_usaid_adjusted,fiscal_year,cop_budget_total,expenditure_amt))%>%
+    group_by(partner_type_usaid_adjusted,fiscal_year)%>%
     summarise_at(vars(cop_budget_total,expenditure_amt), sum, na.rm = TRUE)%>%
-    dplyr::mutate(budget_execution=expenditure_amt/cop_budget_total)%>%
+    dplyr::mutate(budget_execution=percent_clean(expenditure_amt,cop_budget_total))%>%
     ungroup()%>%
-    dplyr::rename("Operating Unit"=operatingunit)%>%
-    
     pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
     dplyr::relocate(expenditure_amt_2020, .before = cop_budget_total_2020) %>%
     dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
     dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
     dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) %>%
-    gt()
-  return(df)
-}
-  
-
-
-
-#### old
-{  %>%
-      #cols_hide(
-       # columns = c(
-        #  "fundingagency"
-        #))%>%
+    
+    #break into separate functions
+    gt()%>%
     fmt_percent(
       columns = c(`budget_execution_2020`, `budget_execution_2021`),
       decimals = 0)%>%
@@ -57,33 +66,18 @@ get_global_usaid_ou<-function(df){
     tab_options(
       table.font.names = "Source Sans Pro"
     ) %>% 
-    tab_style(
-      style = cell_text(weight = 700),
-      locations = cells_body(
-        columns = tidyselect::contains("_execution_")
-      )
-    )%>%
     cols_width(
       everything() ~ px(90))%>%
     cols_label(
-      operatingunit = "Operating Unit",
+      partner_type_usaid_adjusted = "Partner Type",
       expenditure_amt_2020 = "Expenditure",
       cop_budget_total_2020 = "Budget",
       budget_execution_2020="Budget Execution",
+      #agency_category = "Agency",
       expenditure_amt_2021 = "Expenditure",
       cop_budget_total_2021 = "Budget",
       budget_execution_2021="Budget Execution"
     )%>%
-    tab_style(
-      style = cell_borders(
-        sides = "right",
-        weight = px(1.5),
-      ),
-      locations = cells_body(
-        columns = everything(),
-        rows = everything()
-      ))%>%
-  
     tab_spanner(
       label = "COP21 Performance",
       columns = c(
@@ -97,13 +91,34 @@ get_global_usaid_ou<-function(df){
         gt::cell_text(weight = "bold")), 
       locations = gt::cells_column_spanners(spanners = tidyselect::everything())
     )%>%
+    tab_style(
+      style = cell_text(weight = 700),
+      locations = cells_body(
+        columns = tidyselect::contains("_execution_")
+      ))%>%
+        gt::tab_options(
+          source_notes.font.size = 8,
+          table.font.size = 13, 
+          data_row.padding = gt::px(5),
+          source_notes.padding = gt::px(1),) %>%
+   
+    tab_style(
+      style = cell_borders(
+        sides = "right",
+        weight = px(1.5),
+      ),
+      locations = cells_body(
+        columns = everything(),
+        rows = everything()
+      ))%>%
+  
     cols_align(
       align = "center",
       columns = everything()
     )%>%
     cols_align(
       align = "left",
-      columns = tidyselect::contains("unit")
+      columns = tidyselect::contains("partner")
     )%>%
     tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),      
               locations = cells_body(               
@@ -139,28 +154,30 @@ get_global_usaid_ou<-function(df){
                 columns = (budget_execution_2021),
                 rows = (budget_execution_2021) >= 1.2 ))%>%
     
-    gt::tab_options(
-      source_notes.font.size = 8,
-      table.font.size = 13, 
-      data_row.padding = gt::px(5),
-      source_notes.padding = gt::px(1),) %>%
+    
     tab_footnote(
-      footnote = "Excluding M&O",
+      footnote = "Excluding M&O and Commodities",
       locations = cells_column_labels(
         columns =c(expenditure_amt_2020, expenditure_amt_2021)))%>%
     tab_header(
-      title = (" COP 2020 & 2021 USAID Global Financial Performance Summary"))%>%
+      title = glue::glue(" COP2020 & COP2021 {ou} Local Partner Financial Performance Summary"))%>%
     gt::tab_source_note(
-      source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions"))
+      source_note = ("Partner Designations Provided by the OHA Local Partners Team. Visual excludes TBDs"))%>%
+    gt::tab_source_note(
+      source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to gh.oha.ea@usaid.gov for questions"))
     ) 
-  
+   
   return(df)
 }
-#testing
-path="Image"
-prep_fsd(df_fsd)%>%
-  get_global_usaid_ou()%>%
-  ea_style()%>%
-  gtsave(.,filename="globa USAID performance_10_4_2021.png")
 
-#example
+table_out<-"GitHub/stacks-of-hondos/Images"
+#to run for one OU testing below
+get_ou_usaid_lp_be(df_fsd, "South Africa")%>%
+gtsave("test.png")
+#to run for all OUs
+purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
+gtsave(.,path=table_out,filename = glue::glue("{.x}_ou_budget_execution.png")))
+
+glamr::export_drivefile()
+
+

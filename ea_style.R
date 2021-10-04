@@ -1,6 +1,6 @@
 library(gt)
 library(tidyverse)
-
+#see if we can adjust centering by column number
 ea_style<-function(gt_obj){
     gt_obj%>%
   fmt_percent(
@@ -37,12 +37,10 @@ ea_style<-function(gt_obj){
   )%>%
   tab_spanner(
     label = "COP21 Performance",
-    columns = c(
-      expenditure_amt_2021,cop_budget_total_2021, budget_execution_2021,))%>%
+    columns = tidyselect::contains("2021"))%>%
   tab_spanner(
     label = "COP20 Performance",
-    columns = c(
-      expenditure_amt_2020,cop_budget_total_2020,budget_execution_2020))%>%
+    columns = tidyselect::contains("2020"))%>%
   gt::tab_style(
     style = list(
       gt::cell_text(weight = "bold")), 
@@ -59,6 +57,7 @@ ea_style<-function(gt_obj){
       expenditure_amt_2021 = "Expenditure",
       cop_budget_total_2021 = "Budget",
       budget_execution_2021="Budget Execution"
+      
     )%>%
   cols_align(
     align = "left",

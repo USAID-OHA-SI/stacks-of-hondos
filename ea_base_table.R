@@ -60,7 +60,7 @@ ea_base_table<-function(df){
 
 # MUNGE ============================================================================
   
-   df4<-df3 %>% 
+   df4<-df %>% 
       #filter(mech_id_mech_name=="CDU  Angola - 17397")%>%
     
       group_by(fiscal_year,operatingunit,fundingagency,primepartner,mech_id_mech_name)%>%

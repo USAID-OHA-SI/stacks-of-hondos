@@ -29,9 +29,7 @@ library(devtools)
    
     si_paths 
     
-  # Functions  
-    #use this to call utilties functions
-    source("GitHub/stacks-of-hondos/utilties.R")
+  
 
 # LOAD DATA ============================================================================  
     #Use "here" function to find folder
@@ -47,7 +45,9 @@ library(devtools)
   
   source<-source_info(si_path(),"Fin")
   
-
+  # Functions  
+  #use this to call utilties functions
+  source("GitHub/stacks-of-hondos/utilties.R")
 
 
 # MUNGE ============================================================================
@@ -100,43 +100,41 @@ prep_fsd <-function(df){
   #Add in agency category column to group agencies
   
     glamr::clean_agency()%>%
-   #add to separate function file
+    agency_category()%>%
    
-   # dplyr::mutate(`agency_category` = `fundingagency`)%>%
-    #mutate(`agency_category` = ifelse(`agency_category` == "USAID", "USAID",
-     #                                 ifelse(`agency_category` == "CDC", "CDC",
-      #                                       ifelse(`agency_category` =="Dedup", "Dedup","Other"))))%>%
- 
   #mutating & calculating budget execution
-  group_by(operatingunit, countryname, fundingagency, fiscal_year,primepartner,mech_id_mech_name,program, interaction_type) %>% 
+  group_by(operatingunit, countryname, fundingagency, agency_category, fiscal_year,primepartner,mech_id_mech_name,program, interaction_type) %>% 
     summarise_at(vars(cop_budget_total, expenditure_amt), sum, na.rm = TRUE) %>% 
   ungroup()
   
-  df<-df%>%
-    dplyr::mutate(budget_execution = percent_clean(expenditure_amt, cop_budget_total))
+ # df<-df%>%
+  #  dplyr::mutate(budget_execution = percent_clean(expenditure_amt, cop_budget_total))
   
-  df<-df%>%
-    dplyr::mutate(budget_execution= as.numeric(`budget_execution`))
+  #df<-df%>%
+   # dplyr::mutate(budget_execution= as.numeric(`budget_execution`))
  
+  return(df)  
   
-  
-  #lets hold off on this because we need to figure out how to handle dates. Suggest we add handle this on a case by case scenario for now? 
- #df <-df %>% pivot_wider(names_from = fiscal_year ,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
-    #dplyr::relocate(expenditure_amt_2018, .before = cop_budget_total_2018) %>%
-    #dplyr::relocate(expenditure_amt_2019, .before = cop_budget_total_2019) %>%
-    #dplyr::relocate(budget_execution_2018, .after = cop_budget_total_2018) %>%
-    #dplyr::relocate(budget_execution_2019, .after = cop_budget_total_2019) %>% 
-  #  dplyr::relocate(expenditure_amt_2020, .before = cop_budget_total_2020) %>%
-   # dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
-    #dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021) %>%
-    #dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) %>% 
-  
-  return(df)
 }
 
 
-  #GT Section================================================================================
-    gt (df) %>% 
+  #GT/old  Section================================================================================
+  
+  #lets hold off on this because we need to figure out how to handle dates. Suggest we add handle this on a case by case scenario for now? 
+  #df <-df %>% pivot_wider(names_from = fiscal_year ,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
+  #dplyr::relocate(expenditure_amt_2018, .before = cop_budget_total_2018) %>%
+  #dplyr::relocate(expenditure_amt_2019, .before = cop_budget_total_2019) %>%
+  #dplyr::relocate(budget_execution_2018, .after = cop_budget_total_2018) %>%
+  #dplyr::relocate(budget_execution_2019, .after = cop_budget_total_2019) %>% 
+  #  dplyr::relocate(expenditure_amt_2020, .before = cop_budget_total_2020) %>%
+  # dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
+  #dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021) %>%
+  #dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) %>% 
+  
+  
+  
+  
+  gt (df) %>% 
     fmt_percent(columns = tidyselect::contains("_execution_"),
       decimals = 0)%>%
     
