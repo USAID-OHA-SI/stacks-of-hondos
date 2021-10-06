@@ -76,11 +76,11 @@ gt()%>%
       )
     )%>%
     tab_spanner(
-      label = "COP21 Performance",
+      label = "COP20 Performance",
       columns = c(
         expenditure_amt_2021,cop_budget_total_2021, budget_execution_2021,))%>%
     tab_spanner(
-      label = "COP20 Performance",
+      label = "COP19 Performance",
       columns = c(
         expenditure_amt_2020,cop_budget_total_2020,budget_execution_2020))%>%
     gt::tab_style(

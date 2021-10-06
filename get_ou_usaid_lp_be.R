@@ -15,18 +15,18 @@ df_fsd<-si_path()%>%
 source<-source_info(si_path(),"Fin")
   
 ou_list<-si_path()%>%
-  return_latest("COP17")%>%
+  return_latest("Fin")%>%
   gophr::read_msd()%>%
   distinct(operatingunit)%>%
   pull()
 
 country_list<-si_path()%>%
-  return_latest("COP17")%>%
+  return_latest("Fin")%>%
   gophr::read_msd()%>%
   distinct(countryname)%>%
   pull()
 
-glamr::load_secrets()
+#glamr::load_secrets()
 
 #using source info for getting other data
 #potential for sep functions for table, gt, munging, etc.
@@ -34,6 +34,7 @@ glamr::load_secrets()
 #use this function to print out budget execution by USAID partner types at OU level
 
 get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
+  glamr::load_secrets()
   df<-df_fsd%>%
     remove_mo()%>%
     remove_sch("SGAC")%>%
@@ -79,11 +80,11 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
       budget_execution_2021="Budget Execution"
     )%>%
     tab_spanner(
-      label = "COP21 Performance",
+      label = "COP20 Performance",
       columns = c(
         expenditure_amt_2021,cop_budget_total_2021, budget_execution_2021,))%>%
     tab_spanner(
-      label = "COP20 Performance",
+        label = "COP19 Performance",
       columns = c(
         expenditure_amt_2020,cop_budget_total_2020,budget_execution_2020))%>%
     gt::tab_style(
@@ -160,7 +161,8 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
       locations = cells_column_labels(
         columns =c(expenditure_amt_2020, expenditure_amt_2021)))%>%
     tab_header(
-      title = glue::glue(" COP2020 & COP2021 {ou} Local Partner Financial Performance Summary"))%>%
+      title = glue::glue(" COP2019 & COP2020 {ou} Local Partner Financial Performance Summary"),
+      subtitle = legend_chunk)%>%
     gt::tab_source_note(
       source_note = ("Partner Designations Provided by the OHA Local Partners Team. Visual excludes TBDs"))%>%
     gt::tab_source_note(
@@ -172,7 +174,7 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
 
 table_out<-"GitHub/stacks-of-hondos/Images"
 #to run for one OU testing below
-get_ou_usaid_lp_be(df_fsd, "South Africa")%>%
+get_ou_usaid_lp_be(df_fsd, "Malawi")%>%
 gtsave("test.png")
 #to run for all OUs
 purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%

@@ -1,8 +1,9 @@
 library(gt)
 library(tidyverse)
 #see if we can adjust centering by column number
-ea_style<-function(gt_obj){
-    gt_obj%>%
+ea_style<-function(df){
+    df%>%
+    gt()%>%
   fmt_percent(
     columns = tidyselect::contains("_execution_"),
     decimals = 0)%>%
@@ -36,10 +37,10 @@ ea_style<-function(gt_obj){
     )
   )%>%
   tab_spanner(
-    label = "COP21 Performance",
+    label = "COP20 Performance",
     columns = tidyselect::contains("2021"))%>%
   tab_spanner(
-    label = "COP20 Performance",
+    label = "COP19 Performance",
     columns = tidyselect::contains("2020"))%>%
   gt::tab_style(
     style = list(
@@ -61,7 +62,7 @@ ea_style<-function(gt_obj){
     )%>%
   cols_align(
     align = "left",
-    columns = tidyselect::contains("agency")
+    columns = 1
   )%>%
   tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),      
             locations = cells_body(               

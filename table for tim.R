@@ -43,7 +43,7 @@ agency_category<-function(df){
 source<-source_info(si_path(),"Fin")
 #building legends
 legend_be<-'https://user-images.githubusercontent.com/5873344/136249989-046c8107-706f-42cf-be5e-1dfb15e29093.png?raw=true'
-legend_chunk<-gt::md(glue::glue("Legend: Budget Execution <img src= '{legend_be}' style='height:15px"))
+legend_chunk <- gt::md(glue::glue("Legend: Budget Execution <img src= '{legend_be}' style='height:15px;'>"))
 
 
 
