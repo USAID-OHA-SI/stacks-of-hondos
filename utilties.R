@@ -78,7 +78,8 @@ agency_category<-function(df){
     dplyr::mutate(`agency_category` = `fundingagency`)%>%
     dplyr::mutate(`agency_category` = ifelse(`agency_category` == "USAID", "USAID",
                                       ifelse(`agency_category` == "CDC", "CDC",
-                                             ifelse(`agency_category` =="Dedup", "Dedup","Other"))))
+                                             ifelse(`agency_category` =="Dedup", "Dedup","Other"))))%>%
+    mutate( agency_category = fct_relevel(agency_category, "USAID","CDC","Other"))
   return(df)
   
   

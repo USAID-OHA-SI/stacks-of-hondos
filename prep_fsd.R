@@ -47,7 +47,7 @@ library(devtools)
   
   # Functions  
   #use this to call utilties functions
-  source("GitHub/stacks-of-hondos/utilties.R")
+  source("Github/stacks-of-hondos/utilties.R")
 
 
 # MUNGE ============================================================================
@@ -71,7 +71,7 @@ library(devtools)
 prep_fsd <-function(df){ 
   
   #removing
-  df<-df_fsd %>% 
+  df<-df %>% 
     dplyr::select(-c("prime_partner_duns","prime_partner_org_type",
                                   "is_indigenous_prime_partner", "subrecipient_duns",
                                   "award_number","procurement_type")) %>% 

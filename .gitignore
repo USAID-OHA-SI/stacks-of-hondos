@@ -38,7 +38,7 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 *.txt
-*.png
+.png
 remove M&O.r
 Supply chain exclusions.R
 Supply chain exclusions.R
