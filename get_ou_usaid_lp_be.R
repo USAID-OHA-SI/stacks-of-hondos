@@ -12,19 +12,9 @@ df_fsd<-si_path()%>%
   return_latest("Fin")%>%
   gophr::read_msd()
 
-source<-source_info(si_path(),"Fin")
-  
-ou_list<-si_path()%>%
-  return_latest("Fin")%>%
-  gophr::read_msd()%>%
-  distinct(operatingunit)%>%
-  pull()
+source("~/GitHub/stacks-of-hondos/ea_style.R")
 
-country_list<-si_path()%>%
-  return_latest("Fin")%>%
-  gophr::read_msd()%>%
-  distinct(countryname)%>%
-  pull()
+source("~/GitHub/stacks-of-hondos/utilities.R")
 
 #glamr::load_secrets()
 
@@ -35,7 +25,7 @@ country_list<-si_path()%>%
 
 get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
   glamr::load_secrets()
-  df<-df_fsd%>%
+  df<-df%>%
     remove_mo()%>%
     remove_sch("SGAC")%>%
     dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
@@ -164,7 +154,7 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
       title = glue::glue(" COP2019 & COP2020 {ou} Local Partner Financial Performance Summary"),
       subtitle = legend_chunk)%>%
     gt::tab_source_note(
-      source_note = ("Partner Designations Provided by the OHA Local Partners Team. Visual excludes TBDs"))%>%
+      source_note = ("USAID mechanisms only. Partner Designations Provided by the OHA Local Partners Team. Visual excludes TBDs"))%>%
     gt::tab_source_note(
       source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to gh.oha.ea@usaid.gov for questions"))
     ) 
@@ -176,10 +166,10 @@ table_out<-"GitHub/stacks-of-hondos/Images"
 #to run for one OU testing below
 get_ou_usaid_lp_be(df_fsd, "Malawi")%>%
 gtsave("test.png")
-#to run for all OUs
+#to run for all OUs. Can also run for country use country_list in place of ou_list
 purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
 gtsave(.,path=table_out,filename = glue::glue("{.x}_ou_budget_execution.png")))
 
-glamr::export_drivefile()
+# to do-glamr::export_drivefile()
 
 

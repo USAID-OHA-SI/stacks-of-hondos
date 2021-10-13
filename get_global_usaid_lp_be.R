@@ -10,103 +10,32 @@ library(webshot)
 
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
-read_msd()
-
-#added the below to the utilities file
-#source<-source_info(si_path(),"Fin")
-  
-#ou_list<-si_path()%>%
- # return_latest("COP17")%>%
-  #gophr::read_msd()%>%
-  #distinct(operatingunit)%>%
-  #pull()
-
-#country_list<-si_path()%>%
- # return_latest("COP17")%>%
-  #gophr::read_msd()%>%
-  #distinct(countryname)%>%
-  #pull()
-
-#using source info for getting other data
-#potential for sep functions for table, gt, munging, etc.
-
-#use this function to print out budget execution by agency at different OUs
-
+  gophr::read_msd()
 
 source("~/GitHub/stacks-of-hondos/ea_style.R")
 
 source("~/GitHub/stacks-of-hondos/utilities.R")
 
-### New version
-get_ou_agency_be<-function(df, ou="operatingunit"){
-  df<-df%>%
-    prep_fsd()%>%
-    dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
-    #dplyr::filter(operatingunit== "Mozambique")%>%
-    dplyr::filter(operatingunit %in% ou)%>%
-    dplyr::select (c(fundingagency,fiscal_year,cop_budget_total,expenditure_amt))%>%
-    mutate_at(vars(cop_budget_total,expenditure_amt),~replace_na(.,0))%>%
-    mutate( fundingagency = fct_relevel(fundingagency, "USAID","CDC"))%>%
-    group_by(fundingagency,fiscal_year)%>%
-    summarise_at(vars(cop_budget_total,expenditure_amt), sum, na.rm = TRUE)%>%
-    dplyr::mutate(budget_execution=percent_clean(expenditure_amt,cop_budget_total))%>%
-    ungroup()%>%
-    pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
-    dplyr::relocate(expenditure_amt_2020, .before = cop_budget_total_2020) %>%
-    dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
-    dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
-    dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) %>%
-    
-    #break into separate functions
-   
-    ea_style()%>%
-    #gt()%>%
-    cols_label(
-     fundingagency = "Funding Agency")%>%
-    tab_header(
-      title = glue::glue(" COP2019 & COP2020 {ou} Financial Performance Summary"),
-      subtitle = legend_chunk)
-      
-     
-    
-  return(df)
-}
+#glamr::load_secrets()
 
-table_out<-"GitHub/stacks-of-hondos/Images"
-#to run for one OU testing below
-get_ou_agency_be(df_fsd, "South Africa")%>%
-  gtsave("test.png")
-#to run for all
-purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
-             gtsave(.,path=table_out,filename = glue::glue("{.x}_ou_budget_execution.png")))
+#using source info for getting other data
+#potential for sep functions for table, gt, munging, etc.
 
+#use this function to print out budget execution by USAID partner types at OU level
 
-
-
-
-#to do-add in glamr export
-#glamr::export_drivefile()
-
-
-
-### OLD DRAFTS====================================================================
-
-#get_ou_agency_be<-function(df, ou="operatingunit"){
+get_global_usaid_lp_be<-function(df){
+  glamr::load_secrets()
   df<-df%>%
     remove_mo()%>%
+    remove_sch("SGAC")%>%
     dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
-    #dplyr::filter(operatingunit== "Mozambique")%>%
-    dplyr::filter(operatingunit %in% ou)%>%
-    dplyr::select (c(fundingagency,fiscal_year,cop_budget_total,expenditure_amt))%>%
-    mutate_at(vars(cop_budget_total,expenditure_amt),~replace_na(.,0))%>%
-    dplyr::mutate(agency_category=fundingagency)%>%
-    mutate(agency_category  = ifelse(agency_category == "USAID", "USAID",
-                                     ifelse(agency_category  == "HHS/CDC", "CDC",
-                                            ifelse(agency_category  =="Dedup", "Dedup","Other"))))%>%
-    mutate( fundingagency = fct_relevel(fundingagency, "USAID","HHS/CDC","Other"))%>%
-    group_by(fundingagency,fiscal_year)%>%
+    dplyr::filter(fundingagency=="USAID")%>%
+    glamr::apply_partner_type()%>%
+    dplyr::filter(partner_type_usaid_adjusted=="Local" | partner_type_usaid_adjusted=="International" )%>%
+    dplyr::select (c(partner_type_usaid_adjusted,fiscal_year,cop_budget_total,expenditure_amt))%>%
+    group_by(partner_type_usaid_adjusted,fiscal_year)%>%
     summarise_at(vars(cop_budget_total,expenditure_amt), sum, na.rm = TRUE)%>%
-    dplyr::mutate(budget_execution=expenditure_amt/cop_budget_total)%>%
+    dplyr::mutate(budget_execution=percent_clean(expenditure_amt,cop_budget_total))%>%
     ungroup()%>%
     pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
     dplyr::relocate(expenditure_amt_2020, .before = cop_budget_total_2020) %>%
@@ -129,7 +58,7 @@ purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
     cols_width(
       everything() ~ px(90))%>%
     cols_label(
-      fundingagency = "Agency",
+      partner_type_usaid_adjusted = "Partner Type",
       expenditure_amt_2020 = "Expenditure",
       cop_budget_total_2020 = "Budget",
       budget_execution_2020="Budget Execution",
@@ -143,7 +72,7 @@ purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
       columns = c(
         expenditure_amt_2021,cop_budget_total_2021, budget_execution_2021,))%>%
     tab_spanner(
-      label = "COP19 Performance",
+        label = "COP19 Performance",
       columns = c(
         expenditure_amt_2020,cop_budget_total_2020,budget_execution_2020))%>%
     gt::tab_style(
@@ -156,12 +85,12 @@ purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
       locations = cells_body(
         columns = tidyselect::contains("_execution_")
       ))%>%
-    gt::tab_options(
-      source_notes.font.size = 8,
-      table.font.size = 13, 
-      data_row.padding = gt::px(5),
-      source_notes.padding = gt::px(1),) %>%
-    
+        gt::tab_options(
+          source_notes.font.size = 8,
+          table.font.size = 13, 
+          data_row.padding = gt::px(5),
+          source_notes.padding = gt::px(1),) %>%
+   
     tab_style(
       style = cell_borders(
         sides = "right",
@@ -171,14 +100,14 @@ purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
         columns = everything(),
         rows = everything()
       ))%>%
-    
+  
     cols_align(
       align = "center",
       columns = everything()
     )%>%
     cols_align(
       align = "left",
-      columns = tidyselect::contains("agency")
+      columns = tidyselect::contains("partner")
     )%>%
     tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),      
               locations = cells_body(               
@@ -216,14 +145,28 @@ purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
     
     
     tab_footnote(
-      footnote = "Excluding M&O",
+      footnote = "Excluding M&O and Commodities",
       locations = cells_column_labels(
         columns =c(expenditure_amt_2020, expenditure_amt_2021)))%>%
     tab_header(
-      title = glue::glue(" COP2019 & COP2020 {ou} Financial Performance Summary"),
+      title = glue::glue(" COP2019 & COP2020 Local Partner Financial Performance Summary"),
       subtitle = legend_chunk)%>%
+    gt::tab_source_note(
+      source_note = ("USAID mechanisms only. Partner Designations Provided by the OHA Local Partners Team. Visual excludes TBDs"))%>%
     gt::tab_source_note(
       source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to gh.oha.ea@usaid.gov for questions"))
     ) 
+   
   return(df)
 }
+
+table_out<-"GitHub/stacks-of-hondos/Images"
+#to run
+get_global_usaid_lp_be(df_fsd)%>%
+gtsave("global_usaid_lp_performance.png")
+#to run for all OUs
+
+
+# to do-glamr::export_drivefile()
+
+
