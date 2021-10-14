@@ -41,7 +41,10 @@ get_global_usaid_ou<-function(df){
   return(df)
 }
   
-
+#testing
+table_out<-"GitHub/stacks-of-hondos/Images"
+get_global_usaid_ou(df_fsd)%>%
+  gtsave(., path=table_out, filename="global performance_usaid.png")
 
 
 #### old

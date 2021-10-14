@@ -52,6 +52,7 @@ library(glue)
   
   df_fsd<-df_fsd%>%
       remove_mo()%>%
+      clean_agency()%>%
       select(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner, fiscal_year, program,cop_budget_total, expenditure_amt)%>%
       group_by(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner, program) %>% 
       #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
@@ -65,6 +66,7 @@ library(glue)
     df_msd<-df_msd%>%
       filter(standardizeddisaggregate=="Total Numerator")%>%
       filter(indicator %in% indics)%>%
+      clean_agency()%>%
       #dplyr::select(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator cumulative,targets)%>%
       group_by(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator) %>% 
       #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
@@ -97,7 +99,9 @@ library(glue)
       pivot_longer(cumulative:targets,
                    names_to ="programatic",
                    values_to="value")%>%
-      ungroup()%>%
+      ungroup()
+    
+    df_ue<-df_ue%>%
       pivot_wider(names_from = financial,
                   values_from=amount)%>%
       pivot_wider(names_from = programatic,
@@ -192,10 +196,10 @@ library(glue)
     }
 
 # testing ============================================================================
-    table_out<-"GitHub/stacks-of-hondos/Images"
+    table_out<-"~/GitHub/stacks-of-hondos/Images"
     #to run for one OU testing below
-    get_ue(df_ctdf, "Angola")%>%
-      gtsave("test.png")
+    get_ue(df_ue, "Angola")%>%
+      gtsave(.,path=table_out,filename = glue::glue("_ou_unit_expenditure.png"))
     #to run for all
     purrr::map(ou_list, ~get_ue(df, ou = .x)%>%
                  gtsave(.,path=table_out,filename = glue::glue("{.x}_ou_unit_expenditure.png")))

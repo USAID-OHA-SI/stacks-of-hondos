@@ -32,12 +32,6 @@ library(devtools)
   
 
 # LOAD DATA ============================================================================  
-    #Use "here" function to find folder
-    #need to sub "here for si_path*********
-    here()
-    here("Raw Datasets")
-    
-    df_fsd<-read.delim(here("Raw Datasets/Finanical_Structured_Dataset_COP17-20_20210813.txt")) 
   
     df_fsd<-si_path()%>%
       glamr::return_latest("Fin")%>%
@@ -47,7 +41,7 @@ library(devtools)
   
   # Functions  
   #use this to call utilties functions
-  source("Github/stacks-of-hondos/utilties.R")
+  source("Github/stacks-of-hondos/utilities.R")
 
 
 

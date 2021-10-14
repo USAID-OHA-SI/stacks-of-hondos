@@ -75,7 +75,7 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
 table_out<-"GitHub/stacks-of-hondos/Images"
 #to run for one OU testing below
 get_ou_agency_be(df_fsd, "South Africa")%>%
-  gtsave("test.png")
+  gtsave(.,path=table_out,"test_be.png")
 #to run for all
 purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
              gtsave(.,path=table_out,filename = glue::glue("{.x}_ou_budget_execution.png")))
