@@ -36,7 +36,7 @@ get_global_usaid_ou<-function(df){
       operatingunit = "Operating Unit")%>%
     
     tab_header(
-      title = (" COP 2019 & 2020 USAID Global Financial Performance Summary"),
+      title = (" COP19 & COP20 USAID Global Financial Performance Summary"),
       subtitle = legend_chunk)
   return(df)
 }
