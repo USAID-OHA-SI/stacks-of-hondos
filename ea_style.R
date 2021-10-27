@@ -18,6 +18,8 @@ ea_style<-function(df){
   tab_options(
     table.font.names = "Source Sans Pro"
   ) %>% 
+    fmt_missing(columns = everything(),
+                missing_text = "-") %>%
   cols_width(
     everything() ~ px(90))%>%
   

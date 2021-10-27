@@ -155,7 +155,7 @@ get_global_usaid_ou(df_fsd)%>%
       locations = cells_column_labels(
         columns =c(expenditure_amt_2020, expenditure_amt_2021)))%>%
     tab_header(
-      title = (" COP 2020 & 2021 USAID Global Financial Performance Summary"))%>%
+      title = (" COP20 & COP21 USAID Global Financial Performance Summary"))%>%
     gt::tab_source_note(
       source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions"))
     ) 

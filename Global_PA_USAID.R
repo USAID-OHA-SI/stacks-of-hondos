@@ -40,7 +40,7 @@ get_global_pa_usaid<-function(df,funding_agency="fundingagency", ou="operatingun
     cols_label(
       program = "Program Area")%>%
     tab_header(
-      title = glue::glue("{funding_agency} COP2019 & COP2020 {ou} Financial Performance Summary"),
+      title = glue::glue("{funding_agency} COP19 & COP20 {ou} Financial Performance Summary"),
       subtitle = legend_chunk) %>%
   
   tab_options(footnotes.font.size = "small")

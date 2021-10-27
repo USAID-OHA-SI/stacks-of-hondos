@@ -90,7 +90,7 @@ get_ou_mechanism_pa<-function(df,funding_agency="fundingagency", ou="operatingun
       mech_id_mech_name = "Mechanism",
       program= "Program Area")%>%
     tab_header(
-      title = glue::glue("{funding_agency} COP2019 & COP2020 {ou} Financial Performance Summary"),
+      title = glue::glue("{funding_agency} COP19 & COP20 {ou} Financial Performance Summary"),
       subtitle = legend_chunk) %>%
     
     tab_options(footnotes.font.size = "small")
