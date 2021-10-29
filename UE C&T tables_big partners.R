@@ -27,6 +27,8 @@ library(glue)
     percent_clean <- function(x, y) {
       ifelse(y > 0.000, (x / y), NA_real_)
     }
+    
+   
     #source<-source_info(si_path(),"Fin")
     
     indics<-c("HTS_TST","HTS_TST_POS", "TX_CURR", "TX_NEW")
@@ -80,7 +82,7 @@ library(glue)
          dplyr::filter(targets>0)
         
     
-   
+  
    
     
     
@@ -120,15 +122,18 @@ library(glue)
                   values_from=value)%>%
       dplyr::mutate(primepartner = dplyr::case_when(primepartner    == "FHI Development 360 LLC"    ~"FHI360",
                                                     primepartner    ==   "Family Health International"    ~"FHI360",
-                                                    primepartner    ==  "Abt Associates, Inc." ~ "Abt Associates Inc"
+                                                    primepartner    ==  "Abt Associates, Inc." ~ "Abt Associates Inc",
                                                     
                                                     TRUE ~primepartner))%>%
-      mutate("country_mech"=glue("{mech_name}- {mech_code}"))%>%
+      mutate("country_mech"=glue("{countryname}-{mech_name}- {mech_code}"))%>%
       dplyr::relocate(country_mech, .before = HTS_TST)%>%
-      dplyr::rename("TST_POS"="HTS_TST_POS")
+      dplyr::rename("TST_POS"="HTS_TST_POS")%>%
+      ungroup
     
    
-      
+    partners_list<-df_ue%>%
+      distinct(primepartner)%>%
+      pull()    
      
   
 # gt function ============================================================================
@@ -136,14 +141,14 @@ library(glue)
   #   
     get_ue_partner<-function(df, partner="primepartner"){
     df<-df_ue%>%
-      select(-c("mech_code","mech_name","countryname"))%>%
+      select(-c("mech_code","mech_name",))%>%
       filter(primepartner %in% partner)%>%
       #filter(operatingunit %in% ou)%>%
      # filter(fiscal_year=="2020")%>%
       #filter(TX_CURR!="NA")%>%
       gt()%>%
       cols_hide(
-        columns=c("primepartner",
+        columns=c("primepartner","countryname",
                  ))%>%
       fmt_currency( # add dolar signs
         columns = c("HTS_TST":"TX_NEW"),
@@ -180,7 +185,8 @@ library(glue)
           align = "left",
           columns = 1)%>%
       tab_header(
-        title = glue::glue(" COP20 {partner} Unit Expenditure: Treatment Cascade"))%>% 
+        title = ("  COP2020 Unit Expenditure: Treatment Cascade"),
+        subtitle = glue::glue("Prime Partner: {partner}"))%>% 
       gt::tab_source_note(
         source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions"))
       )%>%
@@ -201,8 +207,8 @@ library(glue)
 # testing ============================================================================
     table_out<-"~/GitHub/stacks-of-hondos/Images"
     #to run for one OU testing below
-    get_ue_partner(df_ue, "Elizabeth Glaser Pediatric Aids Foundation")%>%
+    get_ue_partner(df_ue, "FHI360")%>%
       gtsave(.,path=table_out,filename = glue::glue("_ou_unit_expenditure.png"))
     #to run for all
-    purrr::map(ou_list, ~get_ue(df, ou = .x)%>%
+    purrr::map(partners_list, ~get_ue_partner(df, partner = .x)%>%
                  gtsave(.,path=table_out,filename = glue::glue("{.x}_ou_unit_expenditure.png")))

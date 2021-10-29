@@ -12,9 +12,13 @@ df_fsd<-si_path()%>%
   gophr::read_msd()
   
 
-#fiscal_years=c("2020","2021") #old
 
-#use this function to print out budget execution by for just USAID in all OUs
+#use this function to print out budget execution by for just USAID in all OUs. You should load the above
+#packages and pre_fsd, ea_style, and the utilities file before running
+
+source("~/GitHub/stacks-of-hondos/ea_style.R")
+source("~/GitHub/stacks-of-hondos/prep_fsd.R")
+source("~/GitHub/stacks-of-hondos/utilities.R")
 
 get_global_usaid_ou<-function(df){
   df<-df%>%
@@ -41,13 +45,13 @@ get_global_usaid_ou<-function(df){
   return(df)
 }
   
-#testing
-table_out<-"GitHub/stacks-of-hondos/Images"
+#output of table========================================================
+table_out<-"GitHub/stacks-of-hondos/Images/global performance"
 get_global_usaid_ou(df_fsd)%>%
   gtsave(., path=table_out, filename="global performance_usaid.png")
 
 
-#### old
+#### old ignore below===========================================
 #{  %>%
       #cols_hide(
        # columns = c(
@@ -162,8 +166,8 @@ get_global_usaid_ou(df_fsd)%>%
   
   return(df)
 }
-#testing
-table_out<-"GitHub/stacks-of-hondos/Images"
+#old output======================
+table_out<-"GitHub/stacks-of-hondos/Images/global performance"
 get_global_usaid_ou(df_fsd)%>%
   gtsave(., path=table_out, filename="global performance_usaid.png")
 

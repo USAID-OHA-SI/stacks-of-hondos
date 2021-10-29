@@ -207,4 +207,10 @@ get_ou_mechanism_pa<-function(df, partner="primepartner"){
   return(df)
 }
 
-get_ou_mechanism_pa(df_fsd,"FHI360")
+#output 
+
+
+table_out<-"~/GitHub/stacks-of-hondos/Images"
+#to run for one OU testing below
+get_ou_mechanism_pa(df_fsd,"FHI360")%>%
+  gtsave(.,path=table_out,filename = glue::glue("FHI360_pa_budget execution.png"))

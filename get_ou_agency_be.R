@@ -12,29 +12,12 @@ df_fsd<-si_path()%>%
   return_latest("Fin")%>%
 read_msd()
 
-#added the below to the utilities file
-#source<-source_info(si_path(),"Fin")
-  
-#ou_list<-si_path()%>%
- # return_latest("COP17")%>%
-  #gophr::read_msd()%>%
-  #distinct(operatingunit)%>%
-  #pull()
 
-#country_list<-si_path()%>%
- # return_latest("COP17")%>%
-  #gophr::read_msd()%>%
-  #distinct(countryname)%>%
-  #pull()
-
-#using source info for getting other data
-#potential for sep functions for table, gt, munging, etc.
-
-#use this function to print out budget execution by agency at different OUs
+#use this function to print out budget execution by agency at different OUs. Be sure to load the following files below before running
 
 
 source("~/GitHub/stacks-of-hondos/ea_style.R")
-
+source("~/GitHub/stacks-of-hondos/prep_fsd.R")
 source("~/GitHub/stacks-of-hondos/utilities.R")
 
 ### New version
@@ -72,7 +55,7 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
   return(df)
 }
 
-table_out<-"GitHub/stacks-of-hondos/Images"
+table_out<-"GitHub/stacks-of-hondos/Images/budget execution"
 #to run for one OU testing below
 get_ou_agency_be(df_fsd, "South Africa")%>%
   gtsave(.,path=table_out,"test_be.png")

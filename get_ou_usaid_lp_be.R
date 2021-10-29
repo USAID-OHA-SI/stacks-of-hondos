@@ -11,17 +11,13 @@ library(webshot)
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
   gophr::read_msd()
-
+#use this function to print out budget execution by partner type for USAID at the ou level.
+#Be sure to load the following files below before running
 source("~/GitHub/stacks-of-hondos/ea_style.R")
-
+source("~/GitHub/stacks-of-hondos/prep_fsd.R")
 source("~/GitHub/stacks-of-hondos/utilities.R")
 
-#glamr::load_secrets()
 
-#using source info for getting other data
-#potential for sep functions for table, gt, munging, etc.
-
-#use this function to print out budget execution by USAID partner types at OU level
 
 get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
   glamr::load_secrets()
@@ -161,8 +157,8 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
    
   return(df)
 }
-
-table_out<-"GitHub/stacks-of-hondos/Images"
+##Output=======
+table_out<-"GitHub/stacks-of-hondos/Images/lp"
 #to run for one OU testing below
 get_ou_usaid_lp_be(df_fsd, "Malawi")%>%
 gtsave(.,path=table_out,"test_lp.png")

@@ -22,10 +22,7 @@ library(glue)
     
     
   
-  # Set paths  
-    proj_paths
-   
-    si_paths 
+  
     
   # Functions  
     percent_clean <- function(x, y) {
@@ -196,9 +193,9 @@ library(glue)
     }
 
 # testing ============================================================================
-    table_out<-"~/GitHub/stacks-of-hondos/Images"
+    table_out<-"GitHub/stacks-of-hondos/Images/unit expenditure"
     #to run for one OU testing below
-    get_ue(df_ue, "Angola")%>%
+    get_ue(df_ue, "Mozambique")%>%
       gtsave(.,path=table_out,filename = glue::glue("_ou_unit_expenditure.png"))
     #to run for all
     purrr::map(ou_list, ~get_ue(df, ou = .x)%>%

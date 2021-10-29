@@ -160,10 +160,10 @@ get_global_usaid_lp_be<-function(df){
   return(df)
 }
 
-table_out<-"GitHub/stacks-of-hondos/Images"
+table_out<-"GitHub/stacks-of-hondos/Images/lp"
 #to run
 get_global_usaid_lp_be(df_fsd)%>%
-gtsave("global_usaid_lp_performance.png")
+gtsave(path=table_out,filename = "global_usaid_lp_performance.png")
 #to run for all OUs
 
 

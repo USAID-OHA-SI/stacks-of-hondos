@@ -7,6 +7,15 @@ library(gt)
 library(glue)
 library(webshot)
 
+
+df_fsd<-si_path()%>%
+return_latest("Fin")%>%
+  read_msd()
+#use this function to print out budget execution by agency at the global level. Be sure to load the following files below before running
+source("~/GitHub/stacks-of-hondos/ea_style.R")
+source("~/GitHub/stacks-of-hondos/prep_fsd.R")
+source("~/GitHub/stacks-of-hondos/utilities.R")
+
 get_global_agency_be<-function(df){
   df<-df%>%
     prep_fsd()%>%
@@ -36,6 +45,6 @@ get_global_agency_be<-function(df){
   return(df)
 }
 
-table_out<-"GitHub/stacks-of-hondos/Images"
+table_out<-"GitHub/stacks-of-hondos/Images/global execution"
 get_global_agency_be(df_fsd)%>%
   gtsave(., path=table_out, filename="global performance_all_agencies.png")

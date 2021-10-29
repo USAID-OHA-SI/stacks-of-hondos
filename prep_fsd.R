@@ -23,11 +23,7 @@ library(gophr)
 library(scales)
 library(sf)
 library(devtools)
-  
-  # Set paths  
-    proj_paths
-   
-    si_paths 
+
     
   
 
