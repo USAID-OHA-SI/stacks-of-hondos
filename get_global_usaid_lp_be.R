@@ -16,12 +16,9 @@ source("~/GitHub/stacks-of-hondos/ea_style.R")
 
 source("~/GitHub/stacks-of-hondos/utilities.R")
 
-#glamr::load_secrets()
-
-#using source info for getting other data
-#potential for sep functions for table, gt, munging, etc.
-
-#use this function to print out budget execution by USAID partner types at OU level
+### EA Function======
+#use this function to print out budget execution by USAID partner types at OU level.
+#Load Secrets
 
 get_global_usaid_lp_be<-function(df){
   glamr::load_secrets()
@@ -159,14 +156,11 @@ get_global_usaid_lp_be<-function(df){
    
   return(df)
 }
-
+####Output========
 table_out<-"GitHub/stacks-of-hondos/Images/lp"
 #to run
 get_global_usaid_lp_be(df_fsd)%>%
 gtsave(path=table_out,filename = "global_usaid_lp_performance.png")
-#to run for all OUs
 
-
-# to do-glamr::export_drivefile()
 
 
