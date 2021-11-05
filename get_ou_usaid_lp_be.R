@@ -148,7 +148,7 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
       title = glue::glue(" COP19 & COP20 {ou} Local Partner Financial Performance Summary"),
       subtitle = legend_chunk)%>%
     gt::tab_source_note(
-      source_note = ("USAID mechanisms only. Partner Designations Provided by the OHA Local Partners Team. Visual excludes TBDs"))%>%
+      source_note = ("USAID mechanisms only. Partner designations provided by the OHA Local Partners Team. Visual excludes TBDs"))%>%
     gt::tab_source_note(
       source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to gh.oha.ea@usaid.gov for questions"))
     ) 

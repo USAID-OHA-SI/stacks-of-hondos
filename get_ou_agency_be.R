@@ -43,7 +43,7 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
     cols_label(
      fundingagency = "Funding Agency")%>%
     tab_header(
-      title = glue::glue(" COP19 & COP20 {ou} Financial Performance Summary"),
+      title = glue::glue(" COP19 & COP20 {ou} Agency Financial Performance Summary"),
       subtitle = legend_chunk)
       
      
