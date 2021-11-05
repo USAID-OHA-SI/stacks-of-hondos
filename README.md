@@ -13,7 +13,7 @@ The EA Branch currently uses the following functions to produce budget tables fo
 
 5. **get_global_usaid_lp_be**: this can be used to generate a global table of budget execution by partner type 
 
-6. **get_ou_usaid_lp_be**: **: this can be used to generate an ou-specific table of budget execution by partner type 
+6. **get_ou_usaid_lp_be**: this can be used to generate an ou-specific table of budget execution by partner type 
 
 
 
