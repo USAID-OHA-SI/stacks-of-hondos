@@ -5,9 +5,15 @@ The EA Branch currently uses the following functions to produce budget tables fo
 
 1. **get_global_be**: this can be used to get agency level budget execution at the global level
 
-2. **get_global_usaid**: this can be used to get usaid budget execution while displaying all ous
+2. **get_global_usaid_ou**: this can be used to get usaid budget execution while displaying all ous
 
 3. **get_ou_agency_be**: this can be used to get agency level budget execution at a specific ou level
+
+4. **get_ue**: this can be used to generate a unit expenditure table across the treatment continuum
+
+5. **get_global_usaid_lp_be**: this can be used to generate a global table of budget execution by partner type 
+
+6. **get_ou_usaid_lp_be**: **: this can be used to generate an ou-specific table of budget execution by partner type 
 
 
 
