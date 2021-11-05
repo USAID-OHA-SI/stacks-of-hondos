@@ -1,24 +1,38 @@
+# Produces GT table for Budget Execution by Program Area
+# Inputs:
+#        * df: FSD dataframe
+#        * funding_agency: name of the funding agency, e.g. USAID or CDC. Datatype: string
+#        * ou: name of operating unit selected. Datatype: string
+# Output: gt table for a specific operating unit
+
+### Libaries and Utility functions =============================================
+###         Please download below before using the code ========================
+library(glamr)
+library(gt)
+library(tidyverse)
+library(glue)
+
+git_src <- "~/GitHub"
+source(glue("{git_src}/stacks-of-hondos/ea_style.R"))
+source(glue("{git_src}/stacks-of-hondos/prep_fsd.R"))
+source(glue("{git_src}/stacks-of-hondos/utilities.R"))
 
 
-
+### Function ===================================================================
 get_global_pa_usaid<-function(df,funding_agency="fundingagency", ou="operatingunit"){
   df<-df%>%
     prep_fsd()%>%
     
     #filter for fiscal year
     dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
-    #dplyr::filter(fundingagency == "USAID") %>% 
-    
+
     #filter for OU
-    #dplyr::filter(operatingunit== "Mozambique")%>%
     dplyr::filter(operatingunit %in% ou)%>%
     dplyr::filter(fundingagency %in% funding_agency) %>% 
     
     #select specific variables
     dplyr::select (c(fundingagency,program, fiscal_year,cop_budget_total,expenditure_amt))%>%
     mutate_at(vars(cop_budget_total,expenditure_amt),~replace_na(.,0))%>%
-    #mutate( fundingagency = fct_relevel(fundingagency, "USAID","CDC"))%>%
-    
     
     
     group_by(program,fiscal_year)%>%
@@ -36,7 +50,6 @@ get_global_pa_usaid<-function(df,funding_agency="fundingagency", ou="operatingun
     #break into separate functions
     
     ea_style()%>%
-    #gt()%>%
     cols_label(
       program = "Program Area")%>%
     tab_header(
@@ -48,4 +61,11 @@ get_global_pa_usaid<-function(df,funding_agency="fundingagency", ou="operatingun
   return(df)
 }
 
+### Run Code for Output ========================================================
+# Read in the FSD data.frame from where you locally saved it
+df_fsd<-si_path()%>%
+  return_latest("Fin")%>%
+  read_msd()
+
+# To use function, change the "fundingagency" or "ou" options
 get_global_pa_usaid(df_fsd,"CDC", "Malawi")
