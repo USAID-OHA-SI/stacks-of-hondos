@@ -1,49 +1,30 @@
-# PURPOSE: Munge and Analysis of
-# AUTHOR: Ben Kasdan | SIEI
-# LICENSE: MIT
-# DATE: 2021-10-08
-# NOTES: 
-
-# LOCALS & SETUP ============================================================================
-
-  # Libraries
-    library(glitr)
-    library(glamr)
-    library(gisr)
-    library(tidyverse)
-    library(gophr)
-    library(scales)
-    library(sf)
-    library(extrafont)
-    library(tidytext)
-    library(here)
-    library(gt)
+library(glamr)
+library(tidyverse)
+library(gophr)
+library(extrafont)
+library(tidytext)
+library(gt)
 library(glue)
-    
-    
-  
-  
-    
-  # Functions  
-    percent_clean <- function(x, y) {
-      ifelse(y > 0.000, (x / y), NA_real_)
-    }
-    source<-source_info(si_path(),"Fin")
+library(webshot)
+
+
+df_fsd<-si_path()%>%
+  return_latest("Fin")%>%
+  gophr::read_msd()
+
+df_msd<-si_path()%>%
+  return_latest("OU_IM")%>%
+  gophr::read_msd()
+
+#This function can be used to generate unit expenditure tables across the treatment continuum
+#It can be used to generate one table for one ou, or a batch for all ous.
+#Be sure to load the following source files below before running
+source("~/GitHub/stacks-of-hondos/utilities.R")
     
     indics<-c("HTS_TST","HTS_TST_POS", "TX_CURR", "TX_NEW")
     progs<-c("HTS", "C&T")
 
-# LOAD DATA ============================================================================  
 
-    df_fsd<-si_path()%>%
-      return_latest("Fin")%>%
-      gophr::read_msd()
-    
-    df_msd<-si_path()%>%
-      return_latest("OU_IM")%>%
-      gophr::read_msd()
-    
-    source("~/Github/stacks-of-hondos/utilities.R")
 
 # MUNGE FSD ============================================================================
   
@@ -192,11 +173,11 @@ library(glue)
     return(df)
     }
 
-# testing ============================================================================
+# Output ============================================================================
     table_out<-"GitHub/stacks-of-hondos/Images/unit expenditure"
-    #to run for one OU testing below
+    #to run for one OU, be sure to change the ou to the ou name
     get_ue(df_ue, "Mozambique")%>%
-      gtsave(.,path=table_out,filename = glue::glue("_ou_unit_expenditure.png"))
-    #to run for all
+      gtsave(.,path=table_out,filename = glue::glue("Mozambique_unit_expenditure.png"))
+    #to run for all OUs. You can use country_list to do countries 
     purrr::map(ou_list, ~get_ue(df, ou = .x)%>%
-                 gtsave(.,path=table_out,filename = glue::glue("{.x}_ou_unit_expenditure.png")))
+                 gtsave(.,path=table_out,filename = glue::glue("{.x}_unit_expenditure.png")))

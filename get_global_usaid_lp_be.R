@@ -12,13 +12,13 @@ df_fsd<-si_path()%>%
   return_latest("Fin")%>%
   gophr::read_msd()
 
-source("~/GitHub/stacks-of-hondos/ea_style.R")
 
+#This function can be used to print out budget execution by partner type (local, international)for USAID at a global level. 
+#You will need to ensure that you have load_secrets from the glamr package set up beforehand
+#Be sure to load the following source files below before running
+source("~/GitHub/stacks-of-hondos/ea_style.R")
 source("~/GitHub/stacks-of-hondos/utilities.R")
 
-### EA Function======
-#use this function to print out budget execution by USAID partner types at OU level.
-#Load Secrets
 
 get_global_usaid_lp_be<-function(df){
   glamr::load_secrets()
@@ -39,8 +39,6 @@ get_global_usaid_lp_be<-function(df){
     dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
     dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
     dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) %>%
-    
-    #break into separate functions
     gt()%>%
     fmt_percent(
       columns = c(`budget_execution_2020`, `budget_execution_2021`),
@@ -158,7 +156,6 @@ get_global_usaid_lp_be<-function(df){
 }
 ####Output========
 table_out<-"GitHub/stacks-of-hondos/Images/lp"
-#to run
 get_global_usaid_lp_be(df_fsd)%>%
 gtsave(path=table_out,filename = "global_usaid_lp_performance.png")
 

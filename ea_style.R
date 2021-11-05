@@ -1,6 +1,6 @@
-library(gt)
-library(tidyverse)
-#see if we can adjust centering by column number
+#Use this function to create the base table style for the EA gt table
+
+
 ea_style<-function(df){
     df%>%
     gt()%>%

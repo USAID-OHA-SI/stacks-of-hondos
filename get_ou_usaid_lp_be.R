@@ -13,9 +13,9 @@ df_fsd<-si_path()%>%
   gophr::read_msd()
 
 
-#use this function to print out budget execution by partner type for USAID at the ou level.
-#Be sure to load the following files below before running
-source("~/GitHub/stacks-of-hondos/ea_style.R")
+#This function can be used to print out budget execution by partner type (local, international)for USAID at an OU level. You can use this to 
+#print information for multiple OUs. You will need to ensure that you have load_secrets from the glamr package set up beforehand
+#Be sure to load the following source files below before running
 source("~/GitHub/stacks-of-hondos/utilities.R")
 
 
@@ -27,7 +27,6 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
     remove_sch("SGAC")%>%
     dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
     dplyr::filter(fundingagency=="USAID")%>%
-    #dplyr::filter(operatingunit== "Mozambique")%>%
     dplyr::filter(operatingunit %in% ou)%>%
     glamr::apply_partner_type()%>%
     dplyr::filter(partner_type_usaid_adjusted=="Local" | partner_type_usaid_adjusted=="International" )%>%
@@ -41,8 +40,6 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
     dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
     dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
     dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) %>%
-    
-    #break into separate functions
     gt()%>%
     fmt_percent(
       columns = c(`budget_execution_2020`, `budget_execution_2021`),
@@ -158,12 +155,13 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
    
   return(df)
 }
-##Output=======
+##Output the file=======
 table_out<-"GitHub/stacks-of-hondos/Images/lp"
-#to run for one OU testing below
-get_ou_usaid_lp_be(df_fsd, "Malawi")%>%
-gtsave(.,path=table_out,"test_lp.png") #change test to OU name
-#to run for all OUs. Can also run for country use country_list in place of ou_list
+#to run for one OU, change the OU name below and change test to OU name.
+get_ou_usaid_lp_be(df_fsd, "Mozambique")%>%
+gtsave(.,path=table_out,"Mozambique_lp.png") 
+
+#to run for all OUs.You can also run for country use country_list in place of ou_list
 purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
 gtsave(.,path=table_out,filename = glue::glue("{.x}_lp_budget_execution.png")))
 
