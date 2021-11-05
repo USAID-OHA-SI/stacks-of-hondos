@@ -20,16 +20,7 @@
     library(gt)
 library(glue)
     
-    
-  
-    
-  # Functions  
-    percent_clean <- function(x, y) {
-      ifelse(y > 0.000, (x / y), NA_real_)
-    }
-    
-   
-    #source<-source_info(si_path(),"Fin")
+
     
     indics<-c("HTS_TST","HTS_TST_POS", "TX_CURR", "TX_NEW")
     progs<-c("HTS", "C&T")
@@ -205,10 +196,10 @@ library(glue)
     }
 
 # testing ============================================================================
-    table_out<-"~/GitHub/stacks-of-hondos/Images"
+    table_out<-"GitHub/stacks-of-hondos/Images/Partner tables"
     #to run for one OU testing below
-    get_ue_partner(df_ue, "FHI360")%>%
-      gtsave(.,path=table_out,filename = glue::glue("_ou_unit_expenditure.png"))
+    get_ue_partner(df_ue, "Elizabeth Glaser Pediatric Aids Foundation")%>%
+      gtsave(.,path=table_out,filename = glue::glue("EGPAF_unit_expenditure.png"))
     #to run for all
     purrr::map(partners_list, ~get_ue_partner(df, partner = .x)%>%
                  gtsave(.,path=table_out,filename = glue::glue("{.x}_ou_unit_expenditure.png")))
