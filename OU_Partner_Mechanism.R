@@ -1,5 +1,4 @@
-install.packages("remotes")
-remotes::install_github("USAID-OHA-SI/glitr", build_vignettes = TRUE)
+
 
 library(glamr)
 library(tidyverse)
@@ -16,6 +15,9 @@ library(scales)
 library(sf)
 library(glitr)
 
+
+
+
 set_paths(folderpath_msd="C:/Users/jmontespenaloza/Documents/Raw Datasets")
 
 
@@ -29,7 +31,9 @@ source("~/GitHub/stacks-of-hondos/prep_fsd.R")
 source("~/GitHub/stacks-of-hondos/utilities.R")
 
 
-get_ou_partner<-function(df,funding_agency="fundingagency", ou="operatingunit"){
+
+
+get_ou_partner<-function(df, ou="operatingunit"){
   df<-df%>%
     prep_fsd()%>%
     
@@ -40,19 +44,19 @@ get_ou_partner<-function(df,funding_agency="fundingagency", ou="operatingunit"){
     #filter for OU
     #dplyr::filter(operatingunit== "Mozambique")%>%
     dplyr::filter(operatingunit %in% ou)%>%
-    dplyr::filter(fundingagency %in% funding_agency) %>% 
+    #dplyr::filter(fundingagency %in% funding_agency) %>% 
     
     #select specific variables
-    dplyr::select (c(fundingagency,primepartner, fiscal_year,cop_budget_total,expenditure_amt))%>%
+    dplyr::select (c(fundingagency, primepartner, fiscal_year,cop_budget_total,expenditure_amt))%>%
     mutate_at(vars(cop_budget_total,expenditure_amt),~replace_na(.,0))%>%
     #mutate( fundingagency = fct_relevel(fundingagency, "USAID","CDC"))%>%
     
     
     
-    group_by(primepartner,fiscal_year)%>%
+    group_by(fundingagency,primepartner,fiscal_year)%>%
     summarise_at(vars(cop_budget_total,expenditure_amt), sum, na.rm = TRUE)%>%
     dplyr::mutate(budget_execution=percent_clean(expenditure_amt,cop_budget_total))%>%
-    ungroup()%>%
+    ungroup(primepartner)%>%
     
     
     pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
@@ -68,7 +72,7 @@ get_ou_partner<-function(df,funding_agency="fundingagency", ou="operatingunit"){
     cols_label(
       primepartner = "Partner")%>%
     tab_header(
-      title = glue::glue("{funding_agency} COP19 & COP20 {ou} Financial Performance Summary"),
+      title = glue::glue("COP19 & COP20 {ou} Financial Performance Summary"),
     subtitle = legend_chunk) %>%
     
     tab_options(footnotes.font.size = "small")
@@ -76,9 +80,22 @@ get_ou_partner<-function(df,funding_agency="fundingagency", ou="operatingunit"){
   return(df)
 }
 
-get_ou_partner(df_fsd,"USAID", "Malawi")
+get_ou_partner(df_fsd,"Malawi")
 
 
+##Output for Partner Level=======
+table_out<-"GitHub/stacks-of-hondos/Images/ou_partner"
+#to run for one OU testing below
+get_ou_partner(df_fsd, "Malawi")%>%
+  gtsave(.,path=table_out,"test_ou_partner.png")
+#to run for all OUs. Can also run for country use country_list in place of ou_list
+purrr::map(ou_list, ~get_ou_partner(df_fsd, ou = .x)%>%
+             gtsave(.,path=table_out,filename = glue::glue("{.x}_ou_Partner.png")))
+
+
+
+
+#Mechanism Section====================================================================
 get_ou_mechanism<-function(df,funding_agency="fundingagency", ou="operatingunit"){
   df<-df%>%
     prep_fsd()%>%
@@ -129,6 +146,13 @@ get_ou_mechanism<-function(df,funding_agency="fundingagency", ou="operatingunit"
 get_ou_mechanism(df_fsd,"USAID", "Malawi")
 
 
+table_out<-"GitHub/stacks-of-hondos/Images/ou_partner"
+#to run for one OU testing below
+get_ou_mechanism(df_fsd, "Malawi")%>%
+  gtsave(.,path=table_out,"test_ou_mechanism.png")
+#to run for all OUs. Can also run for country use country_list in place of ou_list
+purrr::map2(ou_list, ~get_ou_mechanism(df_fsd, ou = .x, fundingagency = .y)%>%
+             gtsave(.,path=table_out,filename = glue::glue("{.x}__{.y}_mechanism.png")))
 
 
 
