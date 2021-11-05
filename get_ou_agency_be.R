@@ -55,9 +55,9 @@ table_out<-"GitHub/stacks-of-hondos/Images/budget execution"
 #to run for one OU below. Be sure to name the ou 
 get_ou_agency_be(df_fsd, "South Africa")%>%
   gtsave(.,path=table_out,"test_be.png")
-#to run for all
+#to run for all ous. You can also use country_list
 purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
-             gtsave(.,path=table_out,filename = glue::glue("{.x}_ou_budget_execution.png")))
+             gtsave(.,path=table_out,filename = glue::glue("{.x}_budget_execution.png")))
 
 
 
