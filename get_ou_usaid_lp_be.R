@@ -164,7 +164,7 @@ get_ou_usaid_lp_be(df_fsd, "Malawi")%>%
 gtsave(.,path=table_out,"test_lp.png")
 #to run for all OUs. Can also run for country use country_list in place of ou_list
 purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
-gtsave(.,path=table_out,filename = glue::glue("{.x}_ou_budget_execution.png")))
+gtsave(.,path=table_out,filename = glue::glue("{.x}_ou_lp_budget_execution.png")))
 
 # to do-glamr::export_drivefile()
 
