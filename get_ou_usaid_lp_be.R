@@ -11,10 +11,11 @@ library(webshot)
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
   gophr::read_msd()
+
+
 #use this function to print out budget execution by partner type for USAID at the ou level.
 #Be sure to load the following files below before running
 source("~/GitHub/stacks-of-hondos/ea_style.R")
-source("~/GitHub/stacks-of-hondos/prep_fsd.R")
 source("~/GitHub/stacks-of-hondos/utilities.R")
 
 
@@ -161,11 +162,9 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
 table_out<-"GitHub/stacks-of-hondos/Images/lp"
 #to run for one OU testing below
 get_ou_usaid_lp_be(df_fsd, "Malawi")%>%
-gtsave(.,path=table_out,"test_lp.png")
+gtsave(.,path=table_out,"test_lp.png") #change test to OU name
 #to run for all OUs. Can also run for country use country_list in place of ou_list
 purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
-gtsave(.,path=table_out,filename = glue::glue("{.x}_ou_lp_budget_execution.png")))
-
-# to do-glamr::export_drivefile()
+gtsave(.,path=table_out,filename = glue::glue("{.x}_lp_budget_execution.png")))
 
 

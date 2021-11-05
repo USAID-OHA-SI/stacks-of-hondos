@@ -7,41 +7,6 @@
 
 # LOCALS & SETUP ============================================================================
 
-  # Libraries
-library(dplyr)
-library(devtools)
-library(tidyverse)
-library(tidyr)
-library(here)
-library(data.table)
-library(gt)
-library(glue)
-library(glitr)
-library(glamr)
-library(gisr)
-library(gophr)
-library(scales)
-library(sf)
-library(devtools)
-
-    
-  
-
-# LOAD DATA ============================================================================  
-  
-    df_fsd<-si_path()%>%
-      glamr::return_latest("Fin")%>%
-      gophr::read_msd()
-  
-  #source<-source_info(si_path(),"Fin")
-  
-  # Functions  
-  #use this to call utilties functions
-  source("Github/stacks-of-hondos/utilities.R")
-
-
-
-
 #prep and cleaning fsd
 #issues with source note at the end of the function
 prep_fsd <-function(df){ 
