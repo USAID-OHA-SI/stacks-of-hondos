@@ -1,3 +1,34 @@
+install.packages("remotes")
+remotes::install_github("USAID-OHA-SI/glitr", build_vignettes = TRUE)
+
+library(glamr)
+library(tidyverse)
+library(gophr)
+library(extrafont)
+library(gt)
+library(glue)
+library(webshot)
+library(dplyr)
+library(devtools)
+library(tidyr)
+library(gisr)
+library(scales)
+library(sf)
+library(glitr)
+
+set_paths(folderpath_msd="C:/Users/jmontespenaloza/Documents/Raw Datasets")
+
+
+df_fsd<-si_path()%>%
+  return_latest("Fin")%>%
+  read_msd()
+
+
+source("~/GitHub/stacks-of-hondos/ea_style.R")
+source("~/GitHub/stacks-of-hondos/prep_fsd.R")
+source("~/GitHub/stacks-of-hondos/utilities.R")
+
+
 get_ou_partner<-function(df,funding_agency="fundingagency", ou="operatingunit"){
   df<-df%>%
     prep_fsd()%>%
@@ -12,13 +43,13 @@ get_ou_partner<-function(df,funding_agency="fundingagency", ou="operatingunit"){
     dplyr::filter(fundingagency %in% funding_agency) %>% 
     
     #select specific variables
-    dplyr::select (c(fundingagency,prime_partner_name, fiscal_year,cop_budget_total,expenditure_amt))%>%
+    dplyr::select (c(fundingagency,primepartner, fiscal_year,cop_budget_total,expenditure_amt))%>%
     mutate_at(vars(cop_budget_total,expenditure_amt),~replace_na(.,0))%>%
     #mutate( fundingagency = fct_relevel(fundingagency, "USAID","CDC"))%>%
     
     
     
-    group_by(prime_partner_name,fiscal_year)%>%
+    group_by(primepartner,fiscal_year)%>%
     summarise_at(vars(cop_budget_total,expenditure_amt), sum, na.rm = TRUE)%>%
     dplyr::mutate(budget_execution=percent_clean(expenditure_amt,cop_budget_total))%>%
     ungroup()%>%
@@ -35,9 +66,9 @@ get_ou_partner<-function(df,funding_agency="fundingagency", ou="operatingunit"){
     ea_style()%>%
     #gt()%>%
     cols_label(
-      prime_partner_name = "Partner")%>%
+      primepartner = "Partner")%>%
     tab_header(
-      title = glue::glue("{funding_agency} COP2019 & COP2020 {ou} Financial Performance Summary"),
+      title = glue::glue("{funding_agency} COP19 & COP20 {ou} Financial Performance Summary"),
     subtitle = legend_chunk) %>%
     
     tab_options(footnotes.font.size = "small")
@@ -96,3 +127,8 @@ get_ou_mechanism<-function(df,funding_agency="fundingagency", ou="operatingunit"
 }
 
 get_ou_mechanism(df_fsd,"USAID", "Malawi")
+
+
+
+
+
