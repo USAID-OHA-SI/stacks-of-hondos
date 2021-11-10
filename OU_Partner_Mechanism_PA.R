@@ -96,8 +96,8 @@ get_ou_partner_pa<-function(df, ou="operatingunit"){
   return(df)
 }
 
-get_ou_partner_pa(df_fsd, "Malawi")
 
+#select path where images will be exported to
 table_out<-"GitHub/stacks-of-hondos/Images/ou_partner_pa"
 #to run for one OU testing below
 get_ou_partner_pa(df_fsd, "Zimbabwe")%>%
@@ -158,6 +158,9 @@ get_ou_mechanism_pa<-function(df, ou="operatingunit"){
   return(df)
 }
 
+#select path where images will be exported to
+table_out<-"GitHub/stacks-of-hondos/Images/ou_partner_pa"
+#to run for one OU testing below
 get_ou_mechanism_pa(df_fsd, "Zimbabwe") %>% 
 gtsave(.,path=table_out,"Zimbabwe_Mechanism_PA.png")
 

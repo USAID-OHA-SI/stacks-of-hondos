@@ -91,7 +91,7 @@ get_ou_partner<-function(df, ou="operatingunit"){
 get_ou_partner(df_fsd,"Malawi")
 
 
-##Output for Partner Level=======
+#select path where images will be exported to
 table_out<-"GitHub/stacks-of-hondos/Images/ou_partner"
 #to run for one OU testing below
 get_ou_partner(df_fsd, "Malawi")%>%
@@ -154,6 +154,7 @@ get_ou_mechanism<-function(df, ou="operatingunit"){
 get_ou_mechanism(df_fsd, "Malawi")
 
 
+#select path where images will be exported to
 table_out<-"GitHub/stacks-of-hondos/Images/ou_partner"
 #to run for one OU testing below
 get_ou_mechanism(df_fsd, "Botswana")%>%
