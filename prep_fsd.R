@@ -7,8 +7,7 @@
 
 # LOCALS & SETUP ============================================================================
 
-#prep and cleaning fsd
-#issues with source note at the end of the function
+#use this function to read to clean and read in financial dataset
 prep_fsd <-function(df){ 
   
   #removing
@@ -48,11 +47,7 @@ prep_fsd <-function(df){
     summarise_at(vars(cop_budget_total, expenditure_amt), sum, na.rm = TRUE) %>% 
   ungroup()
   
- # df<-df%>%
-  #  dplyr::mutate(budget_execution = percent_clean(expenditure_amt, cop_budget_total))
-  
-  #df<-df%>%
-   # dplyr::mutate(budget_execution= as.numeric(`budget_execution`))
+
  
   return(df)  
   
