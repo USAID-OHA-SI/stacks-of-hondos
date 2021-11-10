@@ -116,3 +116,15 @@ country_list<-si_path()%>%
   gophr::read_msd()%>%
   distinct(countryname)%>%
   pull()
+
+lts_countries<-si_path()%>%
+  return_latest("COP17")%>%
+  gophr::read_msd()%>%
+  distinct(operatingunit)%>%
+  dplyr::filter(!operatingunit=="Asia Region")%>%
+  dplyr::filter(!operatingunit=="Western Hemisphere Region")%>%
+  dplyr::filter(!operatingunit=="Angola")%>%
+  dplyr::filter(!operatingunit=="West Africa Region")%>%
+  dplyr::filter(!operatingunit=="Dominican Republic")%>%
+  pull()
+  
