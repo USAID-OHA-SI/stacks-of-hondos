@@ -117,6 +117,24 @@ country_list<-si_path()%>%
   distinct(countryname)%>%
   pull()
 
+#filter for country list as regionals but remove WAR-WAR and Benin which has no funding for now
+country_list_regionals<-si_path()%>%
+  return_latest("COP17")%>%
+  gophr::read_msd()%>%
+  dplyr::filter(operatingunit=="Asia Region" | operatingunit=="Western Hemisphere Region" |operatingunit=="West Africa Region")%>%
+  dplyr::mutate(agg_type = "Region-Country",
+                operatingunit = paste(operatingunit, countryname, sep = "-")) %>% 
+  distinct(operatingunit)%>%
+  filter(!operatingunit=="West Africa Region-West Africa Region")%>%
+  filter(!operatingunit=="West Africa Region-Benin")%>%
+  filter(!operatingunit=="West Africa Region-Sierra Leone")%>%
+  filter(!operatingunit=="Asia Region-Central Asia Region")%>%
+  filter(!operatingunit=="Asia Region-Asia Regional Program")%>%
+  filter(!operatingunit=="Western Hemisphere Region-Caribbean Region")%>%
+  filter(!operatingunit=="Western Hemisphere Region-Central America Region")%>%
+  #%>%
+  pull()
+
 lts_countries<-si_path()%>%
   return_latest("COP17")%>%
   gophr::read_msd()%>%
@@ -128,3 +146,23 @@ lts_countries<-si_path()%>%
   dplyr::filter(!operatingunit=="Dominican Republic")%>%
   pull()
   
+
+
+#Use this function to concatenate the regional countries into one column (i.e. Asia Region-Laos)
+#In order to  create regional views
+label_aggregation <- function(df, type = "OU") {
+  
+  if(!type %in% c("Regional", "OU")) {
+    stop("Please select the type of aggregation label to apply: OU or Regional ")
+  }  
+  
+  
+ if (type == "Regional") {
+    df %>% 
+      dplyr::mutate(agg_type = "Region-Country",
+                    operatingunit = paste(operatingunit, countryname, sep = "-")) %>% 
+      dplyr::select(-countryname)
+  } else {
+    df %>% dplyr::mutate(agg_type = "OU")
+  }
+}
