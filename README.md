@@ -17,7 +17,7 @@ The EA Branch currently uses the following functions to produce budget tables fo
 
 7. **ou_partner_mechanism**: this can be used to generate an ou-specific table of budget execution by prime partner or mechanism
 
-&. **ou_partner_mechanism_pa**: this can be used to generate an ou-specific table of budget execution by prime partner/mechanism and program area
+8. **ou_partner_mechanism_pa**: this can be used to generate an ou-specific table of budget execution by prime partner/mechanism and program area
 
 
 
