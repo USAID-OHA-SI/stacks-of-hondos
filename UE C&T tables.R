@@ -85,7 +85,7 @@ source("~/GitHub/stacks-of-hondos/utilities.R")
       pivot_wider(names_from = programatic,
                   values_from=value)%>%
       dplyr::mutate(unit_expenditure=percent_clean(expenditure_amt,cumulative))%>%
-      filter(fiscal_year=="2020")%>%
+      filter(fiscal_year=="2021")%>%
       select(operatingunit,fundingagency,mech_code, mech_name, primepartner,program, indicator, unit_expenditure)%>%
       pivot_wider(names_from =indicator,
                   values_from=unit_expenditure)%>%
