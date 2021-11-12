@@ -25,7 +25,7 @@ ea_style<-function(df){
   
   tab_style(
     style = cell_borders(
-      sides = "right",
+      sides = "all",
       weight = px(1.5),
     ),
     locations = cells_body(
