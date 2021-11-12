@@ -144,7 +144,7 @@ get_global_usaid_lp_be<-function(df){
       locations = cells_column_labels(
         columns =c(expenditure_amt_2020, expenditure_amt_2021)))%>%
     tab_header(
-      title = glue::glue(" COP19 & COP20 Local Partner Financial Performance Summary"),
+      title = glue::glue(" COP19 & COP20 Local Partner Program Financial Summary: Global"),
       subtitle = legend_chunk)%>%
     gt::tab_source_note(
       source_note = ("USAID mechanisms only. Partner designations provided by the OHA Local Partners Team. Visual excludes TBDs"))%>%
@@ -290,7 +290,7 @@ get_global_usaid_lp_be_lts<-function(df){
       locations = cells_column_labels(
         columns =c(expenditure_amt_2020, expenditure_amt_2021)))%>%
     tab_header(
-      title = glue::glue(" COP19 & COP20 Local Partner Financial Performance Summary: LTS Countries"),
+      title = glue::glue(" COP19 & COP20 Local Partner Program Financial Summary: LTS Countries"),
       subtitle = legend_chunk)%>%
     gt::tab_source_note(
       source_note = ("USAID mechanisms only. Partner designations provided by the OHA Local Partners Team. Visual excludes TBDs"))%>%
@@ -302,7 +302,7 @@ get_global_usaid_lp_be_lts<-function(df){
 }
 ####Output========
 table_out<-"GitHub/stacks-of-hondos/Images/lp"
-get_global_usaid_lp_be(df_fsd)%>%
+get_global_usaid_lp_be_lts(df_fsd)%>%
   gtsave(path=table_out,filename = "lts_usaid_lp_performance.png")
 
 
