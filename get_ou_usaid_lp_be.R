@@ -89,7 +89,7 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
    
     tab_style(
       style = cell_borders(
-        sides = "right",
+        sides = "all",
         weight = px(1.5),
       ),
       locations = cells_body(
@@ -145,7 +145,7 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
       locations = cells_column_labels(
         columns =c(expenditure_amt_2020, expenditure_amt_2021)))%>%
     tab_header(
-      title = glue::glue(" COP19 & COP20 {ou} Local Partner Financial Performance Summary"),
+      title = glue::glue(" COP19 & COP20 Local Partner Program Financial Summary: {ou}"),
       subtitle = legend_chunk)%>%
     gt::tab_source_note(
       source_note = ("USAID mechanisms only. Partner designations provided by the OHA Local Partners Team. Visual excludes TBDs"))%>%
