@@ -301,8 +301,16 @@ get_global_usaid_lp_be_lts<-function(df){
   return(df)
 }
 ####Output========
-table_out<-"GitHub/stacks-of-hondos/Images/lp"
+table_out<-"GitHub/stacks-of-hondos/Images/Local Partners"
 get_global_usaid_lp_be_lts(df_fsd)%>%
   gtsave(path=table_out,filename = "lts_usaid_lp_performance.png")
+
+#Uploading to google drive===============================================
+source("~/GitHub/stacks-of-hondos/upload_dir_to_gdrive.R")
+
+local_p <- table_out
+g_path <- '1V_58kCkggfpY89_-C1rmmrIn4wHzGJ_D'
+
+upload_dir_to_gdrive(local_p, g_path)
 
 
