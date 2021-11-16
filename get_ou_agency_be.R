@@ -50,7 +50,7 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
   return(df)
 }
 #Output========
-table_out<-"GitHub/stacks-of-hondos/Images/budget execution"
+table_out<-"GitHub/stacks-of-hondos/Images/OU"
 #to run for one OU below. Be sure to name the ou 
 get_ou_agency_be(df_fsd, "South Africa")%>%
   gtsave(.,path=table_out,"test_be.png")
