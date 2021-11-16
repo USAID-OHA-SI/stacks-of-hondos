@@ -18,17 +18,21 @@ df_fsd<-si_path()%>%
 #Be sure to load the following source files below before running
 source("~/GitHub/stacks-of-hondos/utilities.R")
 
+#ensure glamr load_secrets is loaded to get partner type data
+glamr::load_secrets()
+#apply partner type data to fsd before starting
+df_fsd<-df_fsd%>%
+  glamr::apply_partner_type()
 
 
 get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
-  glamr::load_secrets()
+  
   df<-df%>%
     remove_mo()%>%
     remove_sch("SGAC")%>%
     dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
     dplyr::filter(fundingagency=="USAID")%>%
     dplyr::filter(operatingunit %in% ou)%>%
-    glamr::apply_partner_type()%>%
     dplyr::filter(partner_type_usaid_adjusted=="Local" | partner_type_usaid_adjusted=="International" )%>%
     dplyr::select (c(partner_type_usaid_adjusted,fiscal_year,cop_budget_total,expenditure_amt))%>%
     group_by(partner_type_usaid_adjusted,fiscal_year)%>%
@@ -156,13 +160,19 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
   return(df)
 }
 ##Output the file=======
-table_out<-"GitHub/stacks-of-hondos/Images/lp"
+table_out<-"GitHub/stacks-of-hondos/Images/Local Partners"
 #to run for one OU, change the OU name below and change test to OU name.
-get_ou_usaid_lp_be(df_fsd, "Mozambique")%>%
-gtsave(.,path=table_out,"Mozambique_lp.png") 
+#get_ou_usaid_lp_be(df_fsd, "Mozambique")%>%
+#gtsave(.,path=table_out,"Mozambique__lp_budget_execution.png") 
 
 #to run for all OUs.You can also run for country use country_list in place of ou_list
-purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
+purrr::map(ou_list, ~get_ou_usaid_lp_be(df_fsd, ou = .x)%>%
 gtsave(.,path=table_out,filename = glue::glue("{.x}_lp_budget_execution.png")))
 
+#Uploading to google drive===============================================
+source("~/GitHub/stacks-of-hondos/upload_dir_to_gdrive.R")
 
+local_p <- table_out
+g_path <- '1V_58kCkggfpY89_-C1rmmrIn4wHzGJ_D'
+
+upload_dir_to_gdrive(local_p, g_path)
