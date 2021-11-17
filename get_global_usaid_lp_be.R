@@ -161,7 +161,7 @@ gtsave(path=table_out,filename = "global_usaid_lp_performance.png")
 
 
 
-#You can run a version of the function above for just LTS countries
+#You can run a version of the function above for just LTS countries=============================
 get_global_usaid_lp_be_lts<-function(df){
   glamr::load_secrets()
   df<-df%>%

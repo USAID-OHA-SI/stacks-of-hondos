@@ -155,7 +155,7 @@ source("~/GitHub/stacks-of-hondos/utilities.R")
           align = "left",
           columns = 1)%>%
       tab_header(
-        title = glue::glue(" COP20 {ou} Unit Expenditure: Treatment Cascade"))%>% 
+        title = glue::glue(" COP20 Unit Expenditure: {ou} Treatment Cascade"))%>% 
       gt::tab_source_note(
         source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions"))
       )%>%

@@ -47,7 +47,7 @@ get_ou_agency_be_reg<-function(df, ou="operatingunit"){
     cols_label(
       fundingagency = "Funding Agency")%>%
     tab_header(
-      title = glue::glue("COP19 & COP Program Financial Summary: {ou}"),
+      title = glue::glue("COP19 & COP20 Program Financial Summary: {ou}"),
       subtitle = legend_chunk)
   
   
@@ -59,7 +59,8 @@ get_ou_agency_be_reg<-function(df, ou="operatingunit"){
 table_out<-"GitHub/stacks-of-hondos/Images/Regional"
 
 #to run for one OU below. Be sure to name the ou 
-get_ou_agency_be_reg(df_fsd, "Asia Region-Asia Regional Program")
+#get_ou_agency_be_reg(df_fsd, "	
+#Asia Region-Asia Region")
 #to run all
 purrr::map(country_list_regionals, ~get_ou_agency_be_reg(df_fsd, ou = .x)%>%
              gtsave(.,path=table_out,filename = glue::glue("{.x}_budget_execution.png")))
