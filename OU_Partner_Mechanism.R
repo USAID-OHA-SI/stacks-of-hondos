@@ -80,7 +80,7 @@ get_ou_partner<-function(df, ou="operatingunit"){
     cols_label(
       primepartner = "Partner")%>%
     tab_header(
-      title = glue::glue("COP19 & COP20 {ou} Financial Performance Summary"),
+      title = glue::glue("COP19 & COP20 {ou} Program Financial Performance Summary"),
     subtitle = legend_chunk) %>%
     
     tab_options(footnotes.font.size = "small")
@@ -143,7 +143,7 @@ get_ou_mechanism<-function(df, ou="operatingunit"){
     cols_label(
       mech_id_mech_name = "Mechanism")%>%
     tab_header(
-      title = glue::glue("COP19 & COP20 {ou} Financial Performance Summary"),
+      title = glue::glue("COP19 & COP20 {ou} Program Financial Performance Summary"),
       subtitle = legend_chunk) %>%
     
     tab_options(footnotes.font.size = "small")
