@@ -26,12 +26,11 @@ source("~/GitHub/stacks-of-hondos/utilities.R")
 
 
 
-# MUNGE FSD ============================================================================
-  
-  df_fsd<-df_fsd%>%
+    # MUNGE FSD ============================================================================
+    
+    df_fsd<-df_fsd%>%
       remove_mo()%>%
       clean_agency()%>%
-      select(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner, fiscal_year, program,cop_budget_total, expenditure_amt)%>%
       group_by(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner, program) %>% 
       #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
       summarise_at(vars(cop_budget_total, expenditure_amt), sum, na.rm = TRUE) %>% 
@@ -39,7 +38,7 @@ source("~/GitHub/stacks-of-hondos/utilities.R")
       filter(program %in% progs)
     
     
-# MUNGE MSD ============================================================================
+    # MUNGE MSD ============================================================================
     
     df_msd<-df_msd%>%
       filter(standardizeddisaggregate=="Total Numerator")%>%
@@ -50,22 +49,25 @@ source("~/GitHub/stacks-of-hondos/utilities.R")
       #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
       summarise_at(vars(cumulative,targets), sum, na.rm = TRUE) %>% 
       ungroup()%>%
-
-          dplyr::mutate(program = dplyr::case_when(indicator    == "TX_CURR"    ~"C&T", 
-                                                   indicator    == "TX_NEW"    ~"C&T",
-                                                   indicator =="HTS_TST" ~"HTS",
-                                                   indicator == "HTS_TST_POS" ~"HTS",
-                                                      
-                                                      TRUE ~indicator))%>%
-          filter(fundingagency!="Dedup")%>%
-         dplyr::filter(targets>0)
-        
+      
+      dplyr::mutate(program = dplyr::case_when(indicator    == "TX_CURR"    ~"C&T", 
+                                               indicator    == "TX_NEW"    ~"C&T",
+                                               indicator =="HTS_TST" ~"HTS",
+                                               indicator == "HTS_TST_POS" ~"HTS",
+                                               
+                                               TRUE ~indicator))
+      df_msd<-df_msd%>%
+      filter(!fundingagency=="DEDUP")%>%
+      dplyr::filter(targets>0)
+    #  %>% pivot_wider(names_from = program,
+    #               values_from=cumulative)
     
-   
-   
     
     
-#join datasets together 
+    
+    
+    
+    #join datasets together 
     df_ue<-left_join(df_fsd,df_msd)
     
     df_ue<-df_ue%>%
@@ -78,32 +80,68 @@ source("~/GitHub/stacks-of-hondos/utilities.R")
                    names_to ="programatic",
                    values_to="value")%>%
       ungroup()
+    df_ue<-df_ue%>%
+      filter(programatic=="cumulative")
     
     df_ue<-df_ue%>%
       pivot_wider(names_from = financial,
                   values_from=amount)%>%
       pivot_wider(names_from = programatic,
-                  values_from=value)%>%
+                  values_from=value)
+      df_ue<-df_ue%>%
       dplyr::mutate(unit_expenditure=percent_clean(expenditure_amt,cumulative))%>%
-      filter(fiscal_year=="2021")%>%
-      select(operatingunit,fundingagency,mech_code, mech_name, primepartner,program, indicator, unit_expenditure)%>%
+      filter(fiscal_year=="2020")
+    df_ue<-df_ue%>%select(operatingunit,fundingagency,mech_code, mech_name, primepartner,program, indicator, unit_expenditure, cumulative)%>%
       pivot_wider(names_from =indicator,
-                  values_from=unit_expenditure)%>%
-      select(operatingunit,fundingagency,mech_code, mech_name, primepartner,TX_CURR, TX_NEW, HTS_TST, HTS_TST_POS)%>%
-      pivot_longer(TX_CURR:HTS_TST_POS,
-                   names_to ="UE",
-                   values_to="value")%>%
-      mutate_at(vars(value),~replace_na(.,0))%>%
-        filter(value>0)%>%
-      group_by(operatingunit,fundingagency, mech_code, mech_name, primepartner,UE)%>%
-      summarise_at(vars(value), sum, na.rm = TRUE)%>%
-      pivot_wider(names_from =UE,
-                  values_from=value)%>%
-      mutate("prime_mech"=glue("{primepartner}- {mech_code}"))%>%
-      dplyr::relocate(prime_mech, .before = HTS_TST)%>%
-      dplyr::rename("TST_POS"="HTS_TST_POS")
+                  values_from=cumulative:unit_expenditure)
+    
+    
+    
+    df_ue<-df_ue%>%
+      select(operatingunit,fundingagency,mech_code, mech_name, primepartner,cumulative_HTS_TST,cumulative_HTS_TST_POS,
+             cumulative_TX_CURR,cumulative_TX_NEW,
+             unit_expenditure_HTS_TST,unit_expenditure_HTS_TST_POS,
+             unit_expenditure_TX_CURR,unit_expenditure_TX_NEW,)
+    
+    
+    df_ue<-df_ue%>%     group_by(operatingunit,fundingagency,mech_code, mech_name, primepartner,)%>%
+      summarise_at(vars(cumulative_HTS_TST: unit_expenditure_TX_NEW  ), sum, na.rm = TRUE)
+    #df_ue<-df_ue%>%    pivot_longer(unit_expenditure_HTS_TST:unit_expenditure_TX_NEW,
+    #          names_to ="UE",
+    #         values_to="value")%>%
+    #    pivot_longer(cumulative_HTS_TST:cumulative_TX_NEW,
+    #                names_to ="Results",
+    #               values_to="total")%>%
+    #df_ue<-df_ue%>% mutate_at(vars(total,value),~replace_na(.,0))%>%
+    #  filter(total>0 & value>0)%>%
+    # df_ue<-df_ue%>%     group_by(mech_code, mech_name, primepartner,countryname, UE, Results)%>%
+    #  summarise_at(vars(value,total), sum, na.rm = TRUE)%>%
+    # pivot_wider(names_from =UE,
+    #            values_from=value)%>%
+    df_ue<-df_ue%>%
+      dplyr::mutate(primepartner = dplyr::case_when(primepartner    == "FHI Development 360 LLC"    ~"FHI360",
+                                                    primepartner    ==   "Family Health International"    ~"FHI360",
+                                                    primepartner    ==  "Abt Associates, Inc." ~ "Abt Associates Inc",
+                                                    
+                                                    TRUE ~primepartner))%>%
+      mutate("prime_mech"=glue("{primepartner}- {mech_code}"))
       
-     
+      df_ue<-df_ue%>%
+      dplyr::relocate(prime_mech, .before = cumulative_HTS_TST)
+      df_ue<-df_ue%>%
+      dplyr::relocate(unit_expenditure_HTS_TST , .before = cumulative_HTS_TST)%>%
+      dplyr::relocate( unit_expenditure_HTS_TST_POS, .before = cumulative_HTS_TST_POS)
+      df_ue<-df_ue%>%
+      dplyr::relocate(unit_expenditure_TX_CURR, .before = cumulative_TX_CURR)%>%
+      dplyr::relocate(unit_expenditure_TX_NEW, .before = cumulative_TX_NEW)
+      df_ue<-df_ue%>%  
+      dplyr::rename("cumulative_TST_POS"="cumulative_HTS_TST_POS")%>%
+      dplyr::rename("unit_expenditure_TST_POS"="unit_expenditure_HTS_TST_POS")%>%
+      ungroup
+    
+    df_ue<-df_ue%>%
+      filter(unit_expenditure_HTS_TST>0 | cumulative_HTS_TST> 0 |unit_expenditure_TST_POS>0 |cumulative_TST_POS>0
+             |unit_expenditure_TX_CURR>0 |cumulative_TX_CURR >0 |unit_expenditure_TX_NEW>0| cumulative_TX_NEW  >0)
   
 # gt function ============================================================================
 
@@ -121,9 +159,14 @@ source("~/GitHub/stacks-of-hondos/utilities.R")
         columns=c("operatingunit","fundingagency","mech_code","mech_name","primepartner",
                   ))%>%
       fmt_currency( # add dolar signs
-        columns = c("HTS_TST":"TX_NEW"),
+        columns = contains("unit_expenditure"),
         decimals = 0,
         currency = "USD")%>%
+      fmt_number(
+        columns = contains("cumulative"),
+        decimals = 0,
+        use_seps = TRUE
+      )%>%
       fmt_missing(columns = everything(),
                   missing_text = "-")%>%
       tab_options(
@@ -131,11 +174,20 @@ source("~/GitHub/stacks-of-hondos/utilities.R")
       ) %>% 
       
       cols_width(
-        starts_with("prime") ~ px(140),
+        starts_with("prime_mech") ~ px(140),
         everything() ~ px(80)
       )%>%
       cols_label( #update GT to check on tidy select), also look at clean_names, also potentially case_when
         prime_mech = "Mechanism",
+        unit_expenditure_HTS_TST="TST UE",
+        unit_expenditure_TST_POS="TST POS UE",
+        unit_expenditure_TX_CURR="TX CURR UE",
+        unit_expenditure_TX_NEW="TX NEW UE",
+        cumulative_HTS_TST ="TST Results",
+        cumulative_TST_POS ="TST POS Results",
+        cumulative_TX_CURR ="TX CURR Results",
+        cumulative_TX_NEW ="TX NEW Results",
+        
       )%>%
       
       tab_style(
@@ -151,9 +203,9 @@ source("~/GitHub/stacks-of-hondos/utilities.R")
         align = "center",
         columns = everything()
       )%>%
-        cols_align(
-          align = "left",
-          columns = 1)%>%
+      cols_align(
+        align = "left",
+        columns = 1)%>%
       tab_header(
         title = glue::glue(" COP20 Unit Expenditure: {ou} Treatment Cascade"))%>% 
       gt::tab_source_note(
@@ -161,15 +213,17 @@ source("~/GitHub/stacks-of-hondos/utilities.R")
       )%>%
       
       tab_footnote(
-        footnote = "A unit expenditure (UE) is a calculation of partner-level expenditures for a given program area (source: ER) divided by the number of associated beneficiaries (source: MER). Total IM-level expenditure within a program area, divided by IM-specific result value.  Can only be calculated for mechanisms that have both expenditures and results within a given program area. It can be interpreted as the spend per beneficiary reached with those resources. UEs across partners should be interpreted within the programmatic context, as there are differences in factors such as scope, funding profile, and geography.",
+        footnote = md( "A unit expenditure (UE) is a calculation of partner-level expenditures for a given program area (source: ER) divided by the number of associated beneficiaries (source: MER). Total IM-level expenditure within a program area, divided by IM-specific result value.  Can only be calculated for mechanisms that have both expenditures and results within a given program area. It can be interpreted as the spend per beneficiary reached with those resources. **UEs across partners should be interpreted within the programmatic context, as there are differences in factors such as scope, funding profile, and geography.**"),
         locations = cells_column_labels(
-          columns =c(HTS_TST)))%>%
+          columns =c(unit_expenditure_HTS_TST)))%>%
       
       gt::tab_options(
         source_notes.font.size = 8,
         table.font.size = 13, 
         data_row.padding = gt::px(5),
-        source_notes.padding = gt::px(1),)
+        source_notes.padding = gt::px(1),)%>%
+  
+      opt_row_striping()
     return(df)
     }
 
