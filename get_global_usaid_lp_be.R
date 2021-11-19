@@ -19,15 +19,20 @@ df_fsd<-si_path()%>%
 source("~/GitHub/stacks-of-hondos/ea_style.R")
 source("~/GitHub/stacks-of-hondos/utilities.R")
 
+#ensure glamr load_secrets is loaded to get partner type data
+glamr::load_secrets()
+#apply partner type data to fsd before starting
+df_fsd<-df_fsd%>%
+  glamr::apply_partner_type()
+
+
 
 get_global_usaid_lp_be<-function(df){
-  glamr::load_secrets()
   df<-df%>%
     remove_mo()%>%
     remove_sch("SGAC")%>%
     dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
     dplyr::filter(fundingagency=="USAID")%>%
-    glamr::apply_partner_type()%>%
     dplyr::filter(partner_type_usaid_adjusted=="Local" | partner_type_usaid_adjusted=="International" )%>%
     dplyr::select (c(partner_type_usaid_adjusted,fiscal_year,cop_budget_total,expenditure_amt))%>%
     group_by(partner_type_usaid_adjusted,fiscal_year)%>%
@@ -89,7 +94,7 @@ get_global_usaid_lp_be<-function(df){
     tab_style(
       style = cell_borders(
         sides = "right",
-        weight = px(1.5),
+        weight = px(1),
       ),
       locations = cells_body(
         columns = everything(),
@@ -163,7 +168,6 @@ gtsave(path=table_out,filename = "global_usaid_lp_performance.png")
 
 #You can run a version of the function above for just LTS countries=============================
 get_global_usaid_lp_be_lts<-function(df){
-  glamr::load_secrets()
   df<-df%>%
     remove_mo()%>%
     remove_sch("SGAC")%>%
@@ -173,7 +177,6 @@ get_global_usaid_lp_be_lts<-function(df){
     dplyr::filter(!operatingunit=="Angola")%>%
     dplyr::filter(!operatingunit=="West Africa Region")%>%
     dplyr::filter(!operatingunit=="Dominican Republic")%>%
-    glamr::apply_partner_type()%>%
     dplyr::filter(partner_type_usaid_adjusted=="Local" | partner_type_usaid_adjusted=="International" )%>%
     dplyr::select (c(partner_type_usaid_adjusted,fiscal_year,cop_budget_total,expenditure_amt))%>%
     group_by(partner_type_usaid_adjusted,fiscal_year)%>%
@@ -235,7 +238,7 @@ get_global_usaid_lp_be_lts<-function(df){
     tab_style(
       style = cell_borders(
         sides = "right",
-        weight = px(1.5),
+        weight = px(1),
       ),
       locations = cells_body(
         columns = everything(),
