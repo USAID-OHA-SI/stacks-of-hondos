@@ -85,7 +85,7 @@ purrr::map(ou_list, ~get_ou_pa(df_fsd, ou = .x)%>%
              gtsave(.,path=table_out,filename = glue::glue("{.x}_pa_budget_execution.png")))
 
 #Uploading to google drive===============================================
-source("~/GitHub/stacks-of-hondos/upload_dir_to_gdrive.R")
+source("~/GitHub/EA-Utilities/upload_dir_to_gdrive.R")
 
 local_p <- table_out
 g_path <- '1V_58kCkggfpY89_-C1rmmrIn4wHzGJ_D'
