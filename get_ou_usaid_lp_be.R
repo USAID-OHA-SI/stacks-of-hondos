@@ -94,7 +94,7 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
     tab_style(
       style = cell_borders(
         sides = "all",
-        weight = px(1.5),
+        weight = px(1),
       ),
       locations = cells_body(
         columns = everything(),
@@ -162,8 +162,8 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
 ##Output the file=======
 table_out<-"GitHub/stacks-of-hondos/Images/Local Partners"
 #to run for one OU, change the OU name below and change test to OU name.
-#get_ou_usaid_lp_be(df_fsd, "Mozambique")%>%
-#gtsave(.,path=table_out,"Mozambique__lp_budget_execution.png") 
+get_ou_usaid_lp_be(df_fsd, "Mozambique")%>%
+gtsave(.,path=table_out,"Mozambique__lp_budget_execution.png") 
 
 #to run for all OUs.You can also run for country use country_list in place of ou_list
 purrr::map(ou_list, ~get_ou_usaid_lp_be(df_fsd, ou = .x)%>%
