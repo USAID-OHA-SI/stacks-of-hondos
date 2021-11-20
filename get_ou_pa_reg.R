@@ -11,6 +11,7 @@ library(glamr)
 library(gt)
 library(tidyverse)
 library(glue)
+library(gophr)
 
 git_src <- "~/GitHub"
 source(glue("{git_src}/stacks-of-hondos/ea_style.R"))

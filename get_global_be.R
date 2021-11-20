@@ -56,6 +56,14 @@ df_fsd<-si_path()%>%
 # Output: 
 #       * Feel free to change the path you are saving the file to, by changing
 #         the variable "table_out"
-table_out<-"GitHub/stacks-of-hondos/Images/global execution"
+table_out<-"GitHub/stacks-of-hondos/Images/global performance"
 get_global_agency_be(df_fsd)%>%
   gtsave(., path=table_out, filename="global performance_all_agencies.png")
+
+#Uploading to google drive===============================================
+source("~/GitHub/EA-Utilities/upload_dir_to_gdrive.R")
+
+local_p <- table_out
+g_path <- '1V_58kCkggfpY89_-C1rmmrIn4wHzGJ_D'
+
+upload_dir_to_gdrive(local_p, g_path)

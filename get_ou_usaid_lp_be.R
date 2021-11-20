@@ -154,7 +154,8 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
     gt::tab_source_note(
       source_note = ("USAID mechanisms only. Partner designations provided by the OHA Local Partners Team. Visual excludes TBDs"))%>%
     gt::tab_source_note(
-      source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to gh.oha.ea@usaid.gov for questions"))
+      source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions. Please note that FY21 ER data does not include the following 
+    mechanisms due to data import issues: 70031-Cameroon, 80052-DR, 81108-DR, 18093-DRC, 81894-South Africa,70388-Uganda, 81978-Uganda, 85157-WAR, 85155-WAR, 85158-WAR, 85213-WHR. "))
     ) 
    
   return(df)
