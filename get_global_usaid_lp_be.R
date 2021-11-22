@@ -173,6 +173,7 @@ get_global_usaid_lp_be_lts<-function(df){
     remove_mo()%>%
     remove_sch("SGAC")%>%
     dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
+    dplyr::filter(fundingagency=="USAID")%>%
     dplyr::filter(!operatingunit=="Asia Region")%>%
     dplyr::filter(!operatingunit=="Western Hemisphere Region")%>%
     dplyr::filter(!operatingunit=="Angola")%>%
@@ -306,7 +307,7 @@ get_global_usaid_lp_be_lts<-function(df){
   return(df)
 }
 ####Output========
-table_out<-"GitHub/stacks-of-hondos/Images/Local Partners"
+table_out<-"GitHub/stacks-of-hondos/Images/global performance"
 get_global_usaid_lp_be_lts(df_fsd)%>%
   gtsave(path=table_out,filename = "lts_usaid_lp_performance.png")
 
