@@ -31,7 +31,6 @@ countrylist2 <- read_xlsx("C:/Users/jmontespenaloza/Documents/Raw Datasets/count
   dplyr::distinct(countryname) %>% 
   dplyr::pull(countryname)
 
-read_xlsx("C:/Users/jmontespenaloza/Documents/Raw Datasets/countrly_list_two.xlsx")
 
 #This function can be used to print out budget execution by partner type (local, international)for USAID at a global level. 
 #You will need to ensure that you have load_secrets from the glamr package set up beforehand
@@ -114,8 +113,6 @@ purrr::map(countrylist2, ~get_ou_partner_pa(df_fsd, ou = .x)%>%
 
 
 
-
-glimpse(df_fsd)
 
 #Mechanism Section====================================================================
 #Run the following function to have COP19 & COP20 Financial performance by OUxMechanismxProgramArea
