@@ -181,7 +181,7 @@ purrr::map(countrylist2, ~get_ou_mechanism_pa(df_fsd, ou = .x)%>%
 #GT TABLE FOR A SPECIFIC MECHANISM
 #Mechanism Section====================================================================
 #Run the following function to have COP19 & COP20 Financial performance by OUxMechanismxProgramArea
-get_ou_mechanism_pa<-function(df, ou="operatingunit", id="mech_id_mech_name"){
+get_ou_mech_pa_only<-function(df, ou="operatingunit", id="mech_id_mech_name"){
   df<-df_fsd%>%
     prep_fsd()%>%
     
@@ -233,7 +233,7 @@ get_ou_mechanism_pa<-function(df, ou="operatingunit", id="mech_id_mech_name"){
 #select path where images will be exported to
 table_out<-"GitHub/stacks-of-hondos/Images/specific_mechanism"
 #to run for one OU testing below
-get_ou_mechanism_pa(df_fsd, "Namibia", "13752 - Adherence & Retention Project") %>% 
+get_ou_mech_pa_only(df_fsd, "Namibia", "13752 - Adherence & Retention Project") %>% 
   gtsave(.,path=table_out,"Namibia_Mechanism_PA.png")
 
 
