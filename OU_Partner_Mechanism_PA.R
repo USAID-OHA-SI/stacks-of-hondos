@@ -44,7 +44,7 @@ source("~/GitHub/stacks-of-hondos/utilities.R")
 
 #Partner Section====================================================================
 #Run the following function to have COP19 & COP20 Financial performance by OUxPartnerxProgramArea
-get_ou_partner_pa<-function(df, ou="countryname"){
+get_ou_partner_pa<-function(df, ou="operatingunit"){
   df<-df%>%
     prep_fsd()%>%
     
@@ -54,7 +54,7 @@ get_ou_partner_pa<-function(df, ou="countryname"){
     
     #filter for OU
     #dplyr::filter(operatingunit== "Mozambique")%>%
-    dplyr::filter(countryname %in% ou)%>%
+    dplyr::filter(operatingunit %in% ou)%>%
     #dplyr::filter(fundingagency %in% funding_agency) %>% 
     
     
@@ -71,7 +71,7 @@ get_ou_partner_pa<-function(df, ou="countryname"){
     ungroup(program,fiscal_year)%>%
     
     
-    
+    dplyr::arrange(fiscal_year)%>%
     
     
     pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
@@ -103,10 +103,10 @@ get_ou_partner_pa<-function(df, ou="countryname"){
 
 
 #select path where images will be exported to
-table_out<-"GitHub/stacks-of-hondos/Images/ou_partner_pa"
+table_out<-"GitHub/stacks-of-hondos/Images/OU Partner Performance by Program Area"
 #to run for one OU testing below
-get_ou_partner_pa(df_fsd, "Malawi")%>%
-  gtsave(.,path=table_out,"Zimbabwe_Partner_PA.png")
+get_ou_partner_pa(df_fsd, "West Africa Region")%>%
+  gtsave(.,path=table_out,"West Africa Region_Partner_PA.png")
 #to run for all OUs. Can also run for country use country_list in place of ou_list
 purrr::map(countrylist2, ~get_ou_partner_pa(df_fsd, ou = .x)%>%
              gtsave(.,path=table_out,filename = glue::glue("{.x}_Partner_PA.png")))
@@ -116,7 +116,7 @@ purrr::map(countrylist2, ~get_ou_partner_pa(df_fsd, ou = .x)%>%
 
 #Mechanism Section====================================================================
 #Run the following function to have COP19 & COP20 Financial performance by OUxMechanismxProgramArea
-get_ou_mechanism_pa<-function(df, ou="countryname"){
+get_ou_mechanism_pa<-function(df, ou="operatingunit"){
   df<-df%>%
     prep_fsd()%>%
     
@@ -125,7 +125,7 @@ get_ou_mechanism_pa<-function(df, ou="countryname"){
     dplyr::filter(fundingagency == "USAID") %>% 
     #filter for OU
     #dplyr::filter(operatingunit== "Mozambique")%>%
-    dplyr::filter(countryname %in% ou)%>%
+    dplyr::filter(operatingunit %in% ou)%>%
     #dplyr::filter(fundingagency %in% funding_agency) %>% 
     #dplyr::filter(mech_id_mech_name %in% id) %>% 
     #dplyr::filter(program %in% prog) %>% 
@@ -141,6 +141,8 @@ get_ou_mechanism_pa<-function(df, ou="countryname"){
     dplyr::mutate(budget_execution=percent_clean(expenditure_amt,cop_budget_total))%>%
     ungroup(program, fiscal_year)%>%
     
+    
+    dplyr::arrange(fiscal_year)%>%
     
     pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
     dplyr::relocate(expenditure_amt_2020, .before = cop_budget_total_2020) %>%
@@ -166,10 +168,10 @@ get_ou_mechanism_pa<-function(df, ou="countryname"){
 }
 
 #select path where images will be exported to
-table_out<-"GitHub/stacks-of-hondos/Images/ou_mechanism_pa"
+table_out<-"GitHub/stacks-of-hondos/Images/OU Mechanism Performance by Program Area"
 #to run for one OU testing below
-get_ou_mechanism_pa(df_fsd, "Namibia") %>% 
-gtsave(.,path=table_out,"Zimbabwe_Mechanism_PA.png")
+get_ou_mechanism_pa(df_fsd, "West Africa Region") %>% 
+gtsave(.,path=table_out,"West Africa Region_Mechanism_PA.png")
 
 #to run for all OUs. Can also run for country use country_list in place of ou_list
 purrr::map(countrylist2, ~get_ou_mechanism_pa(df_fsd, ou = .x)%>%
