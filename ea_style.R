@@ -111,8 +111,7 @@ ea_style<-function(df){
     locations = cells_column_labels(
       columns =c(expenditure_amt_2020, expenditure_amt_2021)))%>%
   gt::tab_source_note(
-    source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions. Please note that FY21 ER data does not include the following 
-    mechanisms due to data import issues: 70031-Cameroon, 80052-DR, 81108-DR, 18093-DRC, 81894-South Africa,70388-Uganda, 81978-Uganda, 85157-WAR, 85155-WAR, 85158-WAR, 85213-WHR. "))
+    source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions."))
   )
 
 }
