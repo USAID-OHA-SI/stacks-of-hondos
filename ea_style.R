@@ -110,6 +110,9 @@ ea_style<-function(df){
     footnote = "Excluding M&O",
     locations = cells_column_labels(
       columns =c(expenditure_amt_2020, expenditure_amt_2021)))%>%
+    opt_table_outline()%>%
+    
+    opt_row_striping()%>%
   gt::tab_source_note(
     source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions."))
   )
