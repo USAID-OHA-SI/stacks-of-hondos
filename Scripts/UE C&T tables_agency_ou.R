@@ -44,6 +44,7 @@ glamr::load_secrets()
     df_msd<-df_msd%>%
       filter(standardizeddisaggregate=="Total Numerator")%>%
       filter(indicator %in% indics)%>%
+  dplyr::filter(!mech_code=="16772")%>%
       clean_agency()%>%
       #dplyr::select(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator cumulative,targets)%>%
       group_by(operatingunit,fundingagency,fiscal_year,indicator) %>% 
@@ -208,8 +209,7 @@ glamr::load_secrets()
         title = ("  COP20 Unit Expenditure: Treatment Cascade"),
         subtitle = glue::glue("Operating Unit: {ou}"))%>%
       gt::tab_source_note(
-        source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions. Please note that FY21 ER data does not include the following 
-    mechanisms due to data import issues: 70031-Cameroon, 80052-DR, 81108-DR, 18093-DRC, 81894-South Africa,70388-Uganda, 81978-Uganda, 85157-WAR, 85155-WAR, 85158-WAR, 85213-WHR."))
+        source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions."))
       )%>%
       
       tab_footnote(
