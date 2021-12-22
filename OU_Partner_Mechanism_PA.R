@@ -1,5 +1,8 @@
 
 
+
+
+install.packages()
 library(glamr)
 library(tidyverse)
 library(gophr)
@@ -16,7 +19,7 @@ library(sf)
 library(glitr)
 library(readxl)
 
-
+ 
 
 #Set path where data sources are is located in folder
 set_paths(folderpath_msd="C:/Users/jmontespenaloza/Documents/Raw Datasets")
@@ -28,8 +31,8 @@ df_fsd<-si_path()%>%
   gophr::read_msd()
 
 countrylist2 <- read_xlsx("C:/Users/jmontespenaloza/Documents/Raw Datasets/countrly_list_two.xlsx") %>% 
-  dplyr::distinct(countryname) %>% 
-  dplyr::pull(countryname)
+  dplyr::distinct(country) %>% 
+  dplyr::pull(country)
 
 
 #This function can be used to print out budget execution by partner type (local, international)for USAID at a global level. 
@@ -40,14 +43,11 @@ source("~/GitHub/stacks-of-hondos/prep_fsd.R")
 source("~/GitHub/stacks-of-hondos/utilities.R")
 
 
-
-
 #Partner Section====================================================================
 #Run the following function to have COP19 & COP20 Financial performance by OUxPartnerxProgramArea
 get_ou_partner_pa<-function(df, ou="operatingunit"){
   df<-df%>%
     prep_fsd()%>%
-    
     #filter for fiscal year
     dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
     dplyr::filter(fundingagency == "USAID") %>% 
@@ -80,7 +80,7 @@ get_ou_partner_pa<-function(df, ou="operatingunit"){
     dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
     dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) %>%
     
-    
+    dplyr::filter(`cop_budget_total_2021` !=0 | `expenditure_amt_2021` !=0) %>% 
    
     #break into separate functions
     
@@ -100,6 +100,7 @@ get_ou_partner_pa<-function(df, ou="operatingunit"){
   
   return(df)
 }
+
 
 
 #select path where images will be exported to
@@ -149,6 +150,8 @@ get_ou_mechanism_pa<-function(df, ou="operatingunit"){
     dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
     dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
     dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) %>%
+    
+    dplyr::filter(`cop_budget_total_2021` !=0 | `expenditure_amt_2021` !=0) %>% 
     
     #break into separate functions
     
@@ -214,6 +217,8 @@ get_ou_mech_pa_only<-function(df, ou="operatingunit", id="mech_id_mech_name"){
     dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
     dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
     dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) %>%
+    
+    dplyr::filter(`cop_budget_total_2021` !=0 | `expenditure_amt_2021` !=0) %>% 
     
     #break into separate functions
     
