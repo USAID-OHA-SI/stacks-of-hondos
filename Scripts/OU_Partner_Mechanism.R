@@ -25,7 +25,7 @@ set_paths(folderpath_msd="C:/Users/jmontespenaloza/Documents/Raw Datasets")
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
   read_msd()
-
+ 
 
 #This function can be used to print out budget execution by partner type (local, international)for USAID at a global level. 
 #You will need to ensure that you have load_secrets from the glamr package set up beforehand

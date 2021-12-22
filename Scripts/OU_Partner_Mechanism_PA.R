@@ -41,7 +41,7 @@ countrylist2 <- read_xlsx("C:/Users/jmontespenaloza/Documents/Raw Datasets/count
 source("~/GitHub/stacks-of-hondos/ea_style.R")
 source("~/GitHub/stacks-of-hondos/prep_fsd.R")
 source("~/GitHub/stacks-of-hondos/utilities.R")
-
+ 
 
 #Partner Section====================================================================
 #Run the following function to have COP19 & COP20 Financial performance by OUxPartnerxProgramArea
