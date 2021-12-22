@@ -124,10 +124,10 @@ source("~/GitHub/stacks-of-hondos/scripts/utilities.R")
                                                     primepartner    ==  "Abt Associates, Inc." ~ "Abt Associates Inc",
                                                     
                                                     TRUE ~primepartner))%>%
-      mutate("prime_mech"=glue("{primepartner}- {mech_code}"))
+      mutate("mech"=glue("{mech_code}-{mech_name}"))
       
       df_ue<-df_ue%>%
-      dplyr::relocate(prime_mech, .before = cumulative_HTS_TST)
+      dplyr::relocate(mech, .before = cumulative_HTS_TST)
       df_ue<-df_ue%>%
       dplyr::relocate(unit_expenditure_HTS_TST , .before = cumulative_HTS_TST)%>%
       dplyr::relocate( unit_expenditure_HTS_TST_POS, .before = cumulative_HTS_TST_POS)
@@ -146,10 +146,10 @@ source("~/GitHub/stacks-of-hondos/scripts/utilities.R")
 #  function ============================================================================
 
   #   
-    get_ue<-function(df_ue, ou="operatingunit"){
-    df_ue<-df_ue%>%
-      filter(operatingunit %in% ou)
-     # filter(fiscal_year=="2020")%>%
-      #filter(TX_CURR!="NA")%>%
+    get_ue<-function(df, ou="operatingunit"){
+    df<-df%>%
+      filter(operatingunit %in% ou)%>%
+      select(fundingagency,mech:cumulative_TX_NEW)
+     
  return(df)
     }
