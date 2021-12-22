@@ -1,23 +1,7 @@
-library(glamr)
-library(tidyverse)
-library(gophr)
-library(extrafont)
-library(tidytext)
-library(gt)
-library(glue)
-library(webshot)
-
-
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
 read_msd()
 
-
-#use this function to print out budget execution by agency at different OUs. 
-#Be sure to load the following files below before running
-
-
-source("~/GitHub/stacks-of-hondos/scripts/ea_style.R")
 source("~/GitHub/stacks-of-hondos/scripts/prep_fsd.R")
 source("~/GitHub/stacks-of-hondos/scripts/utilities.R")
 
@@ -38,33 +22,9 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
     dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
     dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
     dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) %>%
-    ea_style()%>%
-    cols_label(
-     fundingagency = "Funding Agency")%>%
-    tab_header(
-      title = glue::glue(" COP19 & COP20 Program Financial Summary: {ou}"),
-      subtitle = legend_chunk)
-      
      
     
   return(df)
 }
-#Output========
-table_out<-"GitHub/stacks-of-hondos/Images/OU"
-#to run for one OU below. Be sure to name the ou 
-get_ou_agency_be(df_fsd, "South Africa")%>%
-  gtsave(.,path=table_out,"test_be.png")
-#to run for all ous
-purrr::map(ou_list, ~get_ou_agency_be(df_fsd, ou = .x)%>%
-             gtsave(.,path=table_out,filename = glue::glue("{.x}_budget_execution.png")))
-
-#Uploading to google drive===============================================
-source("~/GitHub/EA-Utilities/upload_dir_to_gdrive.R")
-
-local_p <- table_out
-g_path <- '1V_58kCkggfpY89_-C1rmmrIn4wHzGJ_D'
-
-upload_dir_to_gdrive(local_p, g_path)
-
 
 
