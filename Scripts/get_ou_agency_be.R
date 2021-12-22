@@ -17,9 +17,9 @@ read_msd()
 #Be sure to load the following files below before running
 
 
-source("~/GitHub/stacks-of-hondos/ea_style.R")
-source("~/GitHub/stacks-of-hondos/prep_fsd.R")
-source("~/GitHub/stacks-of-hondos/utilities.R")
+source("~/GitHub/stacks-of-hondos/scripts/ea_style.R")
+source("~/GitHub/stacks-of-hondos/scripts/prep_fsd.R")
+source("~/GitHub/stacks-of-hondos/scripts/utilities.R")
 
 get_ou_agency_be<-function(df, ou="operatingunit"){
   df<-df%>%

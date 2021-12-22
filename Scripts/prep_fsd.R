@@ -25,8 +25,10 @@ prep_fsd <-function(df){
   
   
   #recode values to match naming in Financial Integrated Dataset
-  dplyr::mutate(`interaction_type`= recode (`interaction_type`, "Service Delivery"= "SD",
-                                                      "Non Service Delivery"= "NSD"))%>%
+    dplyr::mutate(`interaction_type`= recode (`interaction_type`, "Service Delivery"= "SD",
+                                              "Non Service Delivery"= "NSD"))%>%
+    dplyr::mutate(`interaction_type`  = dplyr::case_when(program     == "PM"    ~"PM",
+                                                         TRUE ~`interaction_type`))%>%
   
   #Add in agency category column to group agencies
   

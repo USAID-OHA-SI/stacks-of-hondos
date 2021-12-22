@@ -32,8 +32,6 @@ glamr::load_secrets()
       remove_mo()%>%
       remove_sch("SGAC")%>%
       clean_agency()%>%
-    dplyr::filter(stringr::str_detect(operatingunit, "Region")) %>% 
-    label_aggregation ("Regional")%>%
       group_by(operatingunit,fundingagency,fiscal_year, program) %>% 
       #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
       summarise_at(vars(cop_budget_total, expenditure_amt), sum, na.rm = TRUE) %>% 
@@ -46,9 +44,8 @@ glamr::load_secrets()
     df_msd<-df_msd%>%
       filter(standardizeddisaggregate=="Total Numerator")%>%
       filter(indicator %in% indics)%>%
+  dplyr::filter(!mech_code=="16772")%>%
       clean_agency()%>%
-  dplyr::filter(stringr::str_detect(operatingunit, "Region")) %>% 
-  label_aggregation ("Regional")%>%
       #dplyr::select(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator cumulative,targets)%>%
       group_by(operatingunit,fundingagency,fiscal_year,indicator) %>% 
       #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
@@ -142,11 +139,7 @@ glamr::load_secrets()
     df_ue<-df_ue%>%
       filter(unit_expenditure_HTS_TST>0 | cumulative_HTS_TST> 0 |unit_expenditure_TST_POS>0 |cumulative_TST_POS>0
              |unit_expenditure_TX_CURR>0 |cumulative_TX_CURR >0 |unit_expenditure_TX_NEW>0| cumulative_TX_NEW  >0)
- 
-    
-  country_list_ue<-df_ue%>%
-    dplyr::distinct(operatingunit)%>%
-    pull()
+  
 # gt function ============================================================================
 
   #   
@@ -216,8 +209,7 @@ glamr::load_secrets()
         title = ("  COP20 Unit Expenditure: Treatment Cascade"),
         subtitle = glue::glue("Operating Unit: {ou}"))%>%
       gt::tab_source_note(
-        source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions. Please note that FY21 ER data does not include the following 
-    mechanisms due to data import issues: 70031-Cameroon, 80052-DR, 81108-DR, 18093-DRC, 81894-South Africa,70388-Uganda, 81978-Uganda, 85157-WAR, 85155-WAR, 85158-WAR, 85213-WHR."))
+        source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions."))
       )%>%
       
       tab_footnote(
@@ -240,12 +232,12 @@ glamr::load_secrets()
     }
 
 # Output ============================================================================
-    table_out<-"GitHub/stacks-of-hondos/Images/Regional"
+    table_out<-"GitHub/stacks-of-hondos/Images/OU"
     #to run for one OU, be sure to change the ou to the ou name
     get_ue_ou(df_ue, "Democratic Republic of the Congo")%>%
       gtsave(.,path=table_out,filename = glue::glue("global_unit_expenditure.png"))
     
     #to run for all OUs.You can also run for country use country_list in place of ou_list
-    purrr::map(country_list_ue, ~get_ue_ou(df_ue, ou = .x)%>%
+    purrr::map(ou_list, ~get_ue_ou(df_ue, ou = .x)%>%
                  gtsave(.,path=table_out,filename = glue::glue("{.x}_agency_unit_expenditure.png")))
    
