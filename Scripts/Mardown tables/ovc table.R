@@ -33,11 +33,12 @@ df_fsd<-df_fsd%>%
   remove_mo()%>%
   clean_agency()%>%
   mutate( fundingagency = fct_relevel(fundingagency, "USAID","CDC"))%>%
-  group_by(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner, program,beneficiary) %>%
   dplyr::mutate(program = dplyr::case_when(beneficiary    == "OVC"    ~"OVC", 
                                            
                                            
                                            TRUE ~program))%>%
+  group_by(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner, program,) %>%
+  
   #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
   summarise_at(vars(cop_budget_total, expenditure_amt), sum, na.rm = TRUE) %>% 
   ungroup()%>%
@@ -78,14 +79,16 @@ df_msd<-df_msd%>%
 
 
 #join datasets together 
-df_ue<-left_join(df_fsd,df_msd)%>%
+df_ue<-full_join(df_fsd,df_msd)%>%
   mutate_at(vars(cop_budget_total: OVC_SERV),~replace_na(.,0))%>%
   mutate(mech=glue("{mech_code}-{mech_name}"))%>%
   relocate(expenditure_amt, .before= cop_budget_total)%>%
   relocate(mech, .before= expenditure_amt)%>%
   filter(fiscal_year=="2021")%>%
   filter(operatingunit %in% ou)%>%
-  select(mech:OVC_SERV)%>%
+  filter(OVC_SERV>0
+         |budget_execution>0)%>%
+  select(fundingagency,mech:OVC_SERV)%>%
   rename("OVC SERV Achiev"=OVC_SERV)
 
   
