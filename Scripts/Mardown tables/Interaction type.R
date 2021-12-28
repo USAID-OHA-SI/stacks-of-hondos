@@ -27,7 +27,7 @@ df_fsd<-si_path()%>%
 
  
   # Functions  
-service_table<-function(df, ou="operatingunit"){
+service_graph<-function(df, ou="operatingunit"){
 df<-df_fsd%>%
   remove_sch("SGAC")%>%
   prep_fsd()%>%
@@ -38,9 +38,6 @@ df<-df_fsd%>%
   
   dplyr::filter(operatingunit %in% ou)%>%
   
- 
-  
-  #select specific variables
   dplyr::select (c(agency_category,interaction_type, fiscal_year,expenditure_amt))%>%
   mutate_at(vars(expenditure_amt),~replace_na(.,0))%>%
   mutate( agency_category = fct_relevel(agency_category, "USAID","CDC"))%>%
@@ -88,9 +85,3 @@ df<-df%>%
 
 
 }
-
- 
-
-
-
-#
