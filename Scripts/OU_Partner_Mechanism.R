@@ -30,9 +30,9 @@ df_fsd<-si_path()%>%
 #This function can be used to print out budget execution by partner type (local, international)for USAID at a global level. 
 #You will need to ensure that you have load_secrets from the glamr package set up beforehand
 #Be sure to load the following source files below before running
-source("~/GitHub/stacks-of-hondos/ea_style.R")
-source("~/GitHub/stacks-of-hondos/prep_fsd.R")
-source("~/GitHub/stacks-of-hondos/utilities.R")
+source("~/GitHub/stacks-of-hondos/Scripts/ea_style.R")
+source("~/GitHub/stacks-of-hondos/Scripts/prep_fsd.R")
+source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
 
 
 #Partner Section====================================================================
