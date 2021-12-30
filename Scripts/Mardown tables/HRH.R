@@ -78,3 +78,24 @@ df_hrh2<-df_hrh%>%
     dplyr::relocate(other_staff_share, .after = `Other Staff-NSD`) %>%
     dplyr::relocate( hcw_ancillary_share, .after = `HCW: Ancillary-SD`) %>%
     dplyr::relocate( hcw_clinical_share, .after = `HCW: Clinical-SD`) 
+
+# MER HRH table (drafty)
+df_hrh3<-df_hrh%>%
+  
+  dplyr::mutate(interaction_type  = dplyr::case_when(interaction_type    == "Service Delivery"    ~"SD",
+                                                     interaction_type    == "Non Service Delivery"    ~"NSD",
+                                                     TRUE ~interaction_type))%>%
+  mutate(pa_level=glue("{interaction_type}-{program}"))%>%
+  group_by(operatingunit,fundingagency,fiscal_year,pa_level)%>%
+  summarise_at(vars(actual_annual_spend), sum, na.rm = TRUE)%>%
+  ungroup%>%
+  pivot_wider(
+    names_from="pa_level",
+    values_from="actual_annual_spend",values_fill=0)%>%
+  mutate(total=(rowSums(across(`NSD-ASP`:`NSD-SE`))))%>%
+  mutate(sd_ct_share=(`SD-C&T`/total*100))%>%
+  
+  
+  filter(fiscal_year=="2021",
+         operatingunit %in% ou)%>%
+  select(fundingagency,`SD-C&T`,sd_ct_share)
