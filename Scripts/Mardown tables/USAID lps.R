@@ -23,7 +23,7 @@ glamr::load_secrets()
 #apply partner type data to fsd before starting
 df_fsd<-df_fsd%>%
   glamr::apply_partner_type()
-
+df<-df_fsd
 
 
   
@@ -32,7 +32,7 @@ df_fsd<-df_fsd%>%
     glamr::remove_sch("SGAC")%>%
     dplyr::filter( fiscal_year=="2021")%>%
     dplyr::filter(fundingagency=="USAID")%>%
-    dplyr::filter(operatingunit %in% "Angola")%>%
+    dplyr::filter(operatingunit %in% ou)%>%
     dplyr::filter(partner_type_usaid_adjusted=="Local" )%>%
     mutate(mech=glue("{mech_code}-{mech_name}"))%>%
     dplyr::select (c(operatingunit,partner_type_usaid_adjusted,mech,program,fiscal_year,cop_budget_total,expenditure_amt))%>%
