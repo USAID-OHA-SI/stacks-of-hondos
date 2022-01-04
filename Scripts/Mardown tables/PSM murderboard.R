@@ -33,10 +33,11 @@ df<-df%>%
   group_by(operatingunit, mech, program,sub_program) %>%
   summarise_at(vars(cop_budget_total, expenditure_amt), sum, na.rm = TRUE) %>% 
   ungroup()%>%
-  mutate(budget_execution=round(expenditure_amt/cop_budget_total*100))%>%
-  select(mech,program: budget_execution)%>%
+  select(mech,program: expenditure_amt)%>%
   relocate(expenditure_amt, .before= cop_budget_total)%>%
-  relocate(mech, .before= program)
+  relocate(mech, .before= program)%>%
+  adorn_totals("row",,,, -mech)%>%
+  mutate(budget_execution=round(expenditure_amt/cop_budget_total*100))%>%
 return(df)
 }
 
