@@ -1,11 +1,9 @@
 library(glamr)
 library(tidyverse)
 library(gophr)
-library(extrafont)
-library(tidytext)
-library(gt)
+library(janitor)
 library(glue)
-library(webshot)
+
 
 
 
