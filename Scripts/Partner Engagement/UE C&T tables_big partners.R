@@ -117,23 +117,30 @@ library(glue)
     
     df_ue<-df_ue%>%     group_by(countryname,fundingagency,mech_code, mech_name, primepartner,)%>%
       summarise_at(vars(cumulative_HTS_TST: unit_expenditure_TX_NEW  ), sum, na.rm = TRUE)%>%
-      dplyr::mutate(primepartner = dplyr::case_when(primepartner    == "FHI Development 360 LLC"    ~"FHI360",
-                                                    primepartner    ==   "Family Health International"    ~"FHI360",
-                                                    primepartner    ==  "Abt Associates, Inc." ~ "Abt Associates Inc",
+      dplyr::mutate(primepartner = dplyr::case_when(primepartner    ==  "Abt Associates, Inc." ~ "Abt Associates Inc",
                                                     
                                                     TRUE ~primepartner))%>%
       mutate("country_mech"=glue("{countryname}-{mech_name}- {mech_code}"))%>%
       dplyr::relocate(country_mech, .before = cumulative_HTS_TST)%>%
-      dplyr::rename("cumulative_TST_POS"="cumulative_HTS_TST_POS")%>%
+
       ungroup()
     
     df_ue<-df_ue%>%
-      filter(unit_expenditure_HTS_TST>0 | cumulative_HTS_TST> 0 |unit_expenditure_HTS_TST_POS>0 |cumulative_TST_POS>0
+      filter(unit_expenditure_HTS_TST>0 | cumulative_HTS_TST> 0 |unit_expenditure_HTS_TST_POS>0 |cumulative_HTS_TST_POS>0
              |unit_expenditure_TX_CURR>0 |cumulative_TX_CURR >0 |unit_expenditure_TX_NEW>0| cumulative_TX_NEW  >0)
+    
+   
+      df_ue<-df_ue%>%
+      dplyr::relocate(unit_expenditure_HTS_TST , .before = cumulative_HTS_TST)%>%
+      dplyr::relocate( unit_expenditure_HTS_TST_POS, .before = cumulative_HTS_TST_POS)
+    df_ue<-df_ue%>%
+      dplyr::relocate(unit_expenditure_TX_CURR, .before = cumulative_TX_CURR)%>%
+      dplyr::relocate(unit_expenditure_TX_NEW, .before = cumulative_TX_NEW)%>%
+      ungroup()
     
     
    
-    partners_list<-df_ue%>%
+    partner<-df_ue%>%
       distinct(primepartner)%>%
       pull()    
      
@@ -145,9 +152,6 @@ library(glue)
     df<-df_ue%>%
       select(-c("mech_code","mech_name","fundingagency"))%>%
       filter(primepartner %in% partner)%>%
-      #filter(operatingunit %in% ou)%>%
-     # filter(fiscal_year=="2020")%>%
-      #filter(TX_CURR!="NA")%>%
       gt()%>%
       cols_hide(
         columns=c("primepartner","countryname",
@@ -188,6 +192,18 @@ library(glue)
         align = "center",
         columns = everything()
       )%>%
+      cols_label( #update GT to check on tidy select), also look at clean_names, also potentially case_when
+        country_mech = "Mechanism",
+        unit_expenditure_HTS_TST="TST UE",
+        unit_expenditure_HTS_TST_POS="TST POS UE",
+        unit_expenditure_TX_CURR="TX CURR UE",
+        unit_expenditure_TX_NEW="TX NEW UE",
+        cumulative_HTS_TST ="TST Results",
+        cumulative_HTS_TST_POS ="TST POS Results",
+        cumulative_TX_CURR ="TX CURR Results",
+        cumulative_TX_NEW ="TX NEW Results",
+        
+      )%>%
         cols_align(
           align = "left",
           columns = 1)%>%
@@ -197,18 +213,7 @@ library(glue)
       gt::tab_source_note(
         source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions"))
       )%>%
-      cols_label( #update GT to check on tidy select), also look at clean_names, also potentially case_when
-        prime_mech = "Mechanism",
-        unit_expenditure_HTS_TST="TST UE",
-        unit_expenditure_TST_POS="TST POS UE",
-        unit_expenditure_TX_CURR="TX CURR UE",
-        unit_expenditure_TX_NEW="TX NEW UE",
-        cumulative_HTS_TST ="TST Results",
-        cumulative_TST_POS ="TST POS Results",
-        cumulative_TX_CURR ="TX CURR Results",
-        cumulative_TX_NEW ="TX NEW Results",
-        
-      )%>%
+      
       
       tab_footnote(
         footnote =md( "A unit expenditure (UE) is a calculation of partner-level expenditures for a given program area (source: ER) divided by the number of associated beneficiaries (source: MER). Total IM-level expenditure within a program area, divided by IM-specific result value.  Can only be calculated for mechanisms that have both expenditures and results within a given program area. It can be interpreted as the spend per beneficiary reached with those resources. **UEs across partners should be interpreted within the programmatic context, as there are differences in factors such as scope, funding profile, and geography.**"),
@@ -229,5 +234,14 @@ library(glue)
     get_ue_partner(df_ue, "Elizabeth Glaser Pediatric Aids Foundation")%>%
       gtsave(.,path=table_out,filename = glue::glue("EGPAF_unit_expenditure.png"))
     #to run for all
-    purrr::map(partners_list, ~get_ue_partner(df, partner = .x)%>%
-                 gtsave(.,path=table_out,filename = glue::glue("{.x}_ou_unit_expenditure.png")))
+    purrr::map(partner, ~get_ue_partner(df_ue, partner = .x)%>%
+                 gtsave(.,path=table_out,filename = glue::glue("{.x}_unit_expenditure.png")))
+    
+    
+    ### for FHI 360
+    df_fhi<-df_ue%>%
+      filter(primepartner=="Family Health International")
+    df_fhi1 <- df_fhi[c(10:21),c(1:14)]
+    
+    
+      
