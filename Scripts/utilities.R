@@ -104,23 +104,21 @@ source<-"FY21Q4i FSD"
 legend_be<-'https://user-images.githubusercontent.com/5873344/136249989-046c8107-706f-42cf-be5e-1dfb15e29093.png?raw=true'
 legend_chunk <- gt::md(glue::glue("Legend: Budget Execution <img src= '{legend_be}' style='height:15px;'>"))
 
-
-ou_list<-si_path()%>%
+# dataframe used to generate ou_list, country_list, country_list_regionals, etc.
+df_for_lsts <- si_path()%>%
   return_latest("COP17")%>%
-  gophr::read_msd()%>%
+  gophr::read_msd()
+
+ou_list<- df_for_lsts%>%
   distinct(operatingunit)%>%
   pull()
 
-country_list<-si_path()%>%
-  return_latest("COP17")%>%
-  gophr::read_msd()%>%
+country_list<-df_for_lsts%>%
   distinct(countryname)%>%
   pull()
 
 #filter for country list as regionals but remove WAR-WAR and Benin which has no funding for now
-country_list_regionals<-si_path()%>%
-  return_latest("COP17")%>%
-  gophr::read_msd()%>%
+country_list_regionals<-df_for_lsts%>%
   dplyr::filter(operatingunit=="Asia Region" | operatingunit=="Western Hemisphere Region" |operatingunit=="West Africa Region")%>%
   dplyr::mutate(agg_type = "Region-Country",
                 operatingunit = paste(operatingunit, countryname, sep = "-")) %>% 
@@ -135,9 +133,7 @@ country_list_regionals<-si_path()%>%
   #%>%
   pull()
 
-lts_countries<-si_path()%>%
-  return_latest("COP17")%>%
-  gophr::read_msd()%>%
+lts_countries<-df_for_lsts%>%
   distinct(operatingunit)%>%
   dplyr::filter(!operatingunit=="Asia Region")%>%
   dplyr::filter(!operatingunit=="Western Hemisphere Region")%>%
@@ -145,8 +141,10 @@ lts_countries<-si_path()%>%
   dplyr::filter(!operatingunit=="West Africa Region")%>%
   dplyr::filter(!operatingunit=="Dominican Republic")%>%
   pull()
-  
 
+# Delete df_for_lsts from memory to improve performance
+rm(df_for_lsts)
+gc()
 
 #Use this function to concatenate the regional countries into one column (i.e. Asia Region-Laos)
 #In order to  create regional views
