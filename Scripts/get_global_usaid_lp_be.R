@@ -16,8 +16,8 @@ df_fsd<-si_path()%>%
 #This function can be used to print out budget execution by partner type (local, international)for USAID at a global level. 
 #You will need to ensure that you have load_secrets from the glamr package set up beforehand
 #Be sure to load the following source files below before running
-source("~/GitHub/stacks-of-hondos/ea_style.R")
-source("~/GitHub/stacks-of-hondos/utilities.R")
+source("~/GitHub/stacks-of-hondos/Scripts/ea_style.R")
+source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
 
 #ensure glamr load_secrets is loaded to get partner type data
 glamr::load_secrets()
@@ -155,12 +155,15 @@ get_global_usaid_lp_be<-function(df){
       source_note = ("USAID mechanisms only. Partner designations provided by the OHA Local Partners Team. Visual excludes TBDs"))%>%
     gt::tab_source_note(
       source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions."))
-    ) 
+    ) %>%
+    opt_table_outline()%>%
+    
+    opt_row_striping()
    
   return(df)
 }
 ####Output========
-table_out<-"GitHub/stacks-of-hondos/Images/Local Partners"
+table_out<-"GitHub/stacks-of-hondos/Images/global performance"
 get_global_usaid_lp_be(df_fsd)%>%
 gtsave(path=table_out,filename = "global_usaid_lp_performance.png")
 
@@ -300,7 +303,10 @@ get_global_usaid_lp_be_lts<-function(df){
       source_note = ("USAID mechanisms only. Partner designations provided by the OHA Local Partners Team. Visual excludes TBDs"))%>%
     gt::tab_source_note(
       source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions."))
-    ) 
+    ) %>%
+    opt_table_outline()%>%
+    
+    opt_row_striping()
   
   return(df)
 }
@@ -310,11 +316,11 @@ get_global_usaid_lp_be_lts(df_fsd)%>%
   gtsave(path=table_out,filename = "lts_usaid_lp_performance.png")
 
 #Uploading to google drive===============================================
-source("~/GitHub/EA-Utilities/upload_dir_to_gdrive.R")
-
-local_p <- table_out
-g_path <- '1V_58kCkggfpY89_-C1rmmrIn4wHzGJ_D'
-
-upload_dir_to_gdrive(local_p, g_path)
+# source("~/GitHub/EA-Utilities/upload_dir_to_gdrive.R")
+# 
+# local_p <- table_out
+# g_path <- '1V_58kCkggfpY89_-C1rmmrIn4wHzGJ_D'
+# 
+# upload_dir_to_gdrive(local_p, g_path)
 
 

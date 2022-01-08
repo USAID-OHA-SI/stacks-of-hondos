@@ -19,7 +19,7 @@ df_msd<-si_path()%>%
 #This function can be used to generate unit expenditure tables across the treatment continuum
 #It can be used to generate one table for one ou, or a batch for all ous.
 #Be sure to load the following source files below before running
-source("~/GitHub/stacks-of-hondos/utilities.R")
+source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
     
     indics<-c("HTS_TST","HTS_TST_POS", "TX_CURR", "TX_NEW")
     progs<-c("HTS", "C&T")

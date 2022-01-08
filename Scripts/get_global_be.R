@@ -11,9 +11,9 @@ library(glue)
 library(webshot)
 
 # Be sure to load the following files below before running
-source("~/GitHub/stacks-of-hondos/ea_style.R")
-source("~/GitHub/stacks-of-hondos/prep_fsd.R")
-source("~/GitHub/stacks-of-hondos/utilities.R")
+source("~/GitHub/stacks-of-hondos/Scripts/ea_style.R")
+source("~/GitHub/stacks-of-hondos/Scripts/prep_fsd.R")
+source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
 
 
 ### Function ===================================================================
@@ -61,9 +61,9 @@ get_global_agency_be(df_fsd)%>%
   gtsave(., path=table_out, filename="global performance_all_agencies.png")
 
 #Uploading to google drive===============================================
-source("~/GitHub/EA-Utilities/upload_dir_to_gdrive.R")
-
-local_p <- table_out
-g_path <- '1V_58kCkggfpY89_-C1rmmrIn4wHzGJ_D'
-
-upload_dir_to_gdrive(local_p, g_path)
+# source("~/GitHub/EA-Utilities/upload_dir_to_gdrive.R")
+# 
+# local_p <- table_out
+# g_path <- '1V_58kCkggfpY89_-C1rmmrIn4wHzGJ_D'
+# 
+# upload_dir_to_gdrive(local_p, g_path)

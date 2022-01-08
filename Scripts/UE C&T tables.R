@@ -19,7 +19,7 @@ df_msd<-si_path()%>%
 #This function can be used to generate unit expenditure tables across the treatment continuum
 #It can be used to generate one table for one ou, or a batch for all ous.
 #Be sure to load the following source files below before running
-source("~/GitHub/stacks-of-hondos/utilities.R")
+source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
     
     indics<-c("HTS_TST","HTS_TST_POS", "TX_CURR", "TX_NEW")
     progs<-c("HTS", "C&T")
@@ -231,8 +231,8 @@ source("~/GitHub/stacks-of-hondos/utilities.R")
 # Output ============================================================================
     table_out<-"GitHub/stacks-of-hondos/Images/OU"
     #to run for one OU, be sure to change the ou to the ou name
-    get_ue(df_ue, "Mozambique")%>%
-      gtsave(.,path=table_out,filename = glue::glue("Mozambique_unit_expenditure.png"))
+    # get_ue(df_ue, "Mozambique")%>%
+    #   gtsave(.,path=table_out,filename = glue::glue("Mozambique_unit_expenditure.png"))
     #to run for all OUs. You can use country_list to do countries 
     purrr::map(ou_list, ~get_ue(df, ou = .x)%>%
                  gtsave(.,path=table_out,filename = glue::glue("{.x}_unit_expenditure.png")))

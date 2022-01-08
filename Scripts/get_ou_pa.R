@@ -14,9 +14,9 @@ library(glue)
 library(gophr)
 
 git_src <- "~/GitHub"
-source(glue("{git_src}/stacks-of-hondos/ea_style.R"))
-source(glue("{git_src}/stacks-of-hondos/prep_fsd.R"))
-source(glue("{git_src}/stacks-of-hondos/utilities.R"))
+source(glue("{git_src}/stacks-of-hondos/Scripts/ea_style.R"))
+source(glue("{git_src}/stacks-of-hondos/Scripts/prep_fsd.R"))
+source(glue("{git_src}/stacks-of-hondos/Scripts/utilities.R"))
 
 
 ### Function ===================================================================

@@ -5,7 +5,6 @@ library(extrafont)
 library(tidytext)
 library(gt)
 library(glue)
-library(webshot)
 
 
 df_fsd<-si_path()%>%
@@ -19,7 +18,7 @@ df_msd<-si_path()%>%
 #This function can be used to generate unit expenditure tables across the treatment continuum
 #It can be used to generate one table for one ou, or a batch for all ous.
 #Be sure to load the following source files below before running
-source("~/GitHub/stacks-of-hondos/utilities.R")
+source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
     
     indics<-c("HTS_TST","HTS_TST_POS", "TX_CURR", "TX_NEW")
     progs<-c("HTS", "C&T")
@@ -234,8 +233,8 @@ glamr::load_secrets()
 # Output ============================================================================
     table_out<-"GitHub/stacks-of-hondos/Images/OU"
     #to run for one OU, be sure to change the ou to the ou name
-    get_ue_ou(df_ue, "Democratic Republic of the Congo")%>%
-      gtsave(.,path=table_out,filename = glue::glue("global_unit_expenditure.png"))
+    # get_ue_ou(df_ue, "Democratic Republic of the Congo")%>%
+    #   gtsave(.,path=table_out,filename = glue::glue("global_unit_expenditure.png"))
     
     #to run for all OUs.You can also run for country use country_list in place of ou_list
     purrr::map(ou_list, ~get_ue_ou(df_ue, ou = .x)%>%

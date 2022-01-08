@@ -16,8 +16,8 @@ df_fsd<-si_path()%>%
 #use this function to print out budget executionfor just USAID in all OUs. 
 #You should load the source files below before running
 
-source("~/GitHub/stacks-of-hondos/ea_style.R")
-source("~/GitHub/stacks-of-hondos/prep_fsd.R")
+source("~/GitHub/stacks-of-hondos/Scripts/ea_style.R")
+source("~/GitHub/stacks-of-hondos/Scripts/prep_fsd.R")
 source("~/GitHub/stacks-of-hondos/utilities.R")
 
 get_global_usaid_ou<-function(df){
@@ -55,6 +55,6 @@ get_global_usaid_ou(df_fsd)%>%
 source("~/GitHub/EA-Utilities/upload_dir_to_gdrive.R")
 
 local_p <- table_out
-g_path <- '1V_58kCkggfpY89_-C1rmmrIn4wHzGJ_D'
+g_path <- '1HwKnJUrcil0oXGAejzVkLwMEV7e88aZw'
 
 upload_dir_to_gdrive(local_p, g_path)
