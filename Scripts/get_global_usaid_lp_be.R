@@ -29,6 +29,7 @@ df_fsd<-df_fsd%>%
 
 get_global_usaid_lp_be<-function(df){
   df<-df%>%
+    agency_category()%>%
     remove_mo()%>%
     remove_sch("SGAC")%>%
     dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
@@ -163,7 +164,7 @@ get_global_usaid_lp_be<-function(df){
   return(df)
 }
 ####Output========
-table_out<-"GitHub/stacks-of-hondos/Images/global performance"
+table_out<-"GitHub/stacks-of-hondos/Images/Global Performance"
 get_global_usaid_lp_be(df_fsd)%>%
 gtsave(path=table_out,filename = "global_usaid_lp_performance.png")
 
@@ -172,6 +173,7 @@ gtsave(path=table_out,filename = "global_usaid_lp_performance.png")
 #You can run a version of the function above for just LTS countries=============================
 get_global_usaid_lp_be_lts<-function(df){
   df<-df%>%
+    agency_category()%>%
     remove_mo()%>%
     remove_sch("SGAC")%>%
     dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
@@ -311,16 +313,16 @@ get_global_usaid_lp_be_lts<-function(df){
   return(df)
 }
 ####Output========
-table_out<-"GitHub/stacks-of-hondos/Images/global performance"
+table_out<-"GitHub/stacks-of-hondos/Images/Global Performance"
 get_global_usaid_lp_be_lts(df_fsd)%>%
   gtsave(path=table_out,filename = "lts_usaid_lp_performance.png")
 
 #Uploading to google drive===============================================
-# source("~/GitHub/EA-Utilities/upload_dir_to_gdrive.R")
+ source("~/GitHub/EA-Utilities/upload_dir_to_gdrive.R")
 # 
-# local_p <- table_out
-# g_path <- '1V_58kCkggfpY89_-C1rmmrIn4wHzGJ_D'
+ local_p <- table_out
+ g_path <- '1HwKnJUrcil0oXGAejzVkLwMEV7e88aZw'
 # 
-# upload_dir_to_gdrive(local_p, g_path)
+ upload_dir_to_gdrive(local_p, g_path)
 
 

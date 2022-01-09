@@ -28,6 +28,7 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
     dplyr::filter(operatingunit %in% ou)%>%
     dplyr::select (c(fundingagency,fiscal_year,cop_budget_total,expenditure_amt))%>%
     mutate_at(vars(cop_budget_total,expenditure_amt),~replace_na(.,0))%>%
+   
     mutate( fundingagency = fct_relevel(fundingagency, "USAID","CDC"))%>%
     group_by(fundingagency,fiscal_year)%>%
     summarise_at(vars(cop_budget_total,expenditure_amt), sum, na.rm = TRUE)%>%

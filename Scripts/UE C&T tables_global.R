@@ -31,7 +31,7 @@ glamr::load_secrets()
     df_fsd<-df_fsd%>%
       remove_mo()%>%
       remove_sch("SGAC")%>%
-      clean_agency()%>%
+      agency_category()%>%
       group_by(fundingagency,fiscal_year, program) %>% 
       #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
       summarise_at(vars(cop_budget_total, expenditure_amt), sum, na.rm = TRUE) %>% 
@@ -45,7 +45,7 @@ glamr::load_secrets()
       filter(standardizeddisaggregate=="Total Numerator")%>%
       filter(indicator %in% indics)%>%
       dplyr::filter(!mech_code=="16772")%>%
-      clean_agency()%>%
+    agency_category()%>%
       #dplyr::select(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator cumulative,targets)%>%
       group_by(fundingagency,fiscal_year,indicator) %>% 
       #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
@@ -228,7 +228,7 @@ glamr::load_secrets()
     }
 
 # Output ============================================================================
-    table_out<-"GitHub/stacks-of-hondos/Images/global performance"
+    table_out<-"GitHub/stacks-of-hondos/Images/Global Performance"
     #to run for one OU, be sure to change the ou to the ou name
     get_ue_global(df_ue)%>%
       gtsave(.,path=table_out,filename = glue::glue("global_unit_expenditure.png"))

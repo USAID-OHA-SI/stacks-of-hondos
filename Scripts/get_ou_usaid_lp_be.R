@@ -16,7 +16,7 @@ df_fsd<-si_path()%>%
 #This function can be used to print out budget execution by partner type (local, international)for USAID at an OU level. You can use this to 
 #print information for multiple OUs. You will need to ensure that you have load_secrets from the glamr package set up beforehand
 #Be sure to load the following source files below before running
-source("~/GitHub/stacks-of-hondos/utilities.R")
+source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
 
 #ensure glamr load_secrets is loaded to get partner type data
 glamr::load_secrets()
@@ -28,6 +28,7 @@ df_fsd<-df_fsd%>%
 get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
   
   df<-df%>%
+    agency_category()%>%
     remove_mo()%>%
     remove_sch("SGAC")%>%
     dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
@@ -171,11 +172,10 @@ gtsave(.,path=table_out,filename = glue::glue("{.x}_lp_budget_execution.png")))
 
 #Uploading to google drive===============================================
 source("~/GitHub/EA-Utilities/upload_dir_to_gdrive.R")
-
-
+# 
 local_p <- table_out
-g_path <- '1V_58kCkggfpY89_-C1rmmrIn4wHzGJ_D'
-
+g_path <- '1HwKnJUrcil0oXGAejzVkLwMEV7e88aZw'
+# 
 upload_dir_to_gdrive(local_p, g_path)
 
 

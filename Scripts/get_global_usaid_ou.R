@@ -18,7 +18,7 @@ df_fsd<-si_path()%>%
 
 source("~/GitHub/stacks-of-hondos/Scripts/ea_style.R")
 source("~/GitHub/stacks-of-hondos/Scripts/prep_fsd.R")
-source("~/GitHub/stacks-of-hondos/utilities.R")
+source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
 
 get_global_usaid_ou<-function(df){
   df<-df%>%
@@ -46,7 +46,7 @@ get_global_usaid_ou<-function(df){
 }
   
 #output of table========================================================
-table_out<-"GitHub/stacks-of-hondos/Images/global performance"
+table_out<-"GitHub/stacks-of-hondos/Images/Global Performance"
 get_global_usaid_ou(df_fsd)%>%
   gtsave(., path=table_out, filename="global performance_usaid.png")
 
