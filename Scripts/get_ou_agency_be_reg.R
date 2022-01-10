@@ -17,9 +17,9 @@ df_fsd<-si_path()%>%
 #Be sure to load the following files below before running
 
 
-source("~/GitHub/stacks-of-hondos/ea_style.R")
-source("~/GitHub/stacks-of-hondos/prep_fsd.R")
-source("~/GitHub/stacks-of-hondos/utilities.R")
+source("~/GitHub/stacks-of-hondos/Scripts/ea_style.R")
+source("~/GitHub/stacks-of-hondos/Scripts/prep_fsd.R")
+source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
 
 
 

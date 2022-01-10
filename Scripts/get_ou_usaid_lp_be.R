@@ -143,6 +143,9 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
               locations = cells_body(               
                 columns = (budget_execution_2021),
                 rows = (budget_execution_2021) >= 1.2 ))%>%
+    opt_table_outline()%>%
+    
+    opt_row_striping()%>%
     
     
     tab_footnote(

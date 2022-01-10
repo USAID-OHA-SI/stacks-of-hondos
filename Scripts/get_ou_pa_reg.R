@@ -14,9 +14,9 @@ library(glue)
 library(gophr)
 
 git_src <- "~/GitHub"
-source(glue("{git_src}/stacks-of-hondos/ea_style.R"))
-source(glue("{git_src}/stacks-of-hondos/prep_fsd.R"))
-source(glue("{git_src}/stacks-of-hondos/utilities.R"))
+source(glue("{git_src}/stacks-of-hondos/Scripts/ea_style.R"))
+source(glue("{git_src}/stacks-of-hondos/Scripts/prep_fsd.R"))
+source(glue("{git_src}/stacks-of-hondos/Scripts/utilities.R"))
 
 
 ### Function ===================================================================
@@ -90,12 +90,13 @@ purrr::map(country_list_regionals, ~get_ou_pa_reg(df_fsd, ou = .x)%>%
 
 
 #Uploading to google drive===============================================
-source("~/GitHub/stacks-of-hondos/upload_dir_to_gdrive.R")
-
+source("~/GitHub/EA-Utilities/upload_dir_to_gdrive.R")
+# 
 local_p <- table_out
-g_path <- '1MoTSkr9c1cjpi1PUy5RFkxkNKDPy2KN-'
-
+g_path <- '1HwKnJUrcil0oXGAejzVkLwMEV7e88aZw'
+# 
 upload_dir_to_gdrive(local_p, g_path)
+
 
 
 
