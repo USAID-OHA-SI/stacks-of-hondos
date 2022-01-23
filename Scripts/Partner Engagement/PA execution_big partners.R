@@ -6,7 +6,13 @@ library(tidytext)
 library(gt)
 library(glue)
 library(webshot)
-source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
+legend_be<-'https://user-images.githubusercontent.com/5873344/136249989-046c8107-706f-42cf-be5e-1dfb15e29093.png?raw=true'
+legend_chunk <- gt::md(glue::glue("Legend: Budget Execution <img src= '{legend_be}' style='height:15px;'>"))
+
+source<-source_info(si_path(),"Fin")
+percent_clean <- function(x, y) {
+  ifelse(y > 0.000, (x / y), NA_real_)
+}
 
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
@@ -22,19 +28,14 @@ mech_list<- df_fsd%>%
                                                 primepartner    ==  "Abt Associates, Inc." ~ "Abt Associates Inc",
                                                 
                                                 TRUE ~primepartner))%>%
-  
-  
-  
-  dplyr::select(-c("prime_partner_duns","prime_partner_org_type",
-                   "is_indigenous_prime_partner", "subrecipient_duns",
-                   "award_number","procurement_type")) %>% 
+ 
   glamr::remove_mo()%>% # filter out M&O
   #dplyr::rename("fiscal_year"= implementation_year) %>% 
   #dplyr::filter(fiscal_year == c(2020 ,2021))
   
   
   ##concatenate country and mech name
-  dplyr::mutate( partner_mech_name = paste(primepartner,"-", mech_name,"-",mech_code))%>%
+  dplyr::mutate( partner_mech_name = paste(primepartner,"-",mech_code))%>%
   
   #mutate data type double into integer to have round numbers
   dplyr::mutate_if(is.double, as.integer)%>%
@@ -51,7 +52,7 @@ mech_list<- df_fsd%>%
   #filter(partner_mech_name %in% mech_list)%>% 
   
   #select specific variables
-  dplyr::select (c(partner_mech_name,program, fiscal_year,cop_budget_total,expenditure_amt))%>%
+  dplyr::select (c(partner_mech_name, mech_code,program, fiscal_year,cop_budget_total,expenditure_amt))%>%
   mutate_at(vars(cop_budget_total,expenditure_amt),~replace_na(.,0))%>%
   #mutate( fundingagency = fct_relevel(fundingagency, "USAID","CDC"))%>%
   
@@ -94,7 +95,7 @@ get_ou_mechanism_pa<-function(df, mech_list="partner_mech_name"){
       
       
       ##concatenate country and mech name
-      dplyr::mutate( partner_mech_name = paste(primepartner,"-", mech_name,"-",mech_code))%>%
+      dplyr::mutate( partner_mech_name = paste(primepartner,"-",mech_code))%>%
       
       #mutate data type double into integer to have round numbers
       dplyr::mutate_if(is.double, as.integer)%>%
@@ -107,36 +108,32 @@ get_ou_mechanism_pa<-function(df, mech_list="partner_mech_name"){
      filter(partner_mech_name %in% mech_list)%>% 
     
     #select specific variables
-    dplyr::select (c(partner_mech_name,program, fiscal_year,cop_budget_total,expenditure_amt))%>%
+    dplyr::select (c(partner_mech_name,mech_name,program,cop_budget_total,expenditure_amt))%>%
     mutate_at(vars(cop_budget_total,expenditure_amt),~replace_na(.,0))%>%
     #mutate( fundingagency = fct_relevel(fundingagency, "USAID","CDC"))%>%
     
     
     
-    group_by(partner_mech_name,program, fiscal_year)%>%
+    group_by(partner_mech_name,mech_name,program)%>%
     summarise_at(vars(cop_budget_total,expenditure_amt), sum, na.rm = TRUE)%>%
+    adorn_totals("row",,,, -partner_mech_name,-mech_name,-program)%>%
     dplyr::mutate(budget_execution=percent_clean(expenditure_amt,cop_budget_total))%>%
-    ungroup(program, fiscal_year)%>%
-    
-    
-    pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
-     #dplyr::relocate(expenditure_amt_2020, .before = cop_budget_total_2020) %>%
-    dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
-    dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
+   
+    dplyr::relocate(expenditure_amt, .before = cop_budget_total) %>%
+    ungroup()%>%
      #dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) %>%
     
-    ungroup()%>%
+    
    
     
     #break into separate functions
   
     gt()%>%
     cols_hide(
-      columns = c(
-        "partner_mech_name"
-      ))%>%
+      columns = c(partner_mech_name)
+    ) %>%
     fmt_percent(
-      columns = tidyselect::contains("_execution_"),
+      columns = tidyselect::contains("_execution"),
       decimals = 0)%>%
     fmt_currency( # add dolar signs
       columns = tidyselect::contains("_budget_total"),
@@ -152,7 +149,9 @@ get_ou_mechanism_pa<-function(df, mech_list="partner_mech_name"){
     fmt_missing(columns = everything(),
                 missing_text = "-") %>%
     cols_width(
-      everything() ~ px(90))%>%
+      starts_with("mech") ~ px(140),
+      everything() ~ px(90)
+    )%>%
     
     tab_style(
       style = cell_borders(
@@ -166,20 +165,20 @@ get_ou_mechanism_pa<-function(df, mech_list="partner_mech_name"){
     tab_style(
       style = cell_text(weight = 700),
       locations = cells_body(
-        columns = tidyselect::contains("_execution_")
+        columns = tidyselect::contains("_execution")
       )
     )%>%
-    tab_spanner(
-      label = "COP20 Performance",
-      columns = tidyselect::contains("2021"))%>%
     # tab_spanner(
-    #   label = "COP19 Performance",
-    #   columns = tidyselect::contains("2020"))%>%
-    gt::tab_style(
-      style = list(
-        gt::cell_text(weight = "bold")), 
-      locations = gt::cells_column_spanners(spanners = tidyselect::everything())
-    )%>%
+    #   label = "COP20 Performance",
+    #   columns = tidyselect::contains("2021"))%>%
+    # # tab_spanner(
+    # #   label = "COP19 Performance",
+    # #   columns = tidyselect::contains("2020"))%>%
+    # gt::tab_style(
+    #   style = list(
+    #     gt::cell_text(weight = "bold")), 
+    #   locations = gt::cells_column_spanners(spanners = tidyselect::everything())
+    # )%>%
     cols_align(
       align = "center",
       columns = everything()
@@ -188,10 +187,11 @@ get_ou_mechanism_pa<-function(df, mech_list="partner_mech_name"){
       # expenditure_amt_2020 = "Expenditure",
       # cop_budget_total_2020 = "Budget",
       # budget_execution_2020="Budget Execution",
-      expenditure_amt_2021 = "Expenditure",
-      cop_budget_total_2021 = "Budget",
-      budget_execution_2021="Budget Execution",
-        program= "Program Area")%>%
+      expenditure_amt = "Expenditure",
+      cop_budget_total = "Budget",
+      budget_execution="Budget Execution",
+        program= "Program Area",
+      mech_name="Mechanism")%>%
     cols_align(
       align = "left",
       columns = 1
@@ -215,20 +215,20 @@ get_ou_mechanism_pa<-function(df, mech_list="partner_mech_name"){
     
     tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),      
               locations = cells_body(               
-                columns = (budget_execution_2021),
-                rows = (budget_execution_2021) >= 0.9 & (budget_execution_2021) < 1.1)) %>%
+                columns = (budget_execution),
+                rows = (budget_execution) >= 0.9 & (budget_execution) < 1.1)) %>%
     tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),      
               locations = cells_body(               
-                columns = (budget_execution_2021),
-                rows =(budget_execution_2021) < 0.9 ))%>%
+                columns = (budget_execution),
+                rows =(budget_execution) < 0.9 ))%>%
     tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),      
               locations = cells_body(               
-                columns = (budget_execution_2021),
-                rows = (budget_execution_2021)>= 1.1 & (budget_execution_2021) < 1.2))%>%
+                columns = (budget_execution),
+                rows = (budget_execution)>= 1.1 & (budget_execution) < 1.2))%>%
     tab_style(style = cell_fill(color = "#ff989f",alpha = .75),      
               locations = cells_body(               
-                columns = (budget_execution_2021),
-                rows = (budget_execution_2021) >= 1.2 ))%>%
+                columns = (budget_execution),
+                rows = (budget_execution) >= 1.2 ))%>%
     
     gt::tab_options(
       source_notes.font.size = 8,
@@ -239,6 +239,10 @@ get_ou_mechanism_pa<-function(df, mech_list="partner_mech_name"){
     gt::tab_source_note(
       source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions"))
     )%>%
+    tab_footnote(
+      footnote =md( "USAID typically expects budget execution to fall within the 90-110% range. There are programmatic reasons for budget execution to fall outside that range, and it is important to be able to explain why a mechanism would overspend/underspend their budget"),
+      locations = cells_column_labels(
+        columns =c(budget_execution)))%>%
     
     
     tab_header(
@@ -252,11 +256,13 @@ get_ou_mechanism_pa<-function(df, mech_list="partner_mech_name"){
 }
 
 #output 
-table_out<-"GitHub/stacks-of-hondos/Images/Partner tables"
- purrr::map(mech_list, ~get_ou_mechanism_pa(df_fsd, mech_list = .x)) %>%
-   gtsave(.,path=table_out,filename = glue::glue("{.x}_budget_execution.png"))
-# purrr::map(possibly(mech_list, ~get_ou_mechanism_pa(df_fsd, mechs = .x)%>%
+
+table_out<-"GitHub/stacks-of-hondos/Images/Partner tables/BE/FHI meeting"
+
+purrr::map(mech_list, ~get_ou_mechanism_pa(df_fsd, mech_list = .x)%>%
+             gtsave(.,path=table_out,filename = glue::glue("{.x}_budget_execution.png")))
+
              
-#to run for one OU testing below
-#get_ou_mechanism_pa(df_fsd,"Chemonics International, Inc. - GHSC-PSM - 18437")%>%
- # gtsave(.,path=table_out,filename = glue::glue("EGPAF_pa_budget execution.png"))
+#to run for one testing below
+ get_ou_mechanism_pa(df_fsd,"FHI360 - 81422")%>%
+ gtsave(.,path=table_out,filename = glue::glue("FHI360 - 81422_budget execution.png"))

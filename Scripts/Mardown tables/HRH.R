@@ -21,7 +21,7 @@ df_msd<-si_path()%>%
 df_hrh<-df_hrh %>%
   
   rename(operatingunit=operating_unit,
-        fundingagency=funding_agency )%>%
+        fundingagency=funding_agency_fing )%>%
   clean_agency()%>%
   mutate( fundingagency = fct_relevel(fundingagency,"USAID","CDC"))%>%
   mutate(annual_fte=as.numeric(annual_fte),
