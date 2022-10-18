@@ -111,7 +111,7 @@ legend_chunk <- gt::md(glue::glue("Legend: Budget Execution <img src= '{legend_b
 
 # dataframe used to generate ou_list, country_list, country_list_regionals, etc.
 df_for_lsts <- si_path()%>%
-  return_latest("COP17")%>%
+  return_latest("Fin")%>%
   gophr::read_msd()
 
 ou_list<- df_for_lsts%>%
@@ -128,14 +128,15 @@ country_list_regionals<-df_for_lsts%>%
   dplyr::mutate(agg_type = "Region-Country",
                 operatingunit = paste(operatingunit, countryname, sep = "-")) %>% 
   distinct(operatingunit)%>%
-  filter(!operatingunit=="West Africa Region-West Africa Region")%>%
-  filter(!operatingunit=="West Africa Region-Benin")%>%
-  filter(!operatingunit=="West Africa Region-Sierra Leone")%>%
-  filter(!operatingunit=="Asia Region-Central Asia Region")%>%
-  filter(!operatingunit=="Asia Region-Asia Regional Program")%>%
-  filter(!operatingunit=="Western Hemisphere Region-Caribbean Region")%>%
-  filter(!operatingunit=="Western Hemisphere Region-Central America Region")%>%
-  #%>%
+  # filter(!operatingunit=="West Africa Region-West Africa Region")%>%
+   filter(!operatingunit=="West Africa Region-Benin")%>%
+  filter(!operatingunit=="Western Hemisphere Region-Barbados")
+  # filter(!operatingunit=="West Africa Region-Sierra Leone")%>%
+  # filter(!operatingunit=="Asia Region-Central Asia Region")%>%
+  # filter(!operatingunit=="Asia Region-Asia Regional Program")%>%
+  # filter(!operatingunit=="Western Hemisphere Region-Caribbean Region")%>%
+  # filter(!operatingunit=="Western Hemisphere Region-Central America Region")%>%
+  # #%>%
   pull()
 
 lts_countries<-df_for_lsts%>%
