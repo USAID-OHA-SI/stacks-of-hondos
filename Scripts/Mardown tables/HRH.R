@@ -3,12 +3,28 @@ library(tidyverse)
 library(gophr)
 library(glue)
 library(janitor)
+library(xlsx)
 
 
 
 df_hrh<-si_path()%>%
-  return_latest("HRH")%>%
+  return_latest("mock")%>%
   gophr::read_msd()
+
+
+
+library(readxl)
+Financial_Structured_Datasets_COP17_22_mock_dataset <- read_excel("~/Data/FY22Q3/Financial_Structured_Datasets_COP17-22_mock-dataset.xlsx", 
+                                                                  col_types = c("text", "text", "text", 
+                                                                                "text", "text", "text", "text", "text", 
+                                                                                "text", "text", "text", "text", "text", 
+                                                                                "text", "text", "text", "text", "text", 
+                                                                                "text", "text", "text", "text", "text", 
+                                                                                "text", "text", "text", "numeric", 
+                                                                                "numeric", "numeric", "numeric", 
+                                                                                "numeric"))
+View(Financial_Structured_Datasets_COP17_22_mock_dataset)
+df_hrh<-Financial_Structured_Datasets_COP17_22_mock_dataset
 
 df_fsd<-si_path()%>%
   return_latest("Financial")%>%
@@ -19,9 +35,6 @@ df_msd<-si_path()%>%
 
 # Munge HRH========
 df_hrh<-df_hrh %>%
-  
-  rename(operatingunit=operating_unit,
-        fundingagency=funding_agency_fing )%>%
   clean_agency()%>%
   mutate( fundingagency = fct_relevel(fundingagency,"USAID","CDC"))%>%
   mutate(annual_fte=as.numeric(annual_fte),
@@ -151,6 +164,8 @@ df_merhrh<-full_join(df_hrh3,df_msd)%>%
            operatingunit %in% ou)%>%
     select(-c(fiscal_year,operatingunit))
   
+
+##=== new HRH for 2022
   
  
   

@@ -233,8 +233,8 @@ library(glue)
 # testing ============================================================================
     table_out<-"GitHub/stacks-of-hondos/Images/Partner tables/UE"
     #to run for one OU testing below
-    get_ue_partner(df_ue, "Elizabeth Glaser Pediatric Aids Foundation")%>%
-      gtsave(.,path=table_out,filename = glue::glue("EGPAF_unit_expenditure.png"))
+    get_ue_partner(df_ue, "PATH")%>%
+      gtsave(.,path=table_out,filename = glue::glue("PATH_unit_expenditure.png"))
     #to run for all
     purrr::map(partner, ~get_ue_partner(df_ue, partner = .x)%>%
                  gtsave(.,path=table_out,filename = glue::glue("{.x}_unit_expenditure.png")))

@@ -1,0 +1,33 @@
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{15em}rrr>{\raggedleft\arraybackslash}p{5em}>{\raggedleft\arraybackslash}p{5em}}
+\toprule
+Mechanism & Expenditure & Budget & Budget Execution & PrEP NEW (\#) & PrEP NEW Achieved\\
+\midrule
+\endfirsthead
+\multicolumn{6}{@{}l}{\textit{(continued)}}\\
+\toprule
+Mechanism & Expenditure & Budget & Budget Execution & PrEP NEW (\#) & PrEP NEW Achieved\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textbf{USAID}}\\
+\hspace{1em}\cellcolor{gray!6}{70185-Baylor TSP} & \cellcolor{gray!6}{\$122,545} & \cellcolor{gray!6}{\$124,763} & \cellcolor{gray!6}{98\%} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{5\%}\\
+\hspace{1em}70186-OHSEC & \$78,831 & \$81,525 & 97\% & 312 & 22\%\\
+\hspace{1em}\cellcolor{gray!6}{70190-Local Capacity KP} & \cellcolor{gray!6}{\$243,471} & \cellcolor{gray!6}{\$349,964} & \cellcolor{gray!6}{70\%} & \cellcolor{gray!6}{1029} & \cellcolor{gray!6}{35\%}\\
+\hspace{1em}81759-Meeting Targets and Maintaining Epidemic Control (EpiC) & \$122,270 & \$552,845 & 22\% & 1575 & 162\%\\
+\hspace{1em}\cellcolor{gray!6}{81764-PROTECT} & \cellcolor{gray!6}{\$143,860} & \cellcolor{gray!6}{\$172,189} & \cellcolor{gray!6}{84\%} & \cellcolor{gray!6}{290} & \cellcolor{gray!6}{20\%}\\
+\hspace{1em}81765-Ana Patsogolo (APA) & \$180,907 & \$200,000 & 90\% & 0 & 0\%\\
+\hspace{1em}\cellcolor{gray!6}{81768-EMPOWER FHI} & \cellcolor{gray!6}{\$104,261} & \cellcolor{gray!6}{\$219,913} & \cellcolor{gray!6}{47\%} & \cellcolor{gray!6}{0} & \cellcolor{gray!6}{0\%}\\
+\hspace{1em}84562-Client-Oriented Response for HIV Epidemic Control 2 (CORE 2) & \$109,827 & \$111,776 & 98\% & 0 & 0\%\\
+\hspace{1em}\cellcolor{gray!6}{84566-Client-Oriented Response for HIV Epidemic Control 1 (CORE 1)} & \cellcolor{gray!6}{\$15,181} & \cellcolor{gray!6}{\$83,425} & \cellcolor{gray!6}{18\%} & \cellcolor{gray!6}{0} & \cellcolor{gray!6}{0\%}\\
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textbf{CDC}}\\
+\hspace{1em}14441-Center of Excellence for Comprehensive Integrated HIV Care and Treatment Services in Lilongwe, Malawi & \$162,814 & \$278,305 & 59\% & 203 & 31\%\\
+\hspace{1em}\cellcolor{gray!6}{18025-Achieving HIV Epidemic Control through Scaling up Quality Testing, Care and Treatment in Malawi under the President’s Plan for AIDS Relief (PEPFAR)} & \cellcolor{gray!6}{\$136,131} & \cellcolor{gray!6}{\$216,509} & \cellcolor{gray!6}{63\%} & \cellcolor{gray!6}{780} & \cellcolor{gray!6}{38\%}\\
+\hspace{1em}18244-Addressing unmet need in HIV Testing Services (HTS) through effective delivery models under PEPFAR & \$66,944 & \$135,100 & 50\% & 1018 & 75\%\\
+\hspace{1em}\cellcolor{gray!6}{18544-Achieving HIV Epidemic Control through Scaling Up Quality Testing, Care and Treatment in Malawi under the Presidents Emergency Fund for AIDS Relief (PEPFAR) - Pivot 2} & \cellcolor{gray!6}{\$111,747} & \cellcolor{gray!6}{\$476,000} & \cellcolor{gray!6}{23\%} & \cellcolor{gray!6}{1782} & \cellcolor{gray!6}{35\%}\\*
+\end{longtable}

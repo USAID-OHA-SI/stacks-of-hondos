@@ -43,6 +43,7 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
     df_msd<-df_msd%>%
       filter(standardizeddisaggregate=="Total Numerator")%>%
       filter(indicator %in% indics)%>%
+     rename(fundingagency = funding_agency)%>%
       agency_category()%>%
       #dplyr::select(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator cumulative,targets)%>%
       group_by(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator) %>% 
@@ -57,7 +58,7 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
                                                
                                                TRUE ~indicator))
       df_msd<-df_msd%>%
-      filter(!fundingagency=="DEDUP")%>%
+      filter(!fundingagency=="DEDUP")
       # dplyr::filter(targets>0)
     #  %>% pivot_wider(names_from = program,
     #               values_from=cumulative)
@@ -90,7 +91,7 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
                   values_from=value)
       df_ue<-df_ue%>%
       dplyr::mutate(unit_expenditure=percent_clean(expenditure_amt,cumulative))%>%
-      filter(fiscal_year=="2021")
+      filter(fiscal_year %in% fy_end)
     df_ue<-df_ue%>%select(operatingunit,fundingagency,mech_code, mech_name, primepartner,program, indicator, unit_expenditure, cumulative)%>%
       pivot_wider(names_from =indicator,
                   values_from=cumulative:unit_expenditure)
@@ -207,7 +208,7 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
         align = "left",
         columns = 1)%>%
       tab_header(
-        title = ("  COP20 Unit Expenditure: Treatment Cascade"),
+        title = ("  COP21 Unit Expenditure: Treatment Cascade"),
         subtitle = glue::glue("Operating Unit: {ou}"))%>%
       gt::tab_source_note(
         source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions."))

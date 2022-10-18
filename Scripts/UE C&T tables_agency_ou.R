@@ -43,8 +43,10 @@ glamr::load_secrets()
     df_msd<-df_msd%>%
       filter(standardizeddisaggregate=="Total Numerator")%>%
       filter(indicator %in% indics)%>%
-  dplyr::filter(!mech_code=="16772")%>%
+  rename(fundingagency = funding_agency)%>%
   agency_category()%>%
+  # dplyr::filter(!mech_code=="16772")%>%
+ 
       #dplyr::select(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator cumulative,targets)%>%
       group_by(operatingunit,fundingagency,fiscal_year,indicator) %>% 
       #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%

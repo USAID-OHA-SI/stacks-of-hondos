@@ -32,7 +32,7 @@ get_global_usaid_lp_be<-function(df){
     agency_category()%>%
     remove_mo()%>%
     remove_sch("SGAC")%>%
-    dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
+    dplyr::filter(fiscal_year %in% fys)%>%
     dplyr::filter(fundingagency=="USAID")%>%
     dplyr::filter(partner_type_usaid_adjusted=="Local" | partner_type_usaid_adjusted=="International" )%>%
     dplyr::select (c(partner_type_usaid_adjusted,fiscal_year,cop_budget_total,expenditure_amt))%>%
@@ -41,16 +41,16 @@ get_global_usaid_lp_be<-function(df){
     dplyr::mutate(budget_execution=percent_clean(expenditure_amt,cop_budget_total))%>%
     ungroup()%>%
     pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
-    dplyr::relocate(expenditure_amt_2020, .before = cop_budget_total_2020) %>%
+    dplyr::relocate(expenditure_amt_2022, .before = cop_budget_total_2022) %>%
     dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
     dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
-    dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) %>%
+    dplyr::relocate(budget_execution_2022, .after = cop_budget_total_2022) %>%
     gt()%>%
     fmt_percent(
-      columns = c(`budget_execution_2020`, `budget_execution_2021`),
+      columns = c(`budget_execution_2022`, `budget_execution_2021`),
       decimals = 0)%>%
     fmt_currency( # add dolar signs
-      columns = c(`cop_budget_total_2020`,`expenditure_amt_2020`,`cop_budget_total_2021`,`expenditure_amt_2021` ),
+      columns = c(`cop_budget_total_2022`,`expenditure_amt_2022`,`cop_budget_total_2021`,`expenditure_amt_2021` ),
       decimals = 0,
       currency = "USD")%>%
     tab_options(
@@ -60,9 +60,9 @@ get_global_usaid_lp_be<-function(df){
       everything() ~ px(90))%>%
     cols_label(
       partner_type_usaid_adjusted = "Partner Type",
-      expenditure_amt_2020 = "Expenditure",
-      cop_budget_total_2020 = "Budget",
-      budget_execution_2020="Budget Execution",
+      expenditure_amt_2022 = "Expenditure",
+      cop_budget_total_2022 = "Budget",
+      budget_execution_2022="Budget Execution",
       #agency_category = "Agency",
       expenditure_amt_2021 = "Expenditure",
       cop_budget_total_2021 = "Budget",
@@ -73,9 +73,9 @@ get_global_usaid_lp_be<-function(df){
       columns = c(
         expenditure_amt_2021,cop_budget_total_2021, budget_execution_2021,))%>%
     tab_spanner(
-        label = "COP19 Performance",
+        label = "COP21 Performance",
       columns = c(
-        expenditure_amt_2020,cop_budget_total_2020,budget_execution_2020))%>%
+        expenditure_amt_2022,cop_budget_total_2022,budget_execution_2022))%>%
     gt::tab_style(
       style = list(
         gt::cell_text(weight = "bold")), 
@@ -112,20 +112,20 @@ get_global_usaid_lp_be<-function(df){
     )%>%
     tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),      
               locations = cells_body(               
-                columns = (budget_execution_2020),
-                rows = (budget_execution_2020) >= 0.9 & (budget_execution_2020) < 1.1)) %>%
+                columns = (budget_execution_2022),
+                rows = (budget_execution_2022) >= 0.9 & (budget_execution_2022) < 1.1)) %>%
     tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),      
               locations = cells_body(               
-                columns = (budget_execution_2020),
-                rows =(budget_execution_2020) < 0.9 ))%>%
+                columns = (budget_execution_2022),
+                rows =(budget_execution_2022) < 0.9 ))%>%
     tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),      
               locations = cells_body(               
-                columns = (budget_execution_2020),
-                rows = (budget_execution_2020)>= 1.1 & (budget_execution_2020) < 1.2))%>%
+                columns = (budget_execution_2022),
+                rows = (budget_execution_2022)>= 1.1 & (budget_execution_2022) < 1.2))%>%
     tab_style(style = cell_fill(color = "#ff989f",alpha = .75),      
               locations = cells_body(               
-                columns = (budget_execution_2020),
-                rows = (budget_execution_2020) >= 1.2 ))%>%
+                columns = (budget_execution_2022),
+                rows = (budget_execution_2022) >= 1.2 ))%>%
     
     tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),      
               locations = cells_body(               
@@ -148,9 +148,9 @@ get_global_usaid_lp_be<-function(df){
     tab_footnote(
       footnote = "Excluding M&O and Commodities",
       locations = cells_column_labels(
-        columns =c(expenditure_amt_2020, expenditure_amt_2021)))%>%
+        columns =c(expenditure_amt_2022, expenditure_amt_2021)))%>%
     tab_header(
-      title = glue::glue(" COP19 & COP20 Local Partner Program Financial Summary: Global"),
+      title = glue::glue(" COP20 & COP21 Local Partner Program Financial Summary: Global"),
       subtitle = legend_chunk)%>%
     gt::tab_source_note(
       source_note = ("USAID mechanisms only. Partner designations provided by the OHA Local Partners Team. Visual excludes TBDs"))%>%

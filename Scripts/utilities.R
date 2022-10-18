@@ -100,8 +100,9 @@ pd <- si_path()%>%
   glamr::source_info(return="fiscal_year")
 fy_end <- pd %>% substr(3, 4) %>% as.numeric() + 2000
 fy_beg <- fy_end - 1 
-max_pd <- pd
-min_pd <- pd -1
+# max_pd <- pd
+# min_pd <- pd -1
+fys<-c(fy_end,fy_beg)
 
 #source<-"FY21Q4i FSD"
 source<-source_info(si_path(),"Fin")

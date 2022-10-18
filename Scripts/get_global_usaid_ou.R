@@ -24,23 +24,23 @@ get_global_usaid_ou<-function(df){
   df<-df%>%
     prep_fsd()%>%
     filter(fundingagency=="USAID")%>%
-    dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
+    dplyr::filter(fiscal_year %in% fys )%>%
     group_by(operatingunit,fiscal_year)%>%
     #mutate_at(vars(cop_budget_total,expenditure_amt),~replace_na(.,0))%>%
     summarise_at(vars(cop_budget_total,expenditure_amt), sum, na.rm = TRUE)%>%
     dplyr::mutate(budget_execution=expenditure_amt/cop_budget_total)%>%
     ungroup()%>%
     pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
-    dplyr::relocate(expenditure_amt_2020, .before = cop_budget_total_2020) %>%
+    dplyr::relocate(expenditure_amt_2022, .before = cop_budget_total_2022) %>%
     dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
     dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
-    dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) %>%
+    dplyr::relocate(budget_execution_2022, .after = cop_budget_total_2022) %>%
     ea_style()%>%
     cols_label( #update GT to check on tidy select), also look at clean_names, also potentially case_when
       operatingunit = "Operating Unit")%>%
     
     tab_header(
-      title = (" COP19 & COP20 Program Financial Summary: USAID "),
+      title = (" COP20 & COP21 Program Financial Summary: USAID "),
       subtitle = legend_chunk)
   return(df)
 }

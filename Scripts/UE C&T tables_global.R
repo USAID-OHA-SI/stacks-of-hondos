@@ -45,6 +45,7 @@ glamr::load_secrets()
       filter(standardizeddisaggregate=="Total Numerator")%>%
       filter(indicator %in% indics)%>%
       dplyr::filter(!mech_code=="16772")%>%
+  rename(fundingagency=funding_agency)
     agency_category()%>%
       #dplyr::select(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator cumulative,targets)%>%
       group_by(fundingagency,fiscal_year,indicator) %>% 
@@ -92,7 +93,7 @@ glamr::load_secrets()
                   values_from=value)
       df_ue<-df_ue%>%
       dplyr::mutate(unit_expenditure=percent_clean(expenditure_amt,cumulative))%>%
-      filter(fiscal_year=="2021")
+      filter(fiscal_year=="2022")
     df_ue<-df_ue%>%select(fundingagency,program, indicator, unit_expenditure, cumulative)%>%
       pivot_wider(names_from =indicator,
                   values_from=cumulative:unit_expenditure)
@@ -202,7 +203,7 @@ glamr::load_secrets()
         align = "left",
         columns = 1)%>%
       tab_header(
-        title = ("  COP20 Unit Expenditure: Treatment Cascade"),
+        title = ("  COP21 Unit Expenditure: Treatment Cascade"),
         subtitle = glue::glue("Operating Unit: Global"))%>%
       gt::tab_source_note(
         source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions."))

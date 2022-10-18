@@ -35,7 +35,7 @@ mech_list<- df_fsd%>%
   
   
   ##concatenate country and mech name
-  dplyr::mutate( partner_mech_name = paste(primepartner,"-",mech_code))%>%
+  dplyr::mutate( partner_mech_name = paste(countryname,"-",mech_code))%>%
   
   #mutate data type double into integer to have round numbers
   dplyr::mutate_if(is.double, as.integer)%>%
@@ -52,13 +52,13 @@ mech_list<- df_fsd%>%
   #filter(partner_mech_name %in% mech_list)%>% 
   
   #select specific variables
-  dplyr::select (c(partner_mech_name, mech_code,program, fiscal_year,cop_budget_total,expenditure_amt))%>%
+  dplyr::select (c(countryname,partner_mech_name, mech_code,program, fiscal_year,cop_budget_total,expenditure_amt))%>%
   mutate_at(vars(cop_budget_total,expenditure_amt),~replace_na(.,0))%>%
   #mutate( fundingagency = fct_relevel(fundingagency, "USAID","CDC"))%>%
   
   
   
-  group_by(partner_mech_name,program, fiscal_year)%>%
+  group_by(countryname,partner_mech_name,program, fiscal_year)%>%
   summarise_at(vars(cop_budget_total,expenditure_amt), sum, na.rm = TRUE)%>%
   dplyr::mutate(budget_execution=percent_clean(expenditure_amt,cop_budget_total))%>%
   ungroup(program, fiscal_year)%>%
@@ -95,7 +95,7 @@ get_ou_mechanism_pa<-function(df, mech_list="partner_mech_name"){
       
       
       ##concatenate country and mech name
-      dplyr::mutate( partner_mech_name = paste(primepartner,"-",mech_code))%>%
+      dplyr::mutate( partner_mech_name = paste(countryname,"-",mech_code))%>%
       
       #mutate data type double into integer to have round numbers
       dplyr::mutate_if(is.double, as.integer)%>%
@@ -257,12 +257,13 @@ get_ou_mechanism_pa<-function(df, mech_list="partner_mech_name"){
 
 #output 
 
-table_out<-"GitHub/stacks-of-hondos/Images/Partner tables/BE/FHI meeting"
+table_out<-"GitHub/stacks-of-hondos/Images/Partner tables/BE"
 
 purrr::map(mech_list, ~get_ou_mechanism_pa(df_fsd, mech_list = .x)%>%
              gtsave(.,path=table_out,filename = glue::glue("{.x}_budget_execution.png")))
 
              
 #to run for one testing below
- get_ou_mechanism_pa(df_fsd,"FHI360 - 81422")%>%
- gtsave(.,path=table_out,filename = glue::glue("FHI360 - 81422_budget execution.png"))
+ get_ou_mechanism_pa(df_fsd,"Kenya - 84483")%>%
+   gtsave("New Kenya.png")
+ gtsave(.,path=table_out,filename = glue::glue("Kenya - ST JOHN'S COMMUNITY CENTRE: PUMWANI - 84483_budget execution.png"))
