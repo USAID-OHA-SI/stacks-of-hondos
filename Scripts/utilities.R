@@ -116,7 +116,8 @@ df_for_lsts <- si_path()%>%
 
 ou_list<- df_for_lsts%>%
   distinct(operatingunit)%>%
-  pull()
+  pull()%>%
+  filter(!operatingunit=="Ukraine")
 
 country_list<-df_for_lsts%>%
   distinct(countryname)%>%

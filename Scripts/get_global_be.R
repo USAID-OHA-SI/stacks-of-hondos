@@ -8,7 +8,7 @@ library(extrafont)
 library(tidytext)
 library(gt)
 library(glue)
-library(webshot)
+library(webshot2)
 
 # Be sure to load the following files below before running
 source("~/GitHub/stacks-of-hondos/Scripts/ea_style.R")
@@ -58,7 +58,7 @@ df_fsd<-si_path()%>%
 #         the variable "table_out"
 table_out<-"GitHub/stacks-of-hondos/Images/Global Performance"
 get_global_agency_be(df_fsd)%>%
-  gtsave(., path=table_out, filename="global performance_all_agencies.png")
+  gtsave(., path=table_out, filename="global performance_all_agencies_2023.png")
 
 #Uploading to google drive===============================================
 # source("~/GitHub/EA-Utilities/upload_dir_to_gdrive.R")

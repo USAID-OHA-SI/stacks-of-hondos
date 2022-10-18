@@ -112,7 +112,7 @@ ea_style<-function(df){
     
     opt_row_striping(row_striping = TRUE)%>%
   gt::tab_source_note(
-    source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions."))
+    source_note = gt::md(glue::glue("**Source**: {source}. Ukraine has been excluded from this analysis | Please reach out to oha.ea@usaid.gov for questions."))
   )
 
 }
