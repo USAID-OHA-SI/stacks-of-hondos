@@ -5,7 +5,7 @@ library(extrafont)
 library(tidytext)
 library(gt)
 library(glue)
-library(webshot)
+library(webshot2)
 
 
 df_fsd<-si_path()%>%

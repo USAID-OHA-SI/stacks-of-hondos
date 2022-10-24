@@ -39,10 +39,10 @@ ea_style<-function(df){
     )
   )%>%
   tab_spanner(
-    label = glue("COP{stringr::str_sub(fy_beg, -2)} Performance"),
+    label = glue("COP{stringr::str_sub(fy_prev, -2)} Performance"),
     columns = tidyselect::matches(as.character(fy_beg)))%>%
   tab_spanner(
-    label = glue("COP{stringr::str_sub(fy_end, -2)} Performance"), #glue::glue("COP{stringr::str_sub(fy_beg, -2)} Performance")
+    label = glue("COP{stringr::str_sub(fy_beg, -2)} Performance"), #glue::glue("COP{stringr::str_sub(fy_beg, -2)} Performance")
     columns = tidyselect::matches(as.character(fy_end)))%>%
   gt::tab_style(
     style = list(

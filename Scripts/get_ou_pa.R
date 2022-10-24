@@ -26,10 +26,13 @@ get_ou_pa<-function(df, ou="operatingunit"){
     agency_category()%>%
     
     #filter for fiscal year
-    dplyr::filter(fiscal_year=="2020" | fiscal_year=="2021")%>%
+    dplyr::filter(fiscal_year%in% fys)%>%
     
     #filter for OU
     dplyr::filter(operatingunit %in% ou)%>%
+    
+    #remove not specified PA (moz issue)
+    dplyr::filter(!program=="Not Specified")%>%
     
     #select specific variables
     dplyr::select (c(agency_category,program, fiscal_year,cop_budget_total,expenditure_amt))%>%
@@ -43,10 +46,10 @@ get_ou_pa<-function(df, ou="operatingunit"){
     
     
     pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
-    dplyr::relocate(expenditure_amt_2020, .before = cop_budget_total_2020) %>%
+    dplyr::relocate(expenditure_amt_2022, .before = cop_budget_total_2022) %>%
     dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
     dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
-    dplyr::relocate(budget_execution_2020, .after = cop_budget_total_2020) %>%
+    dplyr::relocate(budget_execution_2022, .after = cop_budget_total_2022) %>%
     
    group_by(agency_category)%>%
     #break into separate functions
@@ -55,7 +58,7 @@ get_ou_pa<-function(df, ou="operatingunit"){
     cols_label(
       program = "Program Area")%>%
     tab_header(
-      title = glue::glue("COP19 & COP20 Program Financial Summary: {ou} By Program Area"),
+      title = glue::glue("COP20 & COP21 Program Financial Summary: {ou} By Program Area"),
       subtitle = legend_chunk) %>%
     
     tab_options(footnotes.font.size = "small")
@@ -70,7 +73,7 @@ df_fsd<-si_path()%>%
   read_msd()
 
 # To use function, change the "fundingagency" or "ou" options
-#get_ou_pa(df_fsd,"Mozambique")%>%
+#get_ou_pa(df_fsd,"Zambia")%>%
  
 # gtsave(.,path=table_out,filename = glue::glue("Mozambique_pa_budget_execution.png"))
 

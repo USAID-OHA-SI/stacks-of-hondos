@@ -5,7 +5,7 @@ library(extrafont)
 library(tidytext)
 library(gt)
 library(glue)
-library(webshot)
+library(webshot2)
 
 
 df_fsd<-si_path()%>%
@@ -46,6 +46,7 @@ df_fsd<-df_fsd%>%
 df_msd<-df_msd%>%
   filter(standardizeddisaggregate=="Total Numerator")%>%
   filter(indicator %in% indics)%>%
+  rename(fundingagency = funding_agency)%>%
   clean_agency()%>%
   dplyr::filter(stringr::str_detect(operatingunit, "Region")) %>% 
   label_aggregation ("Regional")%>%
@@ -92,7 +93,7 @@ df_ue<-df_ue%>%
               values_from=value)
 df_ue<-df_ue%>%
   dplyr::mutate(unit_expenditure=percent_clean(expenditure_amt,cumulative))%>%
-  filter(fiscal_year=="2021")
+  filter(fiscal_year=="2022")
 df_ue<-df_ue%>%select(operatingunit,fundingagency,mech_code, mech_name, primepartner,program, indicator, unit_expenditure, cumulative)%>%
   pivot_wider(names_from =indicator,
               values_from=cumulative:unit_expenditure)
@@ -213,11 +214,10 @@ get_ue<-function(df, ou="operatingunit"){
       align = "left",
       columns = 1)%>%
     tab_header(
-      title = ("  COP20 Unit Expenditure: Treatment Cascade"),
+      title = ("  COP21 Unit Expenditure: Treatment Cascade"),
       subtitle = glue::glue("Operating Unit: {ou}"))%>%
     gt::tab_source_note(
-      source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions.Please note that FY21 ER data does not include the following 
-    mechanisms due to data import issues: 70031-Cameroon, 80052-DR, 81108-DR, 18093-DRC, 81894-South Africa,70388-Uganda, 81978-Uganda, 85157-WAR, 85155-WAR, 85158-WAR, 85213-WHR."))
+      source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions."))
     )%>%
     
     tab_footnote(

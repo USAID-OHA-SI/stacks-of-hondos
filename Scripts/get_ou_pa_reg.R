@@ -43,14 +43,14 @@ get_ou_pa_reg<-function(df, ou="operatingunit"){
     summarise_at(vars(cop_budget_total,expenditure_amt), sum, na.rm = TRUE)%>%
     dplyr::mutate(budget_execution=percent_clean(expenditure_amt,cop_budget_total))%>%
     ungroup()%>%
-    pivot_wider(names_from = fiscal_year,names_glue="{.value}_{fiscal_year}",values_from = cop_budget_total:budget_execution, values_fill = 0)
-   
-    
-  df<-df %>%
-    dplyr::relocate(expenditure_amt_2022, .before = cop_budget_total_2022) %>%
-    dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
-    dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
-    dplyr::relocate(budget_execution_2022, .after = cop_budget_total_2022) %>%
+    pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
+    dplyr::relocate(budget_execution_2021, .before= budget_execution_2022 )%>%
+      dplyr::relocate(cop_budget_total_2022,.after=budget_execution_2021)%>%
+
+    dplyr::relocate(expenditure_amt_2021,.before=cop_budget_total_2021)%>%
+
+      dplyr::relocate(budget_execution_2021,.before=expenditure_amt_2022)%>%
+
     
     
     # names(df)

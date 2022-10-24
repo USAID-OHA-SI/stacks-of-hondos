@@ -100,6 +100,7 @@ pd <- si_path()%>%
   glamr::source_info(return="fiscal_year")
 fy_end <- pd %>% substr(3, 4) %>% as.numeric() + 2000
 fy_beg <- fy_end - 1 
+fy_prev<-fy_beg-1
 # max_pd <- pd
 # min_pd <- pd -1
 fys<-c(fy_end,fy_beg)
@@ -115,9 +116,10 @@ df_for_lsts <- si_path()%>%
   gophr::read_msd()
 
 ou_list<- df_for_lsts%>%
+  filter(!operatingunit=="Ukraine")%>%
   distinct(operatingunit)%>%
-  pull()%>%
-  filter(!operatingunit=="Ukraine")
+  pull()
+  
 
 country_list<-df_for_lsts%>%
   distinct(countryname)%>%
@@ -131,7 +133,7 @@ country_list_regionals<-df_for_lsts%>%
   distinct(operatingunit)%>%
   # filter(!operatingunit=="West Africa Region-West Africa Region")%>%
    filter(!operatingunit=="West Africa Region-Benin")%>%
-  filter(!operatingunit=="Western Hemisphere Region-Barbados")
+  filter(!operatingunit=="Western Hemisphere Region-Barbados")%>%
   # filter(!operatingunit=="West Africa Region-Sierra Leone")%>%
   # filter(!operatingunit=="Asia Region-Central Asia Region")%>%
   # filter(!operatingunit=="Asia Region-Asia Regional Program")%>%
@@ -171,3 +173,4 @@ label_aggregation <- function(df, type = "OU") {
     df %>% dplyr::mutate(agg_type = "OU")
   }
 }
+
