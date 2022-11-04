@@ -167,6 +167,71 @@ df_merhrh<-full_join(df_hrh3,df_msd)%>%
 
 ##=== new HRH for 2022
   
+library(readr)
+df_hrh_new <- read_csv("C:/Users/Bkasdan/Downloads/HRH_FY22mockdataset_10102022.csv")
+
+df<-df_hrh_new%>%
+  
+  filter(fiscal_year=="2022")
+df<-df%>%
+  select(operating_unit,funding_agency_fing,prime_or_sub,is_community_primarily,primary_beneficiaries,individual_count,annual_fte,annual_expenditure)
+
+df_prime<-df%>%
+  select(operating_unit,funding_agency_fing,prime_or_sub,individual_count,annual_fte,annual_expenditure)%>%
+  group_by(operating_unit,funding_agency_fing,prime_or_sub)%>%
+  summarise_at(vars(individual_count,annual_fte,annual_expenditure), sum, na.rm=TRUE)%>%
+  ungroup()
+
+df_prime<-df_prime%>%
+   pivot_longer(c(individual_count,annual_fte,annual_expenditure), names_to="key", values_to="value")%>%
+  pivot_wider(names_from = c(prime_or_sub, key), 
+              values_from = value,
+              values_fill=0
+  )%>%
  
+  # filter(fiscal_year=="2021",
+         # operatingunit %in% ou)%>%
+   # select(-c(fiscal_year,operatingunit))%>%
+  adorn_totals("row",,,, -funding_agency_fing,)%>%
+  dplyr::rowwise() %>%
+  mutate(total_count=sum(across(matches("individual_count"), na.rm = T)))%>%
+  mutate(total_fte=sum(across(matches("annual_fte"), na.rm = T)))%>%
+  mutate(total_spend=sum(across(matches("annual_expenditure"), na.rm = T)))%>%
+  mutate( #pivot to get totals and shares
+    prime_staff_count_share=round(`Prime_individual_count`/total_count*100) ,
+    prime_staff_fte_share=round(`Prime_annual_fte`/total_fte*100) ,
+    sub_spend_share=round(`Sub_individual_count`/total_count*100),
+    sub_fte_share=round(`Sub_annual_fte` /total_fte*100) ,
+  sub_spend_share=round(`Sub_annual_expenditure`/ total_spend*100),
+  prime_spend_share=round(`Prime_annual_expenditure`/ total_spend*100))%>%
+  select(-c(total_fte,total_count,total_spend))
+
+## beneficiary type FTE and count 
+   
+df_com<-df%>%
+  select(operating_unit,funding_agency_fing,is_community_primarily,individual_count,annual_fte,annual_expenditure)%>%
+  group_by(operating_unit,funding_agency_fing,is_community_primarily)%>%
+  summarise_at(vars(individual_count,annual_fte,annual_expenditure), sum, na.rm=TRUE)%>%
+  ungroup()%>%
+  pivot_longer(c(individual_count,annual_fte,annual_expenditure), names_to="key", values_to="value")%>%
+  pivot_wider(names_from = c(is_community_primarily, key), 
+              values_from = value,
+              values_fill=0
+  )%>%
   
-  
+  # filter(fiscal_year=="2021",
+  # operatingunit %in% ou)%>%
+  # select(-c(fiscal_year,operatingunit))%>%
+  adorn_totals("row",,,, -funding_agency_fing,)%>%
+  dplyr::rowwise() %>%
+  mutate(total_count=sum(across(matches("individual_count"), na.rm = T)))%>%
+  mutate(total_fte=sum(across(matches("annual_fte"), na.rm = T)))%>%
+  mutate(total_spend=sum(across(matches("annual_expenditure"), na.rm = T)))%>%
+  mutate( #pivot to get totals and shares
+    comm_staff_count_share=round(`Community Based_individual_count`/total_count*100) ,
+    comm_staff_fte_share=round(`Community Based_annual_fte`/total_fte*100) ,
+    noncomm_spend_share=round(`Non-Community Based_individual_count`/total_count*100),
+    noncomm_fte_share=round(`Non-Community Based_annual_fte` /total_fte*100) ,
+    noncomm_spend_share=round(`Non-Community Based_annual_expenditure`/ total_spend*100),
+    com_spend_share=round(`Community Based_annual_expenditure`/ total_spend*100))%>%
+  select(-c(total_fte,total_count,total_spend))

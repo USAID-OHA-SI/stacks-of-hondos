@@ -23,7 +23,7 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
 glamr::load_secrets()
 #apply partner type data to fsd before starting
 df_fsd<-df_fsd%>%
-  glamr::apply_partner_type()
+  apply_partner_type()
 
 
 
@@ -33,7 +33,7 @@ get_global_usaid_lp_be<-function(df){
     remove_mo()%>%
     remove_sch("SGAC")%>%
     dplyr::filter(fiscal_year %in% fys)%>%
-    dplyr::filter(fundingagency=="USAID")%>%
+    dplyr::filter(funding_agency=="USAID")%>%
     dplyr::filter(partner_type_usaid_adjusted=="Local" | partner_type_usaid_adjusted=="International" )%>%
     dplyr::select (c(partner_type_usaid_adjusted,fiscal_year,cop_budget_total,expenditure_amt))%>%
     group_by(partner_type_usaid_adjusted,fiscal_year)%>%
@@ -177,7 +177,7 @@ get_global_usaid_lp_be_lts<-function(df){
     remove_mo()%>%
     remove_sch("SGAC")%>%
     dplyr::filter(fiscal_year %in% fys)%>%
-    dplyr::filter(fundingagency=="USAID")%>%
+    dplyr::filter(funding_agency=="USAID")%>%
     dplyr::filter(!operatingunit=="Asia Region")%>%
     dplyr::filter(!operatingunit=="Western Hemisphere Region")%>%
     dplyr::filter(!operatingunit=="Angola")%>%

@@ -77,7 +77,7 @@ df_fsd<-si_path()%>%
   read_msd()
 
 # To use function, change the "fundingagency" or "ou" options
-#get_ou_pa_reg(df_fsd,"Asia Region-Asia Region")%>%
+#get_ou_pa_reg(df_fsd,"Asia Region-Thailand")%>%
  
 # gtsave(.,path=table_out,filename = glue::glue("Mozambique_pa_budget_execution.png"))
 

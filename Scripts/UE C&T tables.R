@@ -31,7 +31,7 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
     df_fsd<-df_fsd%>%
       remove_mo()%>%
       agency_category()%>%
-      group_by(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner, program) %>% 
+      group_by(operatingunit,funding_agency,fiscal_year, mech_code, mech_name, prime_partner_name, program) %>% 
       #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
       summarise_at(vars(cop_budget_total, expenditure_amt), sum, na.rm = TRUE) %>% 
       ungroup()%>%
@@ -43,10 +43,10 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
     df_msd<-df_msd%>%
       filter(standardizeddisaggregate=="Total Numerator")%>%
       filter(indicator %in% indics)%>%
-     rename(fundingagency = funding_agency)%>%
+     # rename(fundingagency = funding_agency)%>%
       agency_category()%>%
       #dplyr::select(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator cumulative,targets)%>%
-      group_by(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator) %>% 
+      group_by(operatingunit,funding_agency,fiscal_year, mech_code, mech_name, prime_partner_name,indicator) %>% 
       #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
       summarise_at(vars(cumulative,targets), sum, na.rm = TRUE) %>% 
       ungroup()%>%
@@ -58,7 +58,7 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
                                                
                                                TRUE ~indicator))
       df_msd<-df_msd%>%
-      filter(!fundingagency=="DEDUP")
+      filter(!funding_agency=="DEDUP")
       # dplyr::filter(targets>0)
     #  %>% pivot_wider(names_from = program,
     #               values_from=cumulative)
@@ -72,8 +72,8 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
     df_ue<-left_join(df_fsd,df_msd)
     
     df_ue<-df_ue%>%
-      mutate( fundingagency = fct_relevel(fundingagency, "USAID","CDC"))%>%
-      group_by(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator)%>%
+      mutate( fundingagency = fct_relevel(funding_agency, "USAID","CDC"))%>%
+      group_by(operatingunit,funding_agency,fiscal_year, mech_code, mech_name, prime_partner_name,indicator)%>%
       pivot_longer(expenditure_amt:cop_budget_total,
                    names_to ="financial",
                    values_to="amount")%>%
@@ -92,20 +92,20 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
       df_ue<-df_ue%>%
       dplyr::mutate(unit_expenditure=percent_clean(expenditure_amt,cumulative))%>%
       filter(fiscal_year %in% fy_end)
-    df_ue<-df_ue%>%select(operatingunit,fundingagency,mech_code, mech_name, primepartner,program, indicator, unit_expenditure, cumulative)%>%
+    df_ue<-df_ue%>%select(operatingunit,funding_agency,mech_code, mech_name, prime_partner_name,program, indicator, unit_expenditure, cumulative)%>%
       pivot_wider(names_from =indicator,
                   values_from=cumulative:unit_expenditure)
     
     
     
     df_ue<-df_ue%>%
-      select(operatingunit,fundingagency,mech_code, mech_name, primepartner,cumulative_HTS_TST,cumulative_HTS_TST_POS,
+      select(operatingunit,funding_agency,mech_code, mech_name, prime_partner_name,cumulative_HTS_TST,cumulative_HTS_TST_POS,
              cumulative_TX_CURR,cumulative_TX_NEW,
              unit_expenditure_HTS_TST,unit_expenditure_HTS_TST_POS,
              unit_expenditure_TX_CURR,unit_expenditure_TX_NEW,)
     
     
-    df_ue<-df_ue%>%     group_by(operatingunit,fundingagency,mech_code, mech_name, primepartner,)%>%
+    df_ue<-df_ue%>%     group_by(operatingunit,funding_agency,mech_code, mech_name, prime_partner_name,)%>%
       summarise_at(vars(cumulative_HTS_TST: unit_expenditure_TX_NEW  ), sum, na.rm = TRUE)
     #df_ue<-df_ue%>%    pivot_longer(unit_expenditure_HTS_TST:unit_expenditure_TX_NEW,
     #          names_to ="UE",
@@ -120,12 +120,12 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
     # pivot_wider(names_from =UE,
     #            values_from=value)%>%
     df_ue<-df_ue%>%
-      dplyr::mutate(primepartner = dplyr::case_when(primepartner    == "FHI Development 360 LLC"    ~"FHI360",
-                                                    primepartner    ==   "Family Health International"    ~"FHI360",
-                                                    primepartner    ==  "Abt Associates, Inc." ~ "Abt Associates Inc",
+      dplyr::mutate(prime_partner_name = dplyr::case_when(prime_partner_name    == "FHI Development 360 LLC"    ~"FHI360",
+                                                          prime_partner_name    ==   "Family Health International"    ~"FHI360",
+                                                          prime_partner_name    ==  "Abt Associates, Inc." ~ "Abt Associates Inc",
                                                     
-                                                    TRUE ~primepartner))%>%
-      mutate("prime_mech"=glue("{primepartner}- {mech_code}"))
+                                                    TRUE ~prime_partner_name))%>%
+      mutate("prime_mech"=glue("{prime_partner_name}- {mech_code}"))
       
       df_ue<-df_ue%>%
       dplyr::relocate(prime_mech, .before = cumulative_HTS_TST)
@@ -153,11 +153,11 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
      # filter(fiscal_year=="2020")%>%
       #filter(TX_CURR!="NA")%>%
       gt(
-        groupname_col = "fundingagency"
+        groupname_col = "funding_agency"
         
       )%>%
       cols_hide(
-        columns=c("operatingunit","fundingagency","mech_code","mech_name","primepartner",
+        columns=c("operatingunit","funding_agency","mech_code","mech_name","prime_partner_name",
                   ))%>%
       fmt_currency( # add dolar signs
         columns = contains("unit_expenditure"),
@@ -168,7 +168,7 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
         decimals = 0,
         use_seps = TRUE
       )%>%
-      fmt_missing(columns = everything(),
+      sub_missing(columns = everything(),
                   missing_text = "-")%>%
       tab_options(
         table.font.names = "Source Sans Pro"

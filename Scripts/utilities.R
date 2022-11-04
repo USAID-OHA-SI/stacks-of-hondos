@@ -73,12 +73,13 @@ note<-function(poc= c("SCH","SGAC","none")){
 #add in agency category column
 agency_category<-function(df){
   df<-df%>%
-  glamr::clean_agency()%>%
-     dplyr::mutate(fundingagency  = dplyr::case_when(fundingagency    == "WCF"    ~"USAID", #fix Kosovo
+    
+  clean_agency()%>% #gophr::clean_agency()%>%
+     dplyr::mutate(funding_agency  = dplyr::case_when(funding_agency    == "WCF"    ~"USAID", #fix Kosovo
                                                  
-                                                 TRUE ~fundingagency))%>%
+                                                 TRUE ~funding_agency))%>%
    
-    dplyr::mutate(`agency_category` = `fundingagency`)%>%
+    dplyr::mutate(`agency_category` = `funding_agency`)%>%
     dplyr::mutate(`agency_category` = ifelse(`agency_category` == "USAID", "USAID",
                                       ifelse(`agency_category` == "CDC", "CDC",
                                              ifelse(`agency_category` == "WCF", "USAID",
@@ -96,8 +97,8 @@ percent_clean <- function(x, y) {
 }
 
 pd <- si_path()%>%
-  glamr::return_latest("Fin")%>%
-  glamr::source_info(return="fiscal_year")
+  return_latest("Fin")%>%
+  source_info(return="fiscal_year") #gophr::source_info
 fy_end <- pd %>% substr(3, 4) %>% as.numeric() + 2000
 fy_beg <- fy_end - 1 
 fy_prev<-fy_beg-1
@@ -122,14 +123,14 @@ ou_list<- df_for_lsts%>%
   
 
 country_list<-df_for_lsts%>%
-  distinct(countryname)%>%
+  distinct(country)%>%
   pull()
 
 #filter for country list as regionals but remove WAR-WAR and Benin which has no funding for now
 country_list_regionals<-df_for_lsts%>%
   dplyr::filter(operatingunit=="Asia Region" | operatingunit=="Western Hemisphere Region" |operatingunit=="West Africa Region")%>%
   dplyr::mutate(agg_type = "Region-Country",
-                operatingunit = paste(operatingunit, countryname, sep = "-")) %>% 
+                operatingunit = paste(operatingunit, country, sep = "-")) %>% 
   distinct(operatingunit)%>%
   # filter(!operatingunit=="West Africa Region-West Africa Region")%>%
    filter(!operatingunit=="West Africa Region-Benin")%>%
@@ -167,8 +168,8 @@ label_aggregation <- function(df, type = "OU") {
  if (type == "Regional") {
     df %>% 
       dplyr::mutate(agg_type = "Region-Country",
-                    operatingunit = paste(operatingunit, countryname, sep = "-")) %>% 
-      dplyr::select(-countryname)
+                    operatingunit = paste(operatingunit, country, sep = "-")) %>% 
+      dplyr::select(-country)
   } else {
     df %>% dplyr::mutate(agg_type = "OU")
   }

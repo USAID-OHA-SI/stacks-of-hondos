@@ -202,7 +202,7 @@ df_kp<-df_fsd%>%
   
   
   mutate(budget_execution=(expenditure_amt/cop_budget_total))%>%
-  filter(fiscal_year=="2021"| fiscal_year=="2020")
+  filter(fiscal_year=="2021")
 df_kp<-df_kp%>%
   pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)
 
@@ -295,8 +295,82 @@ kp_example_1<-df_kp%>%
     columns = 1
   )
 
+##=== KP with KP PREV MER %
+
+df_kp<-df_fsd%>%
+  remove_mo()%>%
+  clean_agency()%>%
+  mutate( fundingagency = fct_relevel(fundingagency, "USAID","CDC"))%>%
+  dplyr::mutate(program = dplyr::case_when(sub_program    == "PREV: PrEP"    ~"PrEP", 
+                                           
+                                           
+                                           TRUE ~program))%>%
+  dplyr::mutate( mech_id_mech_name = paste(mech_code,"-", mech_name))%>%
+  filter(beneficiary=="Key Pops")%>%
+  group_by(operatingunit,fundingagency,fiscal_year, mech_id_mech_name,mech_code, beneficiary,) %>%
+  
+  #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
+  summarise_at(vars(cop_budget_total, expenditure_amt), sum, na.rm = TRUE) %>% 
+  ungroup()%>%
+  
+  
+  mutate(budget_execution=(expenditure_amt/cop_budget_total))%>%
+  filter(fiscal_year=="2021")
+df_kp<-df_kp%>%
+  pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)
+df_kp<-df_kp%>%
+  dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021)
 
 
+progs<-c("PREV")
+df<-df_msd%>%
+  filter(standardizeddisaggregate=="Total Numerator")%>%
+  # filter(indicator %in% indics)%>
+   rename("fundingagency"=funding_agency)%>%
+   #clean_agency()%>%
+  # mutate( funding_agency = fct_relevel(funding_agency, "USAID","CDC"))%>%
+  #dplyr::select(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator cumulative,targets)%>%
+  dplyr::mutate( mech_id_mech_name = paste(mech_code,"-", mech_name))%>%
+  group_by(operatingunit,fundingagency,fiscal_year, mech_id_mech_name,indicator) %>% 
+  #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
+  summarise_at(vars(cumulative,targets), sum, na.rm = TRUE) %>% 
+  ungroup()%>%
+  
+  dplyr::mutate(program = dplyr::case_when(indicator    == "TX_CURR"    ~"C&T",
+                                           indicator    == "TX_NEW"    ~"C&T",
+                                           indicator    == "HTS_TST"    ~"HTS",
+                                           indicator    == "PrEP_NEW"    ~"PrEP",
+                                           indicator    == "KP_PREV"    ~"PREV",
+                                           
+                                           
+                                           TRUE ~indicator))
+df<-df%>%
+  filter(!fundingagency=="DEDUP")%>%
+  dplyr::filter(targets>0)%>%
+  mutate(achievement=round (cumulative/targets*100))%>%
+  filter(fiscal_year=="2021")%>%
+  filter(program %in% progs)%>%
+  
+  
+  select(operatingunit,fundingagency,,mech_id_mech_name,indicator,achievement,program)%>%
+  pivot_wider(names_from = indicator,
+              values_from=achievement)
+
+
+
+
+
+
+#join datasets together 
+df_ue<-left_join(df_kp,df)%>%
+  select(operatingunit,fundingagency,mech_id_mech_name, expenditure_amt_2021:budget_execution_2021, KP_PREV)%>%
+  mutate_at(vars(expenditure_amt_2021: KP_PREV),~replace_na(.,0))%>%
+  # filter(fiscal_year=="2021")%>%
+  filter(operatingunit %in% ou)%>%
+  filter(KP_PREV>0
+         |budget_execution_2021>0)%>%
+  rename("KP PREV Achievement"=KP_PREV)
+  select(fundingagency,mech:OVC_SERV)
 
   
  

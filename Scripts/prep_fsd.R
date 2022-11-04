@@ -9,7 +9,7 @@ prep_fsd <-function(df){
                                   "is_indigenous_prime_partner", "subrecipient_duns",
                                   "award_number","procurement_type")) %>% 
     # filter out M&O
-    glamr::remove_mo()%>% 
+    remove_mo()%>% #gophr::remove_mo
     
   
  
@@ -32,11 +32,11 @@ prep_fsd <-function(df){
   
   #Add in agency category column to group agencies
   
-    glamr::clean_agency()%>%
+    clean_agency()%>% #gophr::clean_agency()
     agency_category()%>%
    
   #mutating & calculating budget execution
-  group_by(operatingunit, countryname, fundingagency, agency_category, fiscal_year,primepartner,mech_id_mech_name,program, interaction_type) %>% 
+  group_by(operatingunit, country, funding_agency, agency_category, fiscal_year,prime_partner_name,mech_id_mech_name,program, interaction_type) %>% 
     summarise_at(vars(cop_budget_total, expenditure_amt), sum, na.rm = TRUE) %>% 
   ungroup()
   
