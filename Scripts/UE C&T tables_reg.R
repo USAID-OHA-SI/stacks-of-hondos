@@ -33,9 +33,9 @@ df_fsd<-df_fsd%>%
   clean_agency()%>%
   dplyr::filter(stringr::str_detect(operatingunit, "Region")) %>% 
   label_aggregation ("Regional")%>%
-  select(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner, fiscal_year, program,cop_budget_total, expenditure_amt)%>%
-  group_by(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner, program) %>% 
-  #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
+  select(operatingunit,funding_agency,fiscal_year, mech_code, mech_name, prime_partner_name, fiscal_year, program,cop_budget_total, expenditure_amt)%>%
+  group_by(operatingunit,funding_agency,fiscal_year, mech_code, mech_name, prime_partner_name, program) %>% 
+  #group_by(country, mech_code, mech_name, prime_partner_name, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
   summarise_at(vars(cop_budget_total, expenditure_amt), sum, na.rm = TRUE) %>% 
   ungroup()%>%
   filter(program %in% progs)
@@ -46,13 +46,13 @@ df_fsd<-df_fsd%>%
 df_msd<-df_msd%>%
   filter(standardizeddisaggregate=="Total Numerator")%>%
   filter(indicator %in% indics)%>%
-  rename(fundingagency = funding_agency)%>%
+  # rename(funding_agency = funding_agency)%>%
   clean_agency()%>%
   dplyr::filter(stringr::str_detect(operatingunit, "Region")) %>% 
   label_aggregation ("Regional")%>%
-  #dplyr::select(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator cumulative,targets)%>%
-  group_by(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator) %>% 
-  #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
+  #dplyr::select(operatingunit,funding_agency,fiscal_year, mech_code, mech_name, prime_partner_name,indicator cumulative,targets)%>%
+  group_by(operatingunit,funding_agency,fiscal_year, mech_code, mech_name, prime_partner_name,indicator) %>% 
+  #group_by(country, mech_code, mech_name, prime_partner_name, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
   summarise_at(vars(cumulative,targets), sum, na.rm = TRUE) %>% 
   ungroup()%>%
   
@@ -62,7 +62,7 @@ df_msd<-df_msd%>%
                                            indicator == "HTS_TST_POS" ~"HTS",
                                            
                                            TRUE ~indicator))%>%
-  filter(fundingagency!="Dedup")%>%
+  filter(funding_agency!="Dedup")%>%
   dplyr::filter(targets>0)
 
 
@@ -74,8 +74,8 @@ df_msd<-df_msd%>%
 df_ue<-left_join(df_fsd,df_msd)
 
 df_ue<-df_ue%>%
-  mutate( fundingagency = fct_relevel(fundingagency, "USAID","CDC"))%>%
-  group_by(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator)%>%
+  mutate( funding_agency = fct_relevel(funding_agency, "USAID","CDC"))%>%
+  group_by(operatingunit,funding_agency,fiscal_year, mech_code, mech_name, prime_partner_name,indicator)%>%
   pivot_longer(expenditure_amt:cop_budget_total,
                names_to ="financial",
                values_to="amount")%>%
@@ -94,20 +94,20 @@ df_ue<-df_ue%>%
 df_ue<-df_ue%>%
   dplyr::mutate(unit_expenditure=percent_clean(expenditure_amt,cumulative))%>%
   filter(fiscal_year=="2022")
-df_ue<-df_ue%>%select(operatingunit,fundingagency,mech_code, mech_name, primepartner,program, indicator, unit_expenditure, cumulative)%>%
+df_ue<-df_ue%>%select(operatingunit,funding_agency,mech_code, mech_name, prime_partner_name,program, indicator, unit_expenditure, cumulative)%>%
   pivot_wider(names_from =indicator,
               values_from=cumulative:unit_expenditure)
 
 
 
 df_ue<-df_ue%>%
-  select(operatingunit,fundingagency,mech_code, mech_name, primepartner,cumulative_HTS_TST,cumulative_HTS_TST_POS,
+  select(operatingunit,funding_agency,mech_code, mech_name, prime_partner_name,cumulative_HTS_TST,cumulative_HTS_TST_POS,
          cumulative_TX_CURR,cumulative_TX_NEW,
          unit_expenditure_HTS_TST,unit_expenditure_HTS_TST_POS,
          unit_expenditure_TX_CURR,unit_expenditure_TX_NEW,)
 
 
-df_ue<-df_ue%>%     group_by(operatingunit,fundingagency,mech_code, mech_name, primepartner,)%>%
+df_ue<-df_ue%>%     group_by(operatingunit,funding_agency,mech_code, mech_name, prime_partner_name,)%>%
   summarise_at(vars(cumulative_HTS_TST: unit_expenditure_TX_NEW  ), sum, na.rm = TRUE)
 #df_ue<-df_ue%>%    pivot_longer(unit_expenditure_HTS_TST:unit_expenditure_TX_NEW,
 #          names_to ="UE",
@@ -117,17 +117,17 @@ df_ue<-df_ue%>%     group_by(operatingunit,fundingagency,mech_code, mech_name, p
 #               values_to="total")%>%
 #df_ue<-df_ue%>% mutate_at(vars(total,value),~replace_na(.,0))%>%
 #  filter(total>0 & value>0)%>%
-# df_ue<-df_ue%>%     group_by(mech_code, mech_name, primepartner,countryname, UE, Results)%>%
+# df_ue<-df_ue%>%     group_by(mech_code, mech_name, prime_partner_name,countryname, UE, Results)%>%
 #  summarise_at(vars(value,total), sum, na.rm = TRUE)%>%
 # pivot_wider(names_from =UE,
 #            values_from=value)%>%
 df_ue<-df_ue%>%
-  dplyr::mutate(primepartner = dplyr::case_when(primepartner    == "FHI Development 360 LLC"    ~"FHI360",
-                                                primepartner    ==   "Family Health International"    ~"FHI360",
-                                                primepartner    ==  "Abt Associates, Inc." ~ "Abt Associates Inc",
+  dplyr::mutate(prime_partner_name = dplyr::case_when(prime_partner_name    == "FHI Development 360 LLC"    ~"FHI360",
+                                                prime_partner_name    ==   "Family Health International"    ~"FHI360",
+                                                prime_partner_name    ==  "Abt Associates, Inc." ~ "Abt Associates Inc",
                                                 
-                                                TRUE ~primepartner))%>%
-  mutate("prime_mech"=glue("{primepartner}- {mech_code}"))
+                                                TRUE ~prime_partner_name))%>%
+  mutate("prime_mech"=glue("{prime_partner_name}- {mech_code}"))
 
 df_ue<-df_ue%>%
   dplyr::relocate(prime_mech, .before = cumulative_HTS_TST)
@@ -159,11 +159,11 @@ get_ue<-function(df, ou="operatingunit"){
     # filter(fiscal_year=="2020")%>%
     #filter(TX_CURR!="NA")%>%
     gt(
-      groupname_col = "fundingagency"
+      groupname_col = "funding_agency"
       
     )%>%
     cols_hide(
-      columns=c("operatingunit","fundingagency","mech_code","mech_name","primepartner",
+      columns=c("operatingunit","funding_agency","mech_code","mech_name","prime_partner_name",
       ))%>%
     fmt_currency( # add dolar signs
       columns = contains("unit_expenditure"),
@@ -239,7 +239,7 @@ get_ue<-function(df, ou="operatingunit"){
 # Output ============================================================================
 table_out<-"GitHub/stacks-of-hondos/Images/Regional"
 #to run for one OU, be sure to change the ou to the ou name
-#get_ue_reg(df_ue, "Asia Region-Thailand")%>%
+#get_ue(df_ue, "Asia Region-Thailand")%>%
   #gtsave(.,path=table_out,filename = glue::glue("Mozambique_unit_expenditure.png"))
 #to run for all OUs. You can use country_list to do countries 
 purrr::map(ue_regional, ~get_ue(df, ou = .x)%>%
