@@ -87,8 +87,7 @@ df_fsd<-si_path()%>%
 table_out<-"GitHub/stacks-of-hondos/Images/Regional"
 
 #to run for one OU below. Be sure to name the ou 
-#get_ou_agency_be_reg(df_fsd, "	
-#Asia Region-Asia Region")
+#get_ou_pa_reg(df_fsd, "Western Hemisphere Region-Guatemala")
 #to run all
 purrr::map(country_list_regionals, ~get_ou_pa_reg(df_fsd, ou = .x)%>%
              gtsave(.,path=table_out,filename = glue::glue("{.x}_pa_budget_execution_2023.png")))

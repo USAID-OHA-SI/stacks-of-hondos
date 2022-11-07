@@ -26,11 +26,11 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
     prep_fsd()%>%
     dplyr::filter(fiscal_year%in% fys)%>%
     dplyr::filter(operatingunit %in% ou)%>%
-    dplyr::select (c(fundingagency,fiscal_year,cop_budget_total,expenditure_amt))%>%
+    dplyr::select (c(funding_agency,fiscal_year,cop_budget_total,expenditure_amt))%>%
     mutate_at(vars(cop_budget_total,expenditure_amt),~replace_na(.,0))%>%
    
-    mutate( fundingagency = fct_relevel(fundingagency, "USAID","CDC"))%>%
-    group_by(fundingagency,fiscal_year)%>%
+    mutate( funding_agency = fct_relevel(funding_agency, "USAID","CDC"))%>%
+    group_by(funding_agency,fiscal_year)%>%
     summarise_at(vars(cop_budget_total,expenditure_amt), sum, na.rm = TRUE)%>%
     dplyr::mutate(budget_execution=percent_clean(expenditure_amt,cop_budget_total))%>%
     ungroup()%>%
@@ -41,7 +41,7 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
     dplyr::relocate(budget_execution_2022, .after = cop_budget_total_2022) %>%
     ea_style()%>%
     cols_label(
-     fundingagency = "Funding Agency")%>%
+     funding_agency = "Funding Agency")%>%
     tab_header(
       title = glue::glue(" COP20 & COP21 Program Financial Summary: {ou}"),
       subtitle = legend_chunk)
