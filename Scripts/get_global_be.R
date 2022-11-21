@@ -21,6 +21,7 @@ get_global_agency_be<-function(df){
   df<-df%>%
     prep_fsd()%>%
     dplyr::filter(fiscal_year %in% fys)%>%
+    filter(!operatingunit=="Ukraine")%>%
     dplyr::select (c(agency_category,fiscal_year,cop_budget_total,expenditure_amt))%>%
     group_by(agency_category,fiscal_year)%>%
     summarise_at(vars(cop_budget_total,expenditure_amt), sum, na.rm = TRUE)%>%
