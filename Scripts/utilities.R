@@ -97,8 +97,8 @@ percent_clean <- function(x, y) {
 }
 
 pd <- si_path()%>%
-  return_latest("Fin")%>%
-  source_info(return="fiscal_year") #gophr::source_info
+  return_latest("Financial")%>%
+  source_info() #gophr::source_info
 fy_end <- pd %>% substr(3, 4) %>% as.numeric() + 2000
 fy_beg <- fy_end - 1 
 fy_prev<-fy_beg-1
@@ -137,7 +137,7 @@ country_list_regionals<-df_for_lsts%>%
   filter(!operatingunit=="Western Hemisphere Region-Barbados")%>%
   # filter(!operatingunit=="West Africa Region-Sierra Leone")%>%
   # filter(!operatingunit=="Asia Region-Central Asia Region")%>%
-  # filter(!operatingunit=="Asia Region-Asia Regional Program")%>%
+   filter(!operatingunit=="Asia Region-Asia Regional Program")%>%
   # filter(!operatingunit=="Western Hemisphere Region-Caribbean Region")%>%
   # filter(!operatingunit=="Western Hemisphere Region-Central America Region")%>%
   # #%>%
