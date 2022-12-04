@@ -5,7 +5,7 @@ library(extrafont)
 library(tidytext)
 library(gt)
 library(glue)
-library(webshot2)
+library(webshot)
 
 
 df_fsd<-si_path()%>%
@@ -25,6 +25,18 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
     progs<-c("HTS", "C&T")
 
 
+    
+    
+  # folder set up
+    # Path where you want to save your PDF outputs, log files, and temp files
+    save_dir <- "C:/Users/bkasdan/Documents/GitHub/stacks-of-hondos/Images"
+    # Add path to where folders should be placed
+    OU <- "OU"
+    OU <- glue("{save_dir}/{OU}")
+    
+    
+    # Build necessary directories if they are not present
+    dir.create(OU, showWarning=F)
 
     # MUNGE FSD ============================================================================
     
@@ -237,3 +249,5 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
     #to run for all OUs. You can use country_list to do countries 
     purrr::map(ou_list, ~get_ue(df, ou = .x)%>%
                  gtsave(.,path=table_out,filename = glue::glue("{.x}_unit_expenditure.png")))
+
+    

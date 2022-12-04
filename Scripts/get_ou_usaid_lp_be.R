@@ -12,6 +12,16 @@ df_fsd<-si_path()%>%
   return_latest("Fin")%>%
   gophr::read_msd()
 
+save_dir <- "C:/Users/bkasdan/Documents/GitHub/stacks-of-hondos/Images"
+# Add path to where folders should be placed
+OU <- "Local Partners"
+OU <- glue("{save_dir}/{OU}")
+
+
+# Build necessary directories if they are not present
+dir.create(OU, showWarning=F)
+
+
 
 #This function can be used to print out budget execution by partner type (local, international)for USAID at an OU level. You can use this to 
 #print information for multiple OUs. You will need to ensure that you have load_secrets from the glamr package set up beforehand
@@ -22,7 +32,7 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
 glamr::load_secrets()
 #apply partner type data to fsd before starting
 df_fsd<-df_fsd%>%
-  glamr::apply_partner_type()
+  apply_partner_type()
 
 
 get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
@@ -32,7 +42,7 @@ get_ou_usaid_lp_be<-function(df, ou="operatingunit"){
     remove_mo()%>%
     remove_sch("SGAC")%>%
     dplyr::filter(fiscal_year %in% fys )%>%
-    dplyr::filter(fundingagency=="USAID")%>%
+    dplyr::filter(funding_agency=="USAID")%>%
     dplyr::filter(operatingunit %in% ou)%>%
     dplyr::filter(partner_type_usaid_adjusted=="Local" | partner_type_usaid_adjusted=="International" )%>%
     dplyr::select (c(partner_type_usaid_adjusted,fiscal_year,cop_budget_total,expenditure_amt))%>%

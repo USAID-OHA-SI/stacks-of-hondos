@@ -33,7 +33,7 @@ progs<-c("OVC")
 df_kp<-df_fsd%>%
   remove_mo()%>%
   clean_agency()%>%
-  mutate( fundingagency = fct_relevel(fundingagency, "USAID","CDC"))%>%
+  mutate( funding_agency = fct_relevel(funding_agency, "USAID","CDC"))%>%
   dplyr::mutate(program = dplyr::case_when(sub_program    == "PREV: PrEP"    ~"PrEP", 
                                            
                                            

@@ -12,6 +12,17 @@ df_fsd<-si_path()%>%
   return_latest("Fin")%>%
   gophr::read_msd()
 
+# folder set up
+# Path where you want to save your PDF outputs, log files, and temp files
+save_dir <- "C:/Users/bkasdan/Documents/GitHub/stacks-of-hondos/Images"
+# Add path to where folders should be placed
+OU <- "Global Performance"
+OU <- glue("{save_dir}/{OU}")
+
+
+# Build necessary directories if they are not present
+dir.create(OU, showWarning=F)
+
 
 #This function can be used to print out budget execution by partner type (local, international)for USAID at a global level. 
 #You will need to ensure that you have load_secrets from the glamr package set up beforehand

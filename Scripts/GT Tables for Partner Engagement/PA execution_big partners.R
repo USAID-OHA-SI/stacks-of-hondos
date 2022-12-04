@@ -21,7 +21,7 @@ df_fsd<-si_path()%>%
 
 mech_list<- df_fsd%>%
   #filter for fiscal year
-  dplyr::filter( fiscal_year=="2021")%>%
+  dplyr::filter( fiscal_year=="2022")%>%
   dplyr::filter(fundingagency == "USAID" | fundingagency == "USAID/WCF") %>% 
   dplyr::mutate(primepartner = dplyr::case_when(primepartner    == "FHI Development 360 LLC"    ~"FHI360",
                                                 primepartner    ==   "Family Health International"    ~"FHI360",

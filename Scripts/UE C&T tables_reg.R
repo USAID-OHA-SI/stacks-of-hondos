@@ -24,6 +24,17 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
 indics<-c("HTS_TST","HTS_TST_POS", "TX_CURR", "TX_NEW")
 progs<-c("HTS", "C&T")
 
+# folder set up
+# Path where you want to save your PDF outputs, log files, and temp files
+save_dir <- "C:/Users/bkasdan/Documents/GitHub/stacks-of-hondos/Images"
+# Add path to where folders should be placed
+OU <- "Regional"
+OU <- glue("{save_dir}/{OU}")
+
+
+# Build necessary directories if they are not present
+dir.create(OU, showWarning=F)
+
 
 
 # MUNGE FSD ============================================================================
