@@ -7,7 +7,7 @@ library(gt)
 library(glue)
 library(webshot)
 
-
+si_path("C:/Users/jmontespenaloza/Documents/Raw Datasets")
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
   read_msd()
@@ -56,7 +56,7 @@ get_ou_agency_be_reg<-function(df, ou="operatingunit"){
 }
 
 #Output========
-table_out<-"GitHub/stacks-of-hondos/Images/Regional"
+table_out<-"GitHub/stacks-of-hondos/Images/Regional Agency"
 
 #to run for one OU below. Be sure to name the ou 
 #get_ou_agency_be_reg(df_fsd, "Asia Region-Asia Region")
