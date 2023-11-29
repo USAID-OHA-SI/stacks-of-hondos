@@ -53,12 +53,12 @@ ea_style<-function(df){
     align = "center",
     columns = everything())%>%
    cols_label(
-    budget_execution_2021="Budget Execution",
-    expenditure_amt_2021 = "Expenditure",
-    cop_budget_total_2021 = "Budget",
-     budget_execution_2022="Budget Execution",
+    budget_execution_2022="Budget Execution",
     expenditure_amt_2022 = "Expenditure",
-    cop_budget_total_2022 = "Budget",)%>%
+    cop_budget_total_2022 = "Budget",
+     budget_execution_2023="Budget Execution",
+    expenditure_amt_2023 = "Expenditure",
+    cop_budget_total_2023 = "Budget",)%>%
   cols_align(
     align = "left",
     columns = 1
@@ -67,36 +67,36 @@ ea_style<-function(df){
 
   tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),
             locations = cells_body(
-              columns = (budget_execution_2021),
-              rows = (budget_execution_2021) >= 0.9 & (budget_execution_2021) < 1.1)) %>%
+              columns = (budget_execution_2022),
+              rows = (budget_execution_2022) >= 0.9 & (budget_execution_2022) < 1.1)) %>%
   tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),
             locations = cells_body(
-              columns = (budget_execution_2021),
-              rows =(budget_execution_2021) < 0.9 ))%>%
+              columns = (budget_execution_2022),
+              rows =(budget_execution_2022) < 0.9 ))%>%
   tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),
             locations = cells_body(
-              columns = (budget_execution_2021),
-              rows = (budget_execution_2021)>= 1.1 & (budget_execution_2021) < 1.2))%>%
+              columns = (budget_execution_2022),
+              rows = (budget_execution_2022)>= 1.1 & (budget_execution_2022) < 1.2))%>%
   tab_style(style = cell_fill(color = "#ff989f",alpha = .75),
             locations = cells_body(
-              columns = (budget_execution_2021),
-              rows = (budget_execution_2021) >= 1.2 ))%>%
+              columns = (budget_execution_2022),
+              rows = (budget_execution_2022) >= 1.2 ))%>%
     tab_style(style = cell_fill(color = "#5bb5d5",alpha = .75),
               locations = cells_body(
-                columns = (budget_execution_2022),
-                rows = (budget_execution_2022) >= 0.9 & (budget_execution_2022) < 1.1)) %>%
+                columns = (budget_execution_2023),
+                rows = (budget_execution_2023) >= 0.9 & (budget_execution_2023) < 1.1)) %>%
     tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),
               locations = cells_body(
-                columns = (budget_execution_2022),
-                rows =(budget_execution_2022) < 0.9 ))%>%
+                columns = (budget_execution_2023),
+                rows =(budget_execution_2023) < 0.9 ))%>%
     tab_style(style = cell_fill(color = "#ffcaa2",alpha = .75),
               locations = cells_body(
-                columns = (budget_execution_2022),
-                rows = (budget_execution_2022)>= 1.1 & (budget_execution_2022) < 1.2))%>%
+                columns = (budget_execution_2023),
+                rows = (budget_execution_2023)>= 1.1 & (budget_execution_2023) < 1.2))%>%
     tab_style(style = cell_fill(color = "#ff989f",alpha = .75),
               locations = cells_body(
-                columns = (budget_execution_2022),
-                rows = (budget_execution_2022) >= 1.2 ))%>%
+                columns = (budget_execution_2023),
+                rows = (budget_execution_2023) >= 1.2 ))%>%
   
   gt::tab_options(
     source_notes.font.size = 8,
