@@ -136,10 +136,10 @@ country_list_regionals<-df_for_lsts%>%
    filter(!operatingunit=="West Africa Region-Benin")%>%
   filter(!operatingunit=="Western Hemisphere Region-Barbados")%>%
   # filter(!operatingunit=="West Africa Region-Sierra Leone")%>%
-  # filter(!operatingunit=="Asia Region-Central Asia Region")%>%
+  filter(!operatingunit=="Asia Region-Central Asia Region")%>%
    filter(!operatingunit=="Asia Region-Asia Regional Program")%>%
-  # filter(!operatingunit=="Western Hemisphere Region-Caribbean Region")%>%
-  # filter(!operatingunit=="Western Hemisphere Region-Central America Region")%>%
+  filter(!operatingunit=="Western Hemisphere Region-Caribbean Region")%>%
+  filter(!operatingunit=="Western Hemisphere Region-Central America Region")%>%
   # #%>%
   pull()
 

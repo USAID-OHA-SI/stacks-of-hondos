@@ -5,7 +5,7 @@ prep_fsd <-function(df){
   
   #removing
   df<-df %>% 
-    dplyr::select(-c("prime_partner_duns","prime_partner_org_type",
+    dplyr::select(-c("prime_partner_duns","prime_partner_uei","prime_partner_org_type",
                                   "is_indigenous_prime_partner", "subrecipient_duns",
                                   "award_number","procurement_type")) %>% 
     # filter out M&O

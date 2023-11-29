@@ -38,7 +38,7 @@ get_global_agency_be<-function(df){
       agency_category = "Agency")%>%
 
     tab_header(
-      title = (" COP20 & COP21 Program Financial Summary: Global"),
+      title = (" COP21 & COP22 Program Financial Summary: Global"),
       subtitle = legend_chunk)%>%
     tab_source_note(
       source_note = md("*Other* based on aggregated funding agencies"))

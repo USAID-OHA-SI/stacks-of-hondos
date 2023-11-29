@@ -10,11 +10,11 @@ library(webshot)
 
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
-  gophr::read_msd()
+  gophr::read_psd()
 
 df_msd<-si_path()%>%
   return_latest("OU_IM")%>%
-  gophr::read_msd()
+  gophr::read_psd()
 
 #This function can be used to generate unit expenditure tables across the treatment continuum
 #It can be used to generate one table for one ou, or a batch for all ous.
@@ -34,7 +34,7 @@ glamr::load_secrets()
       clean_agency()%>%
     dplyr::filter(stringr::str_detect(operatingunit, "Region")) %>% 
     label_aggregation ("Regional")%>%
-      group_by(operatingunit,fundingagency,fiscal_year, program) %>% 
+      group_by(operatingunit,funding_agency,fiscal_year, program) %>% 
       #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
       summarise_at(vars(cop_budget_total, expenditure_amt), sum, na.rm = TRUE) %>% 
       ungroup()%>%
@@ -50,7 +50,7 @@ glamr::load_secrets()
   dplyr::filter(stringr::str_detect(operatingunit, "Region")) %>% 
   label_aggregation ("Regional")%>%
       #dplyr::select(operatingunit,fundingagency,fiscal_year, mech_code, mech_name, primepartner,indicator cumulative,targets)%>%
-      group_by(operatingunit,fundingagency,fiscal_year,indicator) %>% 
+      group_by(operatingunit,funding_agency,fiscal_year,indicator) %>% 
       #group_by(country, mech_code, mech_name, primepartner, fiscal_year, `Program Area: Sub Program Area-Service Level`,`Beneficiary-Sub Beneficiary`)%>%
       summarise_at(vars(cumulative,targets), sum, na.rm = TRUE) %>% 
       ungroup()%>%
@@ -62,7 +62,7 @@ glamr::load_secrets()
                                                
                                                TRUE ~indicator))
       df_msd<-df_msd%>%
-      filter(!fundingagency=="DEDUP")%>%
+      filter(!funding_agency=="DEDUP")%>%
       dplyr::filter(targets>0)
     #  %>% pivot_wider(names_from = program,
     #               values_from=cumulative)
@@ -76,8 +76,8 @@ glamr::load_secrets()
       df_ue<-left_join(df_fsd,df_msd)
       
       df_ue<-df_ue%>%
-        mutate( fundingagency = fct_relevel(fundingagency, "USAID","CDC"))%>%
-        group_by(operatingunit,fundingagency,fiscal_year,indicator)%>%
+        mutate( funding_agency = fct_relevel(funding_agency, "USAID","CDC"))%>%
+        group_by(operatingunit,funding_agency,fiscal_year,indicator)%>%
         pivot_longer(expenditure_amt:cop_budget_total,
                      names_to ="financial",
                      values_to="amount")%>%
@@ -95,21 +95,21 @@ glamr::load_secrets()
                     values_from=value)
       df_ue<-df_ue%>%
         dplyr::mutate(unit_expenditure=percent_clean(expenditure_amt,cumulative))%>%
-        filter(fiscal_year=="2021")
-      df_ue<-df_ue%>%select(operatingunit,fundingagency,program, indicator, unit_expenditure, cumulative)%>%
+        filter(fiscal_year=="2023")
+      df_ue<-df_ue%>%select(operatingunit,funding_agency,program, indicator, unit_expenditure, cumulative)%>%
         pivot_wider(names_from =indicator,
                     values_from=cumulative:unit_expenditure)
       
       
       
       df_ue<-df_ue%>%
-        select(operatingunit,fundingagency,cumulative_HTS_TST,cumulative_HTS_TST_POS,
+        select(operatingunit,funding_agency,cumulative_HTS_TST,cumulative_HTS_TST_POS,
                cumulative_TX_CURR,cumulative_TX_NEW,
                unit_expenditure_HTS_TST,unit_expenditure_HTS_TST_POS,
                unit_expenditure_TX_CURR,unit_expenditure_TX_NEW,)
       
       
-      df_ue<-df_ue%>%     group_by(operatingunit,fundingagency,)%>%
+      df_ue<-df_ue%>%     group_by(operatingunit,funding_agency,)%>%
         summarise_at(vars(cumulative_HTS_TST: unit_expenditure_TX_NEW  ), sum, na.rm = TRUE)
       #df_ue<-df_ue%>%    pivot_longer(unit_expenditure_HTS_TST:unit_expenditure_TX_NEW,
       #          names_to ="UE",
@@ -155,7 +155,7 @@ glamr::load_secrets()
           # filter(fiscal_year=="2020")%>%
           #filter(TX_CURR!="NA")%>%
           gt(
-            groupname_col = "fundingagency"
+            groupname_col = "funding_agency"
             
           )%>%
           cols_hide(
@@ -191,7 +191,7 @@ glamr::load_secrets()
             cumulative_TST_POS ="TST POS Results",
             cumulative_TX_CURR ="TX CURR Results",
             cumulative_TX_NEW ="TX NEW Results",
-            fundingagency="Funding Agency"
+            funding_agency="Funding Agency"
             
           )%>%
           
@@ -212,7 +212,7 @@ glamr::load_secrets()
             align = "left",
             columns = 1)%>%
           tab_header(
-            title = ("  COP20 Unit Expenditure: Treatment Cascade"),
+            title = ("  COP22 Unit Expenditure: Treatment Cascade"),
             subtitle = glue::glue("Operating Unit: {ou}"))%>%
           gt::tab_source_note(
             source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions."))
@@ -238,7 +238,7 @@ glamr::load_secrets()
       }
 
 # Output ============================================================================
-    table_out<-"GitHub/stacks-of-hondos/Images/Regional"
+    table_out<-"GitHub/stacks-of-hondos/Images"
     #to run for one OU, be sure to change the ou to the ou name
     get_ue_ou(df_ue, "Democratic Republic of the Congo")%>%
       gtsave(.,path=table_out,filename = glue::glue("global_unit_expenditure.png"))

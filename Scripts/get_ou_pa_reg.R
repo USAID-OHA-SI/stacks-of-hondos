@@ -44,12 +44,10 @@ get_ou_pa_reg<-function(df, ou="operatingunit"){
     dplyr::mutate(budget_execution=percent_clean(expenditure_amt,cop_budget_total))%>%
     ungroup()%>%
     pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
-    dplyr::relocate(budget_execution_2021, .before= budget_execution_2022 )%>%
-      dplyr::relocate(cop_budget_total_2022,.after=budget_execution_2021)%>%
-
-    dplyr::relocate(expenditure_amt_2021,.before=cop_budget_total_2021)%>%
-
-      dplyr::relocate(budget_execution_2021,.before=expenditure_amt_2022)%>%
+    dplyr::relocate(budget_execution_2022, .before= budget_execution_2023 )%>%
+    dplyr::relocate(cop_budget_total_2023,.after=budget_execution_2022)%>%
+    dplyr::relocate(expenditure_amt_2022,.before=cop_budget_total_2022)%>%
+    dplyr::relocate(budget_execution_2022,.before=expenditure_amt_2023)%>%
 
     
     
@@ -62,7 +60,7 @@ get_ou_pa_reg<-function(df, ou="operatingunit"){
     cols_label(
       program = "Program Area")%>%
     tab_header(
-      title = glue::glue("COP20 & COP21 Program Financial Summary: {ou} By Program Area"),
+      title = glue::glue("COP21 & COP22 Program Financial Summary: {ou} By Program Area"),
       subtitle = legend_chunk) %>%
     
     tab_options(footnotes.font.size = "small")
@@ -74,10 +72,10 @@ get_ou_pa_reg<-function(df, ou="operatingunit"){
 # Read in the FSD data.frame from where you locally saved it
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
-  read_msd()
+  read_psd()
 
 # To use function, change the "fundingagency" or "ou" options
-#get_ou_pa_reg(df_fsd,"Asia Region-Thailand")%>%
+get_ou_pa_reg(df_fsd,"Asia Region-Burma")%>%
  
 # gtsave(.,path=table_out,filename = glue::glue("Mozambique_pa_budget_execution.png"))
 

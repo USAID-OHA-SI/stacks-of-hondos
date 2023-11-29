@@ -14,7 +14,7 @@ df_fsd<-si_path()%>%
 
 df_msd<-si_path()%>%
   return_latest("OU_IM")%>%
-  gophr::read_msd()
+  gophr::read_psd()
 
 #This function can be used to generate unit expenditure tables across the treatment continuum
 #It can be used to generate one table for one ou, or a batch for all ous.
@@ -29,7 +29,7 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
     
   # folder set up
     # Path where you want to save your PDF outputs, log files, and temp files
-    save_dir <- "C:/Users/bkasdan/Documents/GitHub/stacks-of-hondos/Images"
+    save_dir <- "C:/Users/jmontespenaloza/Documents/GitHub/stacks-of-hondos/Images"
     # Add path to where folders should be placed
     OU <- "OU"
     OU <- glue("{save_dir}/{OU}")
@@ -220,7 +220,7 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
         align = "left",
         columns = 1)%>%
       tab_header(
-        title = ("  COP21 Unit Expenditure: Treatment Cascade"),
+        title = ("  COP22 Unit Expenditure: Treatment Cascade"),
         subtitle = glue::glue("Operating Unit: {ou}"))%>%
       gt::tab_source_note(
         source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions."))
@@ -242,7 +242,7 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
     }
 
 # Output ============================================================================
-    table_out<-"GitHub/stacks-of-hondos/Images/OU"
+    table_out<-"GitHub/stacks-of-hondos/Images"
     #to run for one OU, be sure to change the ou to the ou name
     # get_ue(df_ue, "Mozambique")%>%
     #   gtsave(.,path=table_out,filename = glue::glue("Mozambique_unit_expenditure.png"))

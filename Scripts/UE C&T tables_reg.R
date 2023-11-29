@@ -26,7 +26,7 @@ progs<-c("HTS", "C&T")
 
 # folder set up
 # Path where you want to save your PDF outputs, log files, and temp files
-save_dir <- "C:/Users/bkasdan/Documents/GitHub/stacks-of-hondos/Images"
+save_dir <- "C:/Users/jmontespenaloza/Documents/GitHub/stacks-of-hondos/Images"
 # Add path to where folders should be placed
 OU <- "Regional"
 OU <- glue("{save_dir}/{OU}")
@@ -104,7 +104,7 @@ df_ue<-df_ue%>%
               values_from=value)
 df_ue<-df_ue%>%
   dplyr::mutate(unit_expenditure=percent_clean(expenditure_amt,cumulative))%>%
-  filter(fiscal_year=="2022")
+  filter(fiscal_year=="2023")
 df_ue<-df_ue%>%select(operatingunit,funding_agency,mech_code, mech_name, prime_partner_name,program, indicator, unit_expenditure, cumulative)%>%
   pivot_wider(names_from =indicator,
               values_from=cumulative:unit_expenditure)
@@ -225,7 +225,7 @@ get_ue<-function(df, ou="operatingunit"){
       align = "left",
       columns = 1)%>%
     tab_header(
-      title = ("  COP21 Unit Expenditure: Treatment Cascade"),
+      title = ("  COP22 Unit Expenditure: Treatment Cascade"),
       subtitle = glue::glue("Operating Unit: {ou}"))%>%
     gt::tab_source_note(
       source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions."))
@@ -248,7 +248,7 @@ get_ue<-function(df, ou="operatingunit"){
 
 
 # Output ============================================================================
-table_out<-"GitHub/stacks-of-hondos/Images/Regional"
+table_out<-"GitHub/stacks-of-hondos/Images"
 #to run for one OU, be sure to change the ou to the ou name
 #get_ue(df_ue, "Asia Region-Thailand")%>%
   #gtsave(.,path=table_out,filename = glue::glue("Mozambique_unit_expenditure.png"))

@@ -10,7 +10,7 @@ library(webshot)
 
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
-read_msd()
+read_psd()
 
 
 #use this function to print out budget execution by agency at different OUs. 
@@ -35,15 +35,15 @@ get_ou_agency_be<-function(df, ou="operatingunit"){
     dplyr::mutate(budget_execution=percent_clean(expenditure_amt,cop_budget_total))%>%
     ungroup()%>%
     pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
+    dplyr::relocate(expenditure_amt_2023, .before = cop_budget_total_2023) %>%
     dplyr::relocate(expenditure_amt_2022, .before = cop_budget_total_2022) %>%
-    dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
-    dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
-    dplyr::relocate(budget_execution_2022, .after = cop_budget_total_2022) %>%
+    dplyr::relocate(budget_execution_2022, .after = cop_budget_total_2022)%>%
+    dplyr::relocate(budget_execution_2023, .after = cop_budget_total_2023) %>%
     ea_style()%>%
     cols_label(
      funding_agency = "Funding Agency")%>%
     tab_header(
-      title = glue::glue(" COP20 & COP21 Program Financial Summary: {ou}"),
+      title = glue::glue(" COP21 & COP22 Program Financial Summary: {ou}"),
       subtitle = legend_chunk)
       
      

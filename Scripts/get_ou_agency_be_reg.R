@@ -10,7 +10,7 @@ library(webshot)
 si_path("C:/Users/jmontespenaloza/Documents/Raw Datasets")
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
-  read_msd()
+  read_psd()
 
 
 #use this function to print out budget execution by agency at different regional-country OUs. 
@@ -29,7 +29,7 @@ get_ou_agency_be_reg<-function(df, ou="operatingunit"){
     dplyr::filter(stringr::str_detect(operatingunit, "Region")) %>% 
     label_aggregation ("Regional")%>%
     dplyr::filter(fiscal_year %in% fys)%>%
-     # dplyr::filter(operatingunit %in% ou)%>%
+    dplyr::filter(operatingunit %in% ou)%>%
     dplyr::select (c(funding_agency,fiscal_year,cop_budget_total,expenditure_amt))%>%
     mutate_at(vars(cop_budget_total,expenditure_amt),~replace_na(.,0))%>%
     mutate( funding_agency = fct_relevel(funding_agency, "USAID","CDC"))%>%
@@ -38,16 +38,16 @@ get_ou_agency_be_reg<-function(df, ou="operatingunit"){
     dplyr::mutate(budget_execution=percent_clean(expenditure_amt,cop_budget_total))%>%
     ungroup()%>%
     pivot_wider(names_from = fiscal_year,values_from = cop_budget_total:budget_execution, values_fill = 0)%>%
+    dplyr::relocate(expenditure_amt_2023, .before = cop_budget_total_2023) %>%
     dplyr::relocate(expenditure_amt_2022, .before = cop_budget_total_2022) %>%
-    dplyr::relocate(expenditure_amt_2021, .before = cop_budget_total_2021) %>%
-    dplyr::relocate(budget_execution_2021, .after = cop_budget_total_2021)%>%
-    dplyr::relocate(budget_execution_2022, .after = cop_budget_total_2022) %>%
+    dplyr::relocate(budget_execution_2022, .after = cop_budget_total_2022)%>%
+    dplyr::relocate(budget_execution_2023, .after = cop_budget_total_2023) %>%
     
    ea_style()%>%
     cols_label(
       funding_agency = "Funding Agency")%>%
     tab_header(
-      title = glue::glue("COP20 & COP21 Program Financial Summary: {ou}"),
+      title = glue::glue("COP21 & COP22 Program Financial Summary: {ou}"),
       subtitle = legend_chunk)
   
   
@@ -59,7 +59,7 @@ get_ou_agency_be_reg<-function(df, ou="operatingunit"){
 table_out<-"GitHub/stacks-of-hondos/Images/Regional Agency"
 
 #to run for one OU below. Be sure to name the ou 
-#get_ou_agency_be_reg(df_fsd, "Asia Region-Asia Region")
+get_ou_agency_be_reg(df_fsd, "Asia Region-India")
 #to run all
 purrr::map(country_list_regionals, ~get_ou_agency_be_reg(df_fsd, ou = .x)%>%
              gtsave(.,path=table_out,filename = glue::glue("{.x}_budget_execution.png")))
