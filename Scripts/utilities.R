@@ -114,7 +114,7 @@ legend_chunk <- gt::md(glue::glue("Legend: Budget Execution <img src= '{legend_b
 # dataframe used to generate ou_list, country_list, country_list_regionals, etc.
 df_for_lsts <- si_path()%>%
   return_latest("Fin")%>%
-  gophr::read_msd()
+  gophr::read_psd()
 
 ou_list<- df_for_lsts%>%
   filter(!operatingunit=="Ukraine")%>%
