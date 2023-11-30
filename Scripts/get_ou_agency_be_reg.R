@@ -5,7 +5,7 @@ library(extrafont)
 library(tidytext)
 library(gt)
 library(glue)
-library(webshot)
+library(webshot2)
 
 si_path("C:/Users/jmontespenaloza/Documents/Raw Datasets")
 df_fsd<-si_path()%>%
@@ -22,7 +22,7 @@ source("~/GitHub/stacks-of-hondos/Scripts/prep_fsd.R")
 source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
 
 
-write_csv(df, "C:/Users/jmontespenaloza/Documents/test.csv")
+
 get_ou_agency_be_reg<-function(df, ou="operatingunit"){
   df<-df_fsd%>%
     prep_fsd()%>%
@@ -59,7 +59,7 @@ get_ou_agency_be_reg<-function(df, ou="operatingunit"){
 table_out<-"GitHub/stacks-of-hondos/Images/Regional Agency"
 
 #to run for one OU below. Be sure to name the ou 
-get_ou_agency_be_reg(df_fsd, "Asia Region-India")
+#get_ou_agency_be_reg(df_fsd, "Asia Region-India")
 #to run all
 purrr::map(country_list_regionals, ~get_ou_agency_be_reg(df_fsd, ou = .x)%>%
              gtsave(.,path=table_out,filename = glue::glue("{.x}_budget_execution.png")))
