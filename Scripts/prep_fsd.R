@@ -17,8 +17,8 @@ prep_fsd <-function(df){
   dplyr::mutate( mech_id_mech_name = paste(mech_code,"-", mech_name))%>%
   
   #mutate data type double into integer to have round numbers
-  dplyr::mutate_if(is.double, as.integer)%>%
- 
+  #dplyr::mutate_if(is.double, as.integer)%>%
+  dplyr::mutate(across(where(is.double), round, 0)) %>% 
   
   #drop NA for numeric amounts
   mutate_at(vars(cop_budget_new_funding:expenditure_amt),~replace_na(.,0))%>%
