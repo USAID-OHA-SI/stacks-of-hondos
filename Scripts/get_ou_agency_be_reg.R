@@ -22,9 +22,9 @@ source("~/GitHub/stacks-of-hondos/Scripts/prep_fsd.R")
 source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
 
 
-
+write_csv(df, "C:/Users/jmontespenaloza/Documents/test.csv")
 get_ou_agency_be_reg<-function(df, ou="operatingunit"){
-  df<-df%>%
+  df<-df_fsd%>%
     prep_fsd()%>%
     dplyr::filter(stringr::str_detect(operatingunit, "Region")) %>% 
     label_aggregation ("Regional")%>%
