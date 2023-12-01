@@ -220,14 +220,14 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
         align = "left",
         columns = 1)%>%
       tab_header(
-        title = ("  COP22 Unit Expenditure: Treatment Cascade"),
+        title = ("  COP22 Spend Per Result: Treatment Cascade"),
         subtitle = glue::glue("Operating Unit: {ou}"))%>%
       gt::tab_source_note(
         source_note = gt::md(glue::glue("**Source**: {source} | Please reach out to oha.ea@usaid.gov for questions."))
       )%>%
       
       tab_footnote(
-        footnote = md( "A unit expenditure (UE) is a calculation of partner-level expenditures for a given program area (source: ER) divided by the number of associated beneficiaries (source: MER). Total IM-level expenditure within a program area, divided by IM-specific result value.  Can only be calculated for mechanisms that have both expenditures and results within a given program area. It can be interpreted as the spend per beneficiary reached with those resources. **UEs across partners should be interpreted within the programmatic context, as there are differences in factors such as scope, funding profile, and geography.**"),
+        footnote = md( "Spend per result is a calculation of partner-level expenditures for a given program area (source: ER) divided by the number of associated beneficiaries (source: MER). Total IM-level expenditure within a program area, divided by IM-specific result value.  Can only be calculated for mechanisms that have both expenditures and results within a given program area. It can be interpreted as the spend per beneficiary reached with those resources. **UEs across partners should be interpreted within the programmatic context, as there are differences in factors such as scope, funding profile, and geography.**"),
         locations = cells_column_labels(
           columns =c(unit_expenditure_HTS_TST)))%>%
       
@@ -248,6 +248,6 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
     #   gtsave(.,path=table_out,filename = glue::glue("Mozambique_unit_expenditure.png"))
     #to run for all OUs. You can use country_list to do countries 
     purrr::map(ou_list, ~get_ue(df, ou = .x)%>%
-                 gtsave(.,path=table_out,filename = glue::glue("{.x}_unit_expenditure.png")))
+                 gtsave(.,path=table_out,filename = glue::glue("{.x}_spend_per_result.png")))
 
     
