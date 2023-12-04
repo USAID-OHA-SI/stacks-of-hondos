@@ -5,12 +5,12 @@ library(extrafont)
 library(tidytext)
 library(gt)
 library(glue)
-library(webshot)
+library(webshot2)
 
 
 df_fsd<-si_path()%>%
   return_latest("Fin")%>%
-  gophr::read_msd()
+  gophr::read_psd()
 
 df_msd<-si_path()%>%
   return_latest("OU_IM")%>%
@@ -227,7 +227,7 @@ source("~/GitHub/stacks-of-hondos/Scripts/utilities.R")
       )%>%
       
       tab_footnote(
-        footnote = md( "Spend per result is a calculation of partner-level expenditures for a given program area (source: ER) divided by the number of associated beneficiaries (source: MER). Total IM-level expenditure within a program area, divided by IM-specific result value.  Can only be calculated for mechanisms that have both expenditures and results within a given program area. It can be interpreted as the spend per beneficiary reached with those resources. **UEs across partners should be interpreted within the programmatic context, as there are differences in factors such as scope, funding profile, and geography.**"),
+        footnote = md( "Spend per result (UE) is a calculation of partner-level expenditures for a given program area (source: ER) divided by the number of associated beneficiaries (source: MER). Total IM-level expenditure within a program area, divided by IM-specific result value.  Can only be calculated for mechanisms that have both expenditures and results within a given program area. It can be interpreted as the spend per beneficiary reached with those resources. **UEs across partners should be interpreted within the programmatic context, as there are differences in factors such as scope, funding profile, and geography.**"),
         locations = cells_column_labels(
           columns =c(unit_expenditure_HTS_TST)))%>%
       

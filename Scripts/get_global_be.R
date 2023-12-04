@@ -58,6 +58,7 @@ df_fsd<-si_path()%>%
 #       * Feel free to change the path you are saving the file to, by changing
 #         the variable "table_out"
 table_out<-"GitHub/stacks-of-hondos/Images"
+
 get_global_agency_be(df_fsd)%>%
   gtsave(., path=table_out, filename="global performance_all_agencies.png")
 

@@ -80,8 +80,9 @@ df_fsd<-si_path()%>%
 
 
 #Output========
-table_out<-"GitHub/stacks-of-hondos/Images/OU Program Area"
+table_out<-"GitHub/stacks-of-hondos/Images"
 #to run for one OU below. Be sure to name the ou 
+get_ou_pa(df_fsd, "Zimbabwe")
 
 #to run for all ous
 purrr::map(ou_list, ~get_ou_pa(df_fsd, ou = .x)%>%
